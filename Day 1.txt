@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day 1</title>
+    <!-- Include Highcharts library -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        /* Your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .converter-container {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .input-field {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .convert-button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 10px;
+            width: 100%; /* Covering full width */
+            padding: 8px;
+            border-radius: 5px;
+            background-color: #ddd;
+            text-align: center;
+        }
+
+        .save-button {
+            background-color: #7c0b9ed0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .save-button:hover {
+            background-color: #7c0b9ed0; /* Change color on hover if desired */
+        }
+
+        .save-button:focus,
+        .save-button:active {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .rounded-input {
+            border-radius: 25px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="topnav">
+        <a href="C:\Users\User\Temperature chart.html">Home</a>
+        <a class="active" href="C:\Users\User\Day 1.html">Temperature of day 1</a>
+        <a href="C:\Users\User\Day 2.html">Temperature of day 2</a>
+        <a href="C:\Users\User\Day 3.html">Temperature of day 3</a>
+        <a href="C:\Users\User\Day 4.html">Temperature of day 4</a>
+        <a href="C:\Users\User\Day 5.html">Temperature of day 5</a>
+    </div>
+
+    <h1>Day 1</h1>
+    <div class="converter-container">
+        <h2>Celsius to Fahrenheit Converter</h2>
+        <input type="number" id="celsiusInput" class="input-field" placeholder="Enter Celsius">
+        <button onclick="convertCelsiusToFahrenheit()" class="convert-button">Convert</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <div id="container" style="width: 100%; height: 800px;"></div>
+    
+    <!-- Save button -->
+    <div style="padding-left: 16px;">
+        <button id="saveButton" class="save-button">Save</button>
+    </div>
+
+    <script>
+        // Your JavaScript code here
+        function convertCelsiusToFahrenheit() {
+            var celsiusInput = document.getElementById('celsiusInput').value;
+            var celsius = parseFloat(celsiusInput);
+            
+            if (!isNaN(celsius)) {
+                var fahrenheit = (celsius * 9/5) + 32;
+                document.getElementById('result').innerText = celsius + '°C is ' + fahrenheit.toFixed(2) + '°F';
+            } else {
+                document.getElementById('result').innerText = 'Please enter a valid number';
+            }
+        }
+
+        // Highcharts chart initialization
+        var initialData = [
+            { time: '02.00', temperature: 98.4 },
+            { time: '04.00', temperature: 98.4 },
+            { time: '10.00', temperature: 98.4 },
+            { time: '14.00', temperature: 98.4 },
+            { time: '18.00', temperature: 98.4 },
+            { time: '22.00', temperature: 98.4 }
+        ];
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                events: {
+                    click: function (event) {
+                        var chart = this,
+                            point = chart.series[0].searchPoint(event, true);
+
+                        if (point) {
+                            var newTemperature = prompt("Enter a new temperature value for " + point.category);
+                            if (newTemperature) {
+                                point.update({ y: parseFloat(newTemperature) });
+                            }
+                        }
+                    }
+                }
+            },
+            title: {
+                text: 'Chart'
+            },
+            xAxis: {
+                categories: ['02.00', '04.00', '10.00', '14.00', '18.00', '22.00'],
+                title: {
+                    text: 'Time'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature'
+                },
+                min: 95.0,
+                max: 105.0,
+                allowDecimals: true
+            },
+            plotOptions: {
+                line: {
+                    color: 'purple' // Set the line color to purple
+                }
+            },
+            series: [{
+                name: 'Temperature',
+                data: initialData.map(dataPoint => dataPoint.temperature)
+            }]
+        });
+
+        // JavaScript to handle the saving process
+        document.getElementById('saveButton').addEventListener('click', function() {
+            // Create a blob containing the HTML content of the page
+            var htmlContent = document.documentElement.outerHTML;
+            var blob = new Blob([htmlContent], { type: 'text/html' });
+
+            // Create a temporary anchor element to trigger the download
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'saved_page.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+    </script>
+</body>
+</html>

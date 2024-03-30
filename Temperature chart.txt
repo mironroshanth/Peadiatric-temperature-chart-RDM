@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('image/jpeg;base64,/9j…E0Ko1uXi7V9khsb33M0UAAMj//Z'); /* Replace with the URL of your background image */
+}
+
+.container {
+  display: fixed
+  justify-content: left;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #7c0b9ed0;
+}
+
+.topnav a {
+  float: left;
+  color: #fefffb;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #000000;
+  color: white;
+}
+
+/* Style for rounded text input box */
+.rounded-input {
+  border-radius: 25px; /* Adjust the radius to change the roundness */
+  border: 2px solid #ccc; /* Border color */
+  padding: 10px; /* Padding inside the input box */
+  width: 200px; /* Adjust width as needed */
+  margin: 10px; /* Adjust margin as needed */
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="topnav">
+
+    <a class="active" href="#home">Home</a>
+    <a href="C:\Users\User\Day 1.html">Temperature of day 1</a>
+    <a href="C:\Users\User\Day 2.html">Temperature of day 2</a>
+    <a href="C:\Users\User\Day 3.html">Temperature of day 3</a>
+    <a href="C:\Users\User\Day 4.html">Temperature of day 4</a>
+    <a href="C:\Users\User\Day 5.html">Temperature of day 5</a>
+    <a href="C:\Users\User\Temperatures recorded in all five days.html">Temperatures recorded in all five days</a>
+  </div>
+</div>
+
+<!-- Input boxes below the container -->
+<div style="padding-left: 16px;">
+  <h1>Temperature chart</h1><br><br>
+  <h3>
+    Name  <input type="text" class="rounded-input" placeholder="Enter child's name here"><br><br>
+    Age  <input type="text" class="rounded-input" placeholder="Enter child's age here">
+  </h3>
+  
+
+  <style>
+    /* Button styles */
+    .save-button {
+        background-color: #7c0b9ed0;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    
+    .save-button:hover {
+        background-color: #7c0b9ed0; /* Change color on hover if desired */
+    }
+    
+    /* To make it look like a link */
+    .save-button:focus,
+    .save-button:active {
+        outline: none;
+        box-shadow: none;
+    }
+    
+    </style>
+    </head>
+    <body>
+    
+    <!-- Your webpage content goes here -->
+    
+    <!-- Save button -->
+    <button id="saveButton" class="save-button">Save</button>
+    
+    <!-- JavaScript to handle the saving process -->
+    <script>
+    document.getElementById('saveButton').addEventListener('click', function() {
+        var htmlContent = document.documentElement.outerHTML;
+        var blob = new Blob([htmlContent], { type: 'text/html' });
+        
+        var anchor = document.getElementById('saveButton');
+        anchor.href = URL.createObjectURL(blob);
+    });
+    </script>
+  <ul>
+    <li><a href="C:\Users\User\about.html">About this website</a></li>
+    <li><a href="C:\Users\User\Getting started.html">Getting started</a></li>
+    <li><a href="C:\Users\User\Convert to fahrenheit.html">Convert to Fahreneit</a></li>
+
+  </ul>          
+</div>
+
+</body>
+</html>

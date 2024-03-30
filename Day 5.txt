@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day 5</title>
+    <!-- Include Highcharts library -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        body {
+          margin: 0;
+          font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        .topnav {
+          overflow: hidden;
+          background-color: #7c0b9ed0;
+        }
+        
+        .topnav a {
+          float: left;
+          color: #fefffb;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+          font-size: 17px;
+        }
+        
+        .topnav a:hover {
+          background-color: #ddd;
+          color: black;
+        }
+        
+        .topnav a.active {
+          background-color: #000000;
+          color: white;
+        }
+        </style>
+        </head>
+    <div class="topnav">
+        <a href="C:\Users\User\Temperature chart.html">Home</a>
+        <a href="C:\Users\User\Day 1.html">Temperature of day 1</a>
+        <a href="C:\Users\User\Day 2.html">Temperature of day 2</a>
+        <a href="C:\Users\User\Day 3.html">Temperature of day 3</a>
+        <a href="C:\Users\User\Day 4.html">Temperature of day 4</a>
+        <a class="active" href="C:\Users\User\Day 5.html">Temperature of day 5</a>
+        <a href="C:\Users\User\Temperatures recorded in all five days.html">Temperatures recorded in all five days</a>
+      </div>
+      <div style="padding-left: 16px;">
+        <h1>Day 5</h1><br><br>
+        <h3>
+          Name  <input type="text" class="rounded-input" placeholder="Enter child's name here"><br><br>
+          Age  <input type="text" class="rounded-input" placeholder="Enter child's age here">
+        </h3>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            .converter-container {
+                max-width: 300px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+            .input-field {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+            .convert-button {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #4CAF50;
+                color: white;
+                cursor: pointer;
+            }
+            .result {
+                margin-top: 10px;
+                width: 100%; /* Covering full width */
+                padding: 8px;
+                border-radius: 5px;
+                background-color: #ddd;
+                text-align: center;
+            }
+        </style>
+        </head>
+        <body>
+        
+        <div class="converter-container">
+            <h2>Celsius to Fahrenheit Converter</h2>
+            <input type="number" id="celsiusInput" class="input-field" placeholder="Enter Celsius">
+            <button onclick="convertCelsiusToFahrenheit()" class="convert-button">Convert</button>
+            <div class="result" id="result"></div>
+        </div>
+        
+        <script>
+            function convertCelsiusToFahrenheit() {
+                var celsiusInput = document.getElementById('celsiusInput').value;
+                var celsius = parseFloat(celsiusInput);
+                
+                if (!isNaN(celsius)) {
+                    var fahrenheit = (celsius * 9/5) + 32;
+                    document.getElementById('result').innerText = celsius + '°C is ' + fahrenheit.toFixed(2) + '°F';
+                } else {
+                    document.getElementById('result').innerText = 'Please enter a valid number';
+                }
+            }
+        </script>
+        
+        </body>
+    <div id="container" style="width: 100%; height: 800px;"></div>
+
+    <script>
+        var initialData = [
+            { time: '02.00', temperature: 98.4 },
+            { time: '04.00', temperature: 98.4 },
+            { time: '10.00', temperature: 98.4 },
+            { time: '14.00', temperature: 98.4 },
+            { time: '18.00', temperature: 98.4 },
+            { time: '22.00', temperature: 98.4 }
+        ];
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                events: {
+                    click: function (event) {
+                        var chart = this,
+                            point = chart.series[0].searchPoint(event, true);
+
+                        if (point) {
+                            var newTemperature = prompt("Enter a new temperature value for " + point.category);
+                            if (newTemperature) {
+                                point.update({ y: parseFloat(newTemperature) });
+                            }
+                        }
+                    }
+                }
+            },
+            
+            title: {
+                text: 'Chart'
+            },
+            xAxis: {
+                categories: ['02.00', '04.00', '10.00', '14.00', '18.00', '22.00'],
+                title: {
+                    text: 'Time'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature'
+                },
+                min: 95.0,
+                max: 105.0,
+                allowDecimals: true
+            },
+            plotOptions: {
+                line: {
+                    color: 'purple' // Set the line color to purple
+                }
+            },
+            series: [{
+                name: 'Temperature',
+                data: initialData.map(dataPoint => dataPoint.temperature)
+            }]
+        });
+    </script>
+    <style>
+        /* Button styles */
+        .save-button {
+            background-color: #7c0b9ed0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .save-button:hover {
+            background-color: #7c0b9ed0; /* Change color on hover if desired */
+        }
+        
+        /* To make it look like a link */
+        .save-button:focus,
+        .save-button:active {
+            outline: none;
+            box-shadow: none;
+        }
+
+        /* Style for rounded text input box */
+.rounded-input {
+  border-radius: 25px; /* Adjust the radius to change the roundness */
+  border: 2px solid #ccc; /* Border color */
+  padding: 10px; /* Padding inside the input box */
+  width: 200px; /* Adjust width as needed */
+  margin: 10px; /* Adjust margin as needed */
+}
+        
+        </style>
+        </head>
+        <body>
+        
+        
+        <!-- Save button -->
+<div style="padding-left: 16px;">
+    <button id="saveButton" class="save-button">Save</button>
+</div>
+
+<script>
+    // JavaScript to handle the saving process
+    document.getElementById('saveButton').addEventListener('click', function() {
+        // Create a blob containing the HTML content of the page
+        var htmlContent = document.documentElement.outerHTML;
+        var blob = new Blob([htmlContent], { type: 'text/html' });
+
+        // Create a temporary anchor element to trigger the download
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'saved_page.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+</script>
+</body>
+</html>

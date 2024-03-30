@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+    /* Container styles */
+.container {
+    width: 100%;
+    height: 50px;
+    background-color: #7c0b9ed0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+
+</style>
+</head>
+<body>
+
+<!-- Your webpage content goes here -->
+<div class="container">
+    <h1>About this website</h1>
+</div><br><br>
+<h3>
+<p>This website is designed to mark body temperatures of children. But it can be also used to mark temperatures of adults if needed.
+    <br><br>
+Before using this app,<br><br>
+    <ul>
+        <li>Note that this app is made only for medical purposes.</li>
+        <li>Always remember fahreneit is the unit used in this website to mark the temperatures on the chart.</li>
+        <ul>
+            <li>If the temperature was recorded in celsius you canvert it to fahrenheit using this website itself.</li>
+        </ul>
+        <li>If you don't know how to mark temperatures properly read <a href="C:\Users\User\Getting started.html">Getting started</a></li>
+    </ul>
+<br><br>The charts in theis website are from High Charts - <a href>https://www.highcharts.com</a>
+</p>
+</h3>
+</body>
+</html>

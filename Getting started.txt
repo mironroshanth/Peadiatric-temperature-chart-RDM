@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Getting started</title>
+<style>
+/* Button styles */
+.save-button {
+    background-color: #7c0b9ed0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #7c0b9ed0; /* Change color on hover if desired */
+}
+
+/* To make it look like a link */
+.save-button:focus,
+.save-button:active {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Container styles */
+.container {
+    width: 100%;
+    height: 50px;
+    background-color: #7c0b9ed0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+
+</style>
+</head>
+<body>
+
+<!-- Your webpage content goes here -->
+
+<div class="container">
+    <h1>Getting started</h1>
+</div>
+
+<br>
+<h2>How to use</h2><br>
+<p>This website is used to mark the temperatures of a child. The methods of using the app are explained below.</p>
+<img src="C:\Users\User\Pictures\Screenshots\Screenshot (17).png" width="800" height="500"><br>
+<p>When the mouse point touches the <a href="C:\Users\User\Pictures\Screenshots\Pont styling.png">point styling</a>, a label will pop up as shown in the figure above. Initially, the chart would be marked with the normal body temperature of children. When you click on that label, the page will ask you the temperature recorded at the mentioned time.</p>
+<br>
+<img src="C:\Users\User\Pictures\Screenshots\Screenshot (18).png" width="800" height="500"><br>
+<p>All you have to do to mark the temperature on the chart is to enter enter the temperature recorded at the mentioned time. Note that the temperature you enter is in fahrenheit.If it is in celsius <a href="C:\Users\User\Convert to fahrenheit.html">click here</a> to convert to fahrenheit.</p>
+
+
+</body>
+</html>
