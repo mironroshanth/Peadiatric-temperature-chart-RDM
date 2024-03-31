@@ -234,21 +234,40 @@
     <button id="saveButton" class="save-button">Save</button>
 </div>
 
-<script>
-    // JavaScript to handle the saving process
-    document.getElementById('saveButton').addEventListener('click', function() {
-        // Create a blob containing the HTML content of the page
-        var htmlContent = document.documentElement.outerHTML;
-        var blob = new Blob([htmlContent], { type: 'text/html' });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/puppeteer/13.2.1/puppeteer.min.js"></script>
+    <script>
+        (async () => {
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            await page.goto('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html');
 
-        // Create a temporary anchor element to trigger the download
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'saved_page.html';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
-</script>
+            // Make changes to the webpage
+            await page.evaluate(() => {
+                // Example: Changing text color of all paragraphs to red
+                const paragraphs = document.querySelectorAll('p');
+                paragraphs.forEach(paragraph => {
+                    paragraph.style.color = 'red';
+                });
+            });
+
+            // Wait for the changes to be applied (if necessary)
+            await page.waitForTimeout(2000); // Adjust the timeout as needed
+
+            // Save the modified page content
+            const content = await page.content();
+
+            // Save the modified content to a file
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'modified_page.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            await browser.close();
+        })();
+    </script>
 </body>
 </html>
