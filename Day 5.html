@@ -210,28 +210,8 @@
         </style>
         </head>
         <body>
-        
-        
-        <!-- Save button -->
+<!-- Save button -->
 <div style="padding-left: 16px;">
-    <button id="saveButton" class="save-button">Save</button>
-</div>
-
-<script>
-    // JavaScript to handle the saving process
-    document.getElementById('saveButton').addEventListener('click', function() {
-        // Create a blob containing the HTML content of the page
-        var htmlContent = document.documentElement.outerHTML;
-        var blob = new Blob([htmlContent], { type: 'text/html' });
-
-        // Create a temporary anchor element to trigger the download
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'saved_page.html';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
-</script>
+    <button id="saveButton"class="save-button"button onclick="window.print()">Save</button>
 </body>
 </html>
