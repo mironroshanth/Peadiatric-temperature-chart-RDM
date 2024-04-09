@@ -229,45 +229,8 @@
   margin: 10px; /* Adjust margin as needed */
 }
     </style>
-    <!-- Save button -->
+<!-- Save button -->
 <div style="padding-left: 16px;">
-    <button id="saveButton" class="save-button">Save</button>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/puppeteer/13.2.1/puppeteer.min.js"></script>
-    <script>
-        (async () => {
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.goto('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html');
-
-            // Make changes to the webpage
-            await page.evaluate(() => {
-                // Example: Changing text color of all paragraphs to red
-                const paragraphs = document.querySelectorAll('p');
-                paragraphs.forEach(paragraph => {
-                    paragraph.style.color = 'red';
-                });
-            });
-
-            // Wait for the changes to be applied (if necessary)
-            await page.waitForTimeout(2000); // Adjust the timeout as needed
-
-            // Save the modified page content
-            const content = await page.content();
-
-            // Save the modified content to a file
-            const blob = new Blob([content], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'modified_page.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            await browser.close();
-        })();
-    </script>
+    <button id="saveButton"class="save-button"button onclick="window.print()">Save</button>
 </body>
 </html>
