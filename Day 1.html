@@ -118,64 +118,64 @@
         <h3>
           Name  <input type="text" class="rounded-input" placeholder="Enter child's name here"><br><br>
           Age  <input type="text" class="rounded-input" placeholder="Enter child's age here"><br><br>
-          Date  <input type="date" class="rounded-input">
+            <br><br>
+        <label for="temperature">Enter Temperature (95-105):</label>
+        <input type="number" id="temperature" min="95" max="105" step="0.1" />
+        
+        <button id="addData">Add Data</button>
         </h3>
       
     
         <div id="container" style="width: 100%; height: 700px;"></div>
     <script>
-        var initialData = [
-            { time: '02.00', temperature: 98.4 },
-            { time: '04.00', temperature: 98.4 },
-            { time: '10.00', temperature: 98.4 },
-            { time: '14.00', temperature: 98.4 },
-            { time: '18.00', temperature: 98.4 },
-            { time: '22.00', temperature: 98.4 }
-        ];
-
-        Highcharts.chart('container', {
+<script>
+        const chart = Highcharts.chart('container', {
             chart: {
-                type: 'line',
-                events: {
-                    click: function (event) {
-                        var chart = this,
-                            point = chart.series[0].searchPoint(event, true);
-
-                        if (point) {
-                            var newTemperature = prompt("Enter a new temperature value for " + point.category);
-                            if (newTemperature) {
-                                point.update({ y: parseFloat(newTemperature) });
-                            }
-                        }
-                    }
-                }
+                type: 'line'
             },
-            title:{
-                text:'Chart'
+            title: {
+                text: 'Temperature Over Time'
             },
             xAxis: {
-                categories: ['02.00', '04.00', '10.00', '14.00', '18.00', '22.00'],
+                type: 'datetime',
                 title: {
-                    text: 'Time'
+                    text: 'Time of Input'
                 }
             },
             yAxis: {
                 title: {
-                    text: 'Temperature'
+                    text: 'Temperature (°F)'
                 },
-                min: 95.0,
-                max: 105.0,
-                allowDecimals: true
+                min: 95,
+                max: 105
+            },
+            series: [{
+                name: 'Temperature',
+                data: []
+            }]
+        });
+
+        document.getElementById('addData').addEventListener('click', function() {
+            const temperature = parseFloat(document.getElementById('temperature').value);
+
+            if (temperature >= 95 && temperature <= 105) {
+                // Get the current time as a timestamp
+                const now = new Date();
+                const timestamp = now.getTime();
+
+                // Add the temperature data point with the current time
+                chart.series[0].addPoint([timestamp, temperature]);
+            } else {
+                alert('Please enter a valid temperature value between 95 and 105.');
+            }
+        });
+    
             },
             plotOptions: {
                 line: {
                     color: 'purple' // Set the line color to purple
                 }
             },
-            series: [{
-                name: 'Temperature',
-                data: initialData.map(dataPoint => dataPoint.temperature)
-            }]
         });
         // JavaScript to handle the saving process
         document.getElementById('saveButton').addEventListener('click', function() {
