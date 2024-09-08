@@ -148,6 +148,7 @@
     <div style="padding-left: 16px;">
         <h1>Mark temperatures of five days</h1><br><br>
         <div class="container">
+            <div id="printableArea">
             <h2>Details</h2>
             <label for="name">Name:</label>
             <input type="text" id="name" placeholder="Enter name">
@@ -169,8 +170,8 @@
     </div>
 
     <div id="container" style="width: 100%; height: 600px;"></div>
-
-    <button id="saveButton" class="save-button" onclick="window.print()">Save</button>
+    </div>
+    <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
 
     <script>
         function calculateAge() {
@@ -363,6 +364,13 @@
             data: initialData.map(data => data.temperature)
         }]
     });
+        function printPageArea(areaID){
+    var printContent = document.getElementById(areaID).innerHTML;
+    var originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+}
     </script>
 </body>
 </html>
