@@ -157,16 +157,9 @@
             <input type="date" id="dob">
             <button onclick="calculateAge()">Calculate Age</button>
             <p id="result"></p>
-            <label>Day 1:</label>
-            <input type="date" placeholder="Enter Day 1">
-            <label>Day 2:</label>
-            <input type="date" placeholder="Enter Day 2">
-            <label>Day 3:</label>
-            <input type="date" placeholder="Enter Day 3">
-            <label>Day 4:</label>
-            <input type="date" placeholder="Enter Day 4">
-            <label>Day 5:</label>
-            <input type="date" placeholder="Enter Day 5">
+            <label for="startDate">Measured from:</label>
+            <input type="date" id="startDate">
+            <button onclick="generateChart()">Generate Chart</button>
     </div>
     
 
@@ -177,6 +170,25 @@
     <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
 
     <script>
+        function generateChart() {
+            const startDateInput = document.getElementById('startDate').value;
+            if (!startDateInput) {
+                alert('Please enter a valid start date.');
+                return;
+            }
+
+            const startDate = new Date(startDateInput);
+            const endDate = new Date();
+            const data = [];
+            let currentDate = startDate;
+
+            while (currentDate <= endDate) {
+                for (let hour = 0; hour < 24; hour++) {
+                    const timeString = `${currentDate.toISOString().split('T')[0]}, ${hour.toString().padStart(2, '0')}.00`;
+                    data.push({ time: timeString, temperature: 98.4 });
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
         function calculateAge() {
             const name = document.getElementById('name').value;
             const dobInput = document.getElementById('dob').value;
@@ -205,168 +217,52 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-        var initialData = [
-            { time: 'Day 1-00.00', temperature: 98.4 },
-            { time: 'Day 1-01.00', temperature: 98.4 },
-            { time: 'Day 1-02.00', temperature: 98.4 },
-            { time: 'Day 1-03.00', temperature: 98.4 },
-            { time: 'Day 1-04.00', temperature: 98.4 },
-            { time: 'Day 1-05.00', temperature: 98.4 },
-            { time: 'Day 1-06.00', temperature: 98.4 },
-            { time: 'Day 1-07.00', temperature: 98.4 },
-            { time: 'Day 1-08.00', temperature: 98.4 },
-            { time: 'Day 1-09.00', temperature: 98.4 },
-            { time: 'Day 1-10.00', temperature: 98.4 },
-            { time: 'Day 1-11.00', temperature: 98.4 },
-            { time: 'Day 1-12.00', temperature: 98.4 },
-            { time: 'Day 1-13.00', temperature: 98.4 },
-            { time: 'Day 1-14.00', temperature: 98.4 },
-            { time: 'Day 1-15.00', temperature: 98.4 },
-            { time: 'Day 1-16.00', temperature: 98.4 },
-            { time: 'Day 1-17.00', temperature: 98.4 },
-            { time: 'Day 1-18.00', temperature: 98.4 },
-            { time: 'Day 1-19.00', temperature: 98.4 },
-            { time: 'Day 1-20.00', temperature: 98.4 },
-            { time: 'Day 1-21.00', temperature: 98.4 },
-            { time: 'Day 1-22.00', temperature: 98.4 },
-            { time: 'Day 1-23.00', temperature: 98.4 },
-            { time: 'Day 2-00.00', temperature: 98.4 },
-            { time: 'Day 2-01.00', temperature: 98.4 },
-            { time: 'Day 2-02.00', temperature: 98.4 },
-            { time: 'Day 2-03.00', temperature: 98.4 },
-            { time: 'Day 2-04.00', temperature: 98.4 },
-            { time: 'Day 2-05.00', temperature: 98.4 },
-            { time: 'Day 2-06.00', temperature: 98.4 },
-            { time: 'Day 2-07.00', temperature: 98.4 },
-            { time: 'Day 2-08.00', temperature: 98.4 },
-            { time: 'Day 2-09.00', temperature: 98.4 },
-            { time: 'Day 2-10.00', temperature: 98.4 },
-            { time: 'Day 2-11.00', temperature: 98.4 },
-            { time: 'Day 2-12.00', temperature: 98.4 },
-            { time: 'Day 2-13.00', temperature: 98.4 },
-            { time: 'Day 2-14.00', temperature: 98.4 },
-            { time: 'Day 2-15.00', temperature: 98.4 },
-            { time: 'Day 2-16.00', temperature: 98.4 },
-            { time: 'Day 2-17.00', temperature: 98.4 },
-            { time: 'Day 2-18.00', temperature: 98.4 },
-            { time: 'Day 2-19.00', temperature: 98.4 },
-            { time: 'Day 2-20.00', temperature: 98.4 },
-            { time: 'Day 2-21.00', temperature: 98.4 },
-            { time: 'Day 2-22.00', temperature: 98.4 },
-            { time: 'Day 2-23.00', temperature: 98.4 },
-            { time: 'Day 3-00.00', temperature: 98.4 },
-            { time: 'Day 3-01.00', temperature: 98.4 },
-            { time: 'Day 3-02.00', temperature: 98.4 },
-            { time: 'Day 3-03.00', temperature: 98.4 },
-            { time: 'Day 3-04.00', temperature: 98.4 },
-            { time: 'Day 3-05.00', temperature: 98.4 },
-            { time: 'Day 3-06.00', temperature: 98.4 },
-            { time: 'Day 3-07.00', temperature: 98.4 },
-            { time: 'Day 3-08.00', temperature: 98.4 },
-            { time: 'Day 3-09.00', temperature: 98.4 },
-            { time: 'Day 3-10.00', temperature: 98.4 },
-            { time: 'Day 3-11.00', temperature: 98.4 },
-            { time: 'Day 3-12.00', temperature: 98.4 },
-            { time: 'Day 3-13.00', temperature: 98.4 },
-            { time: 'Day 3-14.00', temperature: 98.4 },
-            { time: 'Day 3-15.00', temperature: 98.4 },
-            { time: 'Day 3-16.00', temperature: 98.4 },
-            { time: 'Day 3-17.00', temperature: 98.4 },
-            { time: 'Day 3-18.00', temperature: 98.4 },
-            { time: 'Day 3-19.00', temperature: 98.4 },
-            { time: 'Day 3-20.00', temperature: 98.4 },
-            { time: 'Day 3-21.00', temperature: 98.4 },
-            { time: 'Day 3-22.00', temperature: 98.4 },
-            { time: 'Day 3-23.00', temperature: 98.4 },
-            { time: 'Day 4-00.00', temperature: 98.4 },
-            { time: 'Day 4-01.00', temperature: 98.4 },
-            { time: 'Day 4-02.00', temperature: 98.4 },
-            { time: 'Day 4-03.00', temperature: 98.4 },
-            { time: 'Day 4-04.00', temperature: 98.4 },
-            { time: 'Day 4-05.00', temperature: 98.4 },
-            { time: 'Day 4-06.00', temperature: 98.4 },
-            { time: 'Day 4-07.00', temperature: 98.4 },
-            { time: 'Day 4-08.00', temperature: 98.4 },
-            { time: 'Day 4-09.00', temperature: 98.4 },
-            { time: 'Day 4-10.00', temperature: 98.4 },
-            { time: 'Day 4-11.00', temperature: 98.4 },
-            { time: 'Day 4-12.00', temperature: 98.4 },
-            { time: 'Day 4-13.00', temperature: 98.4 },
-            { time: 'Day 4-14.00', temperature: 98.4 },
-            { time: 'Day 4-15.00', temperature: 98.4 },
-            { time: 'Day 4-16.00', temperature: 98.4 },
-            { time: 'Day 4-17.00', temperature: 98.4 },
-            { time: 'Day 4-18.00', temperature: 98.4 },
-            { time: 'Day 4-19.00', temperature: 98.4 },
-            { time: 'Day 4-20.00', temperature: 98.4 },
-            { time: 'Day 4-21.00', temperature: 98.4 },
-            { time: 'Day 4-22.00', temperature: 98.4 },
-            { time: 'Day 4-23.00', temperature: 98.4 },
-            { time: 'Day 5-00.00', temperature: 98.4 },           
-            { time: 'Day 5-01.00', temperature: 98.4 },
-            { time: 'Day 5-02.00', temperature: 98.4 },
-            { time: 'Day 5-03.00', temperature: 98.4 },
-            { time: 'Day 5-04.00', temperature: 98.4 },
-            { time: 'Day 5-05.00', temperature: 98.4 },
-            { time: 'Day 5-06.00', temperature: 98.4 },
-            { time: 'Day 5-07.00', temperature: 98.4 },
-            { time: 'Day 5-08.00', temperature: 98.4 },
-            { time: 'Day 5-09.00', temperature: 98.4 },
-            { time: 'Day 5-10.00', temperature: 98.4 },
-            { time: 'Day 5-11.00', temperature: 98.4 },
-            { time: 'Day 5-12.00', temperature: 98.4 },
-            { time: 'Day 5-13.00', temperature: 98.4 },
-            { time: 'Day 5-14.00', temperature: 98.4 },
-            { time: 'Day 5-14.00', temperature: 98.4 },
-            { time: 'Day 5-15.00', temperature: 98.4 },
-            { time: 'Day 5-16.00', temperature: 98.4 },
-            { time: 'Day 5-17.00', temperature: 98.4 },
-            { time: 'Day 5-18.00', temperature: 98.4 },
-            { time: 'Day 5-19.00', temperature: 98.4 },
-            { time: 'Day 5-20.00', temperature: 98.4 },
-            { time: 'Day 5-21.00', temperature: 98.4 },
-            { time: 'Day 5-22.00', temperature: 98.4 },
-            { time: 'Day 5-23.00', temperature: 98.4 },
-            
-        ];
+
 
                Highcharts.chart('container', {
-            chart: {
-                type: 'line',
-                events: {
-                    click: function (event) {
-                        var chart = this,
-                            point = chart.series[0].searchPoint(event, true);
+                chart: {
+                    type: 'line',
+                    events: {
+                        click: function (event) {
+                            var chart = this,
+                                point = chart.series[0].searchPoint(event, true);
 
-                        if (point) {
-                            var newTemperature = prompt("Enter a new temperature value for " + point.category);
-                            if (newTemperature) {
-                                point.update(Number(newTemperature));
+                            if (point) {
+                                var newTemperature = prompt("Enter a new temperature value for " + point.category);
+                                if (newTemperature) {
+                                    point.update(Number(newTemperature));
+                                }
                             }
                         }
                     }
-                }
-            },
-            title: {
-                text: 'Temperature Record'
-            },
-            xAxis: {
-                categories: initialData.map(data => data.time),
+                },
                 title: {
-                    text: 'Time'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Temperature (°F)'
-                }
-            },
-            series: [{
-            name: 'Temperature',
-            color: '#7c0b9ed0',  // Set the line color here
-            data: initialData.map(data => data.temperature)
-        }]
-    });
+                    text: 'Temperature Record'
+                },
+                xAxis: {
+                    categories: data.map(d => d.time),
+                    title: {
+                        text: 'Time'
+                    },
+                    labels: {
+                        rotation: -45,
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Temperature (°F)'
+                    }
+                },
+                series: [{
+                    name: 'Temperature',
+                    color: '#7c0b9ed0',
+                    data: data.map(d => d.temperature)
+                }]
+            });
+        }
         function printPageArea(areaID){
     var printContent = document.getElementById(areaID).innerHTML;
     var originalContent = document.body.innerHTML;
