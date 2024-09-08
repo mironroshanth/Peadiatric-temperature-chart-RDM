@@ -138,6 +138,7 @@
     <div style="padding-left: 16px;">
         <h1>New chart</h1>
         <br><br>
+        <div id="printableArea">
         <div class="container">
             <h2>Details</h2>
             <label for="name">Name:</label>
@@ -156,7 +157,7 @@
         </h3>
         <div id="container" style="width: 100%; height: 700px;"></div>
     </div>
-
+    </div>
     <script>
         function calculateAge() {
             const name = document.getElementById('name').value;
@@ -253,19 +254,16 @@
             }
         });
 
-        document.getElementById('saveButton').addEventListener('click', function() {
-            var htmlContent = document.documentElement.outerHTML;
-            var blob = new Blob([htmlContent], { type: 'text/html' });
-            var a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'saved_page.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        });
+        function printPageArea(areaID){
+    var printContent = document.getElementById(areaID).innerHTML;
+    var originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+}
     </script>
     <div style="padding-left: 16px;">
-        <button id="saveButton" class="save-button" onclick="window.print()">Save</button>
+        <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
     </div><br><br>
 </body>
 </html>
