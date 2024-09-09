@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature chart</title>
-    <!-- Include Highcharts library -->
+    <title>Temperature Chart</title>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <style>
         body {
@@ -119,7 +118,7 @@
 <body>
     <div class="topnav">
         <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-            <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17">
+            <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
         </a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
         <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
@@ -131,30 +130,93 @@
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%202.html">Age finder</a>
     </div>
 
-    
-
-
-
     <div style="padding-left: 16px;">
-        <h1>New chart</h1>
+        <h1>New Chart</h1>
         <br><br>
         <div id="printableArea">
-        <div class="container">
-            <h2>Details</h2>
-            <label for="name">Name:</label>
-            <input type="text" id="name" placeholder="Enter name">
-            <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob">
-            <button onclick="calculateAge()">Calculate Age</button>
-            <p id="result"></p>
-        </div>
-<br><br><br><br>
-            
-        
-        <div id="container" style="width: 100%; height: 700px;">
-    </div>
+            <div class="container">
+                <h2>Details</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter name">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob">
+                <button onclick="calculateAge()">Calculate Age</button>
+                <p id="result"></p>
             </div>
+            <br><br><br><br>
+            <div id="container" style="width: 100%; height: 700px;"></div>
+        </div>
+    </div>
+    <h3>
+        <br><br>
+        <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert temperature):</label>
+        <input type="number" id="temperature" min="95" max="105" step="0.1" />
+        <button id="addData">Add Data</button>
+    </h3>
+    <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
+    <br><br><br>
+
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chart = Highcharts.chart('container', {
+                accessibility: {
+                    enabled: false
+                },
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Temperature Over Time'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: {
+                        text: 'Time of Input'
+                    },
+                    labels: {
+                        formatter: function() {
+                            var date = new Date(this.value);
+                            var options = { 
+                                year: 'numeric', 
+                                month: '2-digit', 
+                                day: '2-digit', 
+                                hour: '2-digit', 
+                                minute: '2-digit', 
+                                second: '2-digit', 
+                                timeZone: 'Asia/Kolkata',
+                                timeZoneName: 'short'
+                            };
+                            return date.toLocaleString('en-IN', options);
+                        }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Temperature (°F)'
+                    },
+                    min: 95,
+                    max: 105
+                },
+                series: [{
+                    name: 'Temperature',
+                    color: '#7c0b9ed0',
+                    data: []
+                }]
+            });
+
+            document.getElementById('addData').addEventListener('click', function() {
+                const temperature = parseFloat(document.getElementById('temperature').value);
+                if (temperature >= 95 && temperature <= 105) {
+                    const now = new Date();
+                    const timestamp = now.getTime();
+                    chart.series[0].addPoint([timestamp, temperature]);
+                    console.log(`Added data point: ${timestamp}, ${temperature}`); // Debugging line
+                } else {
+                    alert('Please enter a valid temperature value between 95 and 105.');
+                }
+            });
+        });
+
         function calculateAge() {
             const name = document.getElementById('name').value;
             const dobInput = document.getElementById('dob').value;
@@ -183,89 +245,13 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-        function convertCelsiusToFahrenheit() {
-            var celsiusInput = document.getElementById('celsiusInput').value;
-            var celsius = parseFloat(celsiusInput);
-
-            if (!isNaN(celsius)) {
-                var fahrenheit = (celsius * 9 / 5) + 32;
-                document.getElementById('temperatureResult').innerText = celsius + '°C is ' + fahrenheit.toFixed(2) + '°F';
-            } else {
-                document.getElementById('temperatureResult').innerText = 'Please enter a valid number';
-            }
+        function printPageArea(areaID) {
+            var printContent = document.getElementById(areaID).innerHTML;
+            var originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
         }
-
-        const chart = Highcharts.chart('container', {
-            chart: {
-                type: 'line'
-            },
-            title: {
-                text: 'Temperature Over Time'
-            },
-            xAxis: {
-                type: 'datetime',
-                title: {
-                    text: 'Time of Input'
-                },
-                labels: {
-                    formatter: function() {
-                        var date = new Date(this.value);
-                        var options = { 
-                            year: 'numeric', 
-                            month: '2-digit', 
-                            day: '2-digit', 
-                            hour: '2-digit', 
-                            minute: '2-digit', 
-                            second: '2-digit', 
-                            timeZone: 'Asia/Kolkata',
-                            timeZoneName: 'short'
-                        };
-                        return date.toLocaleString('en-IN', options);
-                    }
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Temperature (°F)'
-                },
-                min: 95,
-                max: 105
-            },
-            series: [{
-                name: 'Temperature',
-                color: '#7c0b9ed0',
-                data: []
-            }]
-        });
-
-        document.getElementById('addData').addEventListener('click', function() {
-            const temperature = parseFloat(document.getElementById('temperature').value);
-
-            if (temperature >= 95 && temperature <= 105) {
-                const now = new Date();
-                const timestamp = now.getTime();
-                chart.series[0].addPoint([timestamp, temperature]);
-            } else {
-                alert('Please enter a valid temperature value between 95 and 105.');
-            }
-        });
-
-        function printPageArea(areaID){
-    var printContent = document.getElementById(areaID).innerHTML;
-    var originalContent = document.body.innerHTML;
-    document.body.innerHTML = printContent;
-    window.print();
-    document.body.innerHTML = originalContent;
-}
-    </script><h3>
-            <br><br>
-            <br><br>
-            <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert temperature):</label>
-            <input type="number" id="temperature" min="95" max="105" step="0.1" />
-            <button id="addData">Add Data</button>
-        </h3>
-    <div>
-        <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
-    </div><br><br><br>
+    </script>
 </body>
 </html>
