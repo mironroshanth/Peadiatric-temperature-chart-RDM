@@ -54,13 +54,18 @@
         <h1>My Account</h1>
         <p id="username">Username: </p>
         <p id="password">Password: </p>
+        <h2>My Files</h2>
+        <ul id="fileList"></ul>
+        <button onclick="loadFile()">Load Selected File</button>
+        <div id="fileContent"></div>
         <a href="temperature-chart.html" class="btn">Back to Home</a>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const usernameElement = document.getElementById('username');
             const passwordElement = document.getElementById('password');
+            const fileList = document.getElementById('fileList');
 
             // Get user info from sessionStorage
             const loggedInUser = sessionStorage.getItem('loggedInUser');
@@ -68,11 +73,49 @@
                 const userPassword = localStorage.getItem(loggedInUser);
                 usernameElement.textContent = `Username: ${loggedInUser}`;
                 passwordElement.textContent = `Password: ${userPassword}`;
+
+                // Load saved files
+                loadFileList(loggedInUser);
             } else {
                 usernameElement.textContent = 'No user logged in';
                 passwordElement.textContent = '';
             }
         });
+
+        function loadFileList(user) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('user_')) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = key.substring(5); // Remove 'user_' prefix
+                    listItem.dataset.key = key;
+                    listItem.addEventListener('click', function() {
+                        const selectedFile = document.querySelector('#fileList .selected');
+                        if (selectedFile) {
+                            selectedFile.classList.remove('selected');
+                        }
+                        this.classList.add('selected');
+                    });
+                    fileList.appendChild(listItem);
+                }
+            });
+        }
+
+        function loadFile() {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (!selectedFile) {
+                alert('Please select a file from the list.');
+                return;
+            }
+
+            const key = selectedFile.dataset.key;
+            const fileData = JSON.parse(localStorage.getItem(key));
+            const fileContent = document.getElementById('fileContent');
+
+            fileContent.innerHTML = `<pre>${JSON.stringify(fileData, null, 2)}</pre>`;
+        }
     </script>
 </body>
 </html>
