@@ -70,9 +70,7 @@
         }
     </style>
 </head>
-<br><br>
 <body>
-    
     <div class="container">
         <div id="form-container">
             <form id="auth-form">
@@ -127,7 +125,9 @@
                 } else {
                     if (existingUser === password) {
                         alert('Sign In successful!');
-                        window.open('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html', '_blank');
+                        // Store username in sessionStorage and redirect
+                        sessionStorage.setItem('loggedInUser', username);
+                        window.location.href = 'temperature-chart.html'; // Redirect to the second page
                     } else {
                         alert('Invalid username or password.');
                     }
