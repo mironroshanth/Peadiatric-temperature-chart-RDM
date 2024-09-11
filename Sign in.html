@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up / Sign In</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/healthcare.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            width: 300px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #7c0b9e;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #5a0874;
+        }
+
+        p {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<br><br>
+<body>
+    
+    <div class="container">
+        <div id="form-container">
+            <form id="auth-form">
+                <h1>Sign up to Temperature Chart</h1>
+                <h2 id="form-title">Sign Up</h2>
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <button type="submit">Submit</button>
+                <p id="toggle-link">Already have an account? <a href="#" id="toggle-form">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('auth-form');
+            const toggleLink = document.getElementById('toggle-form');
+            const formTitle = document.getElementById('form-title');
+
+            // Toggle between sign up and sign in
+            toggleLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (formTitle.textContent === 'Sign Up') {
+                    formTitle.textContent = 'Sign In';
+                    toggleLink.textContent = 'Don\'t have an account? Sign Up';
+                } else {
+                    formTitle.textContent = 'Sign Up';
+                    toggleLink.textContent = 'Already have an account? Sign In';
+                }
+                form.reset();
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                const existingUser = localStorage.getItem(username);
+
+                if (formTitle.textContent === 'Sign Up') {
+                    if (existingUser) {
+                        alert('Username already exists.');
+                    } else {
+                        localStorage.setItem(username, password);
+                        alert('Sign Up successful! You can now Sign In.');
+                        formTitle.textContent = 'Sign In';
+                        toggleLink.textContent = 'Don\'t have an account? Sign Up';
+                        form.reset();
+                    }
+                } else {
+                    if (existingUser === password) {
+                        alert('Sign In successful!');
+                        window.open('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html', '_blank');
+                    } else {
+                        alert('Invalid username or password.');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
