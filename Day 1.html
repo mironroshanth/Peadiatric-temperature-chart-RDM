@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Chart</title>
+    <title>Create New Chart</title>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <style>
         body {
@@ -153,9 +153,7 @@
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <input type="text" id="fileName" placeholder="Enter file name to save">
-    <button id="saveButton" class="save-button" onclick="saveData()">Save</button>
-    
+    <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
     <br><br><br>
 
     <script>
@@ -217,57 +215,43 @@
                     alert('Please enter a valid temperature value between 95 and 105.');
                 }
             });
+
+            // Load file data if available
+            const fileData = sessionStorage.getItem('fileData');
+            if (fileData) {
+                try {
+                    const data = JSON.parse(fileData);
+                    document.getElementById('name').value = data.name || '';
+                    document.getElementById('dob').value = data.dob || '';
+                    data.temperatures.forEach(temp => {
+                        chart.series[0].addPoint([new Date(temp.timestamp).getTime(), temp.value]);
+                    });
+                } catch (e) {
+                    console.error('Error parsing file data:', e);
+                }
+            }
         });
 
-        function calculateAge() {
-            const name = document.getElementById('name').value;
-            const dobInput = document.getElementById('dob').value;
-            if (!dobInput) {
-                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
-                return;
-            }
-            if (!name) {
-                document.getElementById('result').innerText = 'Please enter your name.';
-                return;
-            }
-
-            const dob = new Date(dobInput);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            const dayDiff = today.getDate() - dob.getDate();
-
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-                age--;
-            }
-
-            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
-
-            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
+        function printPageArea(areaId) {
+            var printWindow = window.open('', '', 'height=600,width=800');
+            var content = document.getElementById(areaId).innerHTML;
+            printWindow.document.write('<html><head><title>Print</title></head><body>');
+            printWindow.document.write(content);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
         }
 
-        function saveData() {
-            const name = document.getElementById('name').value;
-            const fileName = document.getElementById('fileName').value;
-            const chartData = Highcharts.charts[0].series[0].data.map(point => ({
-                x: point.x,
-                y: point.y
-            }));
-
-            if (!fileName) {
-                alert('Please enter a file name.');
-                return;
+        function calculateAge() {
+            var dob = new Date(document.getElementById("dob").value);
+            var today = new Date();
+            var age = today.getFullYear() - dob.getFullYear();
+            var monthDiff = today.getMonth() - dob.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
             }
-
-            const userData = {
-                name: name,
-                dob: document.getElementById('dob').value,
-                chartData: chartData
-            };
-
-            localStorage.setItem(`user_${fileName}`, JSON.stringify(userData));
-            alert('Data saved successfully.');
+            document.getElementById("result").innerText = "Age: " + age;
         }
     </script>
 </body>
