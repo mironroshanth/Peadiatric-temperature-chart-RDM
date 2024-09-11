@@ -153,7 +153,9 @@
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
+    <input type="text" id="fileName" placeholder="Enter file name to save">
+    <button id="saveButton" class="save-button" onclick="saveData()">Save</button>
+    
     <br><br><br>
 
     <script>
@@ -245,12 +247,27 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-        function printPageArea(areaID) {
-            var printContent = document.getElementById(areaID).innerHTML;
-            var originalContent = document.body.innerHTML;
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
+        function saveData() {
+            const name = document.getElementById('name').value;
+            const fileName = document.getElementById('fileName').value;
+            const chartData = Highcharts.charts[0].series[0].data.map(point => ({
+                x: point.x,
+                y: point.y
+            }));
+
+            if (!fileName) {
+                alert('Please enter a file name.');
+                return;
+            }
+
+            const userData = {
+                name: name,
+                dob: document.getElementById('dob').value,
+                chartData: chartData
+            };
+
+            localStorage.setItem(`user_${fileName}`, JSON.stringify(userData));
+            alert('Data saved successfully.');
         }
     </script>
 </body>
