@@ -47,6 +47,36 @@
         .btn:hover {
             background-color: #5a0874;
         }
+
+        .button {
+            display: block;
+            width: 99%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #7c0b9e;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #5a0874;
+        }
+
+        .selected {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        #fileContent pre {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
@@ -56,8 +86,8 @@
         <p id="password">Password: </p>
         <h2>My Files</h2>
         <ul id="fileList"></ul>
-        <button onclick="loadFile()">Load Selected File</button>
-        <div id="fileContent"></div>
+        <button id="loadFile" class="button" onclick="loadFile()">Load Selected File</button><br><br>
+        <div id="fileContent"></div><br><br>
         <a href="temperature-chart.html" class="btn">Back to Home</a>
     </div>
 
@@ -75,14 +105,14 @@
                 passwordElement.textContent = `Password: ${userPassword}`;
 
                 // Load saved files
-                loadFileList(loggedInUser);
+                loadFileList();
             } else {
                 usernameElement.textContent = 'No user logged in';
                 passwordElement.textContent = '';
             }
         });
 
-        function loadFileList(user) {
+        function loadFileList() {
             const fileList = document.getElementById('fileList');
             fileList.innerHTML = '';
 
