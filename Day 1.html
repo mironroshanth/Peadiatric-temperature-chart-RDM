@@ -57,37 +57,6 @@
         button:hover {
             background-color: #5a0874;
         }
-        .converter-container {
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .input-field {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .convert-button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #7c0b9ed0;
-            color: white;
-            cursor: pointer;
-        }
-        .result {
-            margin-top: 10px;
-            width: 100%;
-            padding: 8px;
-            border-radius: 5px;
-            background-color: #ddd;
-            text-align: center;
-        }
         .rounded-input {
             border-radius: 25px;
             border: 2px solid #ccc;
@@ -159,21 +128,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chart = Highcharts.chart('container', {
-                accessibility: {
-                    enabled: false
-                },
-                chart: {
-                    type: 'line'
-                },
-                title: {
-                    text: 'Temperature Over Time'
-                },
-                xAxis: {
+                chart: { type: 'line' },
+                title: { text: 'Temperature Over Time' },
+                xAxis: { 
                     type: 'datetime',
-                    title: {
-                        text: 'Time of Input'
-                    },
-                    labels: {
+                    title: { text: 'Time of Input' },
+                    labels: { 
                         formatter: function() {
                             var date = new Date(this.value);
                             var options = { 
@@ -190,18 +150,8 @@
                         }
                     }
                 },
-                yAxis: {
-                    title: {
-                        text: 'Temperature (°F)'
-                    },
-                    min: 95,
-                    max: 105
-                },
-                series: [{
-                    name: 'Temperature',
-                    color: '#7c0b9ed0',
-                    data: []
-                }]
+                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
 
             document.getElementById('addData').addEventListener('click', function() {
@@ -210,12 +160,12 @@
                     const now = new Date();
                     const timestamp = now.getTime();
                     chart.series[0].addPoint([timestamp, temperature]);
-                    console.log(`Added data point: ${timestamp}, ${temperature}`); // Debugging line
                 } else {
                     alert('Please enter a valid temperature value between 95 and 105.');
                 }
             });
 
+            // Load file data if available
             const fileData = sessionStorage.getItem('fileData');
             if (fileData) {
                 try {
@@ -248,20 +198,20 @@
             const loggedInUser = sessionStorage.getItem('loggedInUser');
             if (loggedInUser) {
                 const key = `user_${loggedInUser}_data`;
-                let existingData = [];
+                let existingData = { name: '', dob: '', temperatures: [] };
 
                 if (localStorage.getItem(key)) {
                     try {
-                        existingData = JSON.parse(localStorage.getItem(key)).temperatures || [];
+                        existingData = JSON.parse(localStorage.getItem(key));
                     } catch (e) {
                         console.error('Error parsing existing file data:', e);
                     }
                 }
 
                 // Merge existing data with new data
-                fileData.temperatures = existingData.concat(fileData.temperatures);
-
+                fileData.temperatures = existingData.temperatures.concat(fileData.temperatures);
                 localStorage.setItem(key, JSON.stringify(fileData));
+
                 alert('Data saved successfully!');
             } else {
                 alert('No user logged in. Cannot save data.');
@@ -269,10 +219,10 @@
         }
 
         function calculateAge() {
-            var dob = new Date(document.getElementById("dob").value);
-            var today = new Date();
-            var age = today.getFullYear() - dob.getFullYear();
-            var monthDiff = today.getMonth() - dob.getMonth();
+            const dob = new Date(document.getElementById("dob").value);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
                 age--;
             }
