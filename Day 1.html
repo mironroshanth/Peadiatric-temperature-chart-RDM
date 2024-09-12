@@ -174,16 +174,33 @@
                 }
             });
 
-            window.calculateAge = function() {
-                const dob = new Date(document.getElementById('dob').value);
-                const now = new Date();
-                const age = now.getFullYear() - dob.getFullYear();
-                const monthDifference = now.getMonth() - dob.getMonth();
-                if (monthDifference < 0 || (monthDifference === 0 && now.getDate() < dob.getDate())) {
-                    age--;
-                }
-                document.getElementById('result').textContent = `Age: ${age} years`;
-            };
+            function calculateAge() {
+            const name = document.getElementById('name').value;
+            const dobInput = document.getElementById('dob').value;
+            if (!dobInput) {
+                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
+                return;
+            }
+            if (!name) {
+                document.getElementById('result').innerText = 'Please enter your name.';
+                return;
+            }
+
+            const dob = new Date(dobInput);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            const dayDiff = today.getDate() - dob.getDate();
+
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+            }
+
+            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
+            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
+
+            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
+        }
 
             window.saveData = function() {
                 const name = document.getElementById('name').value;
