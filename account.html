@@ -118,9 +118,11 @@
 
             const loggedInUser = sessionStorage.getItem('loggedInUser');
             if (loggedInUser) {
+                // Display username and password
                 const userPassword = localStorage.getItem(`password_${loggedInUser}`);
                 usernameElement.textContent = `Username: ${loggedInUser}`;
-                passwordElement.textContent = `Password: ${userPassword}`;
+                passwordElement.textContent = `Password: ${userPassword || 'Not set'}`;
+
 
                 loadFileList();
             } else {
@@ -161,7 +163,7 @@
             const fileData = JSON.parse(localStorage.getItem(key));
 
             sessionStorage.setItem('fileData', JSON.stringify(fileData));
-            window.location.href = 'NewChart.html';
+            window.location.href = 'Day 1.html';
         }
     </script>
 </body>
