@@ -153,7 +153,7 @@
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
+    <button id="saveButton" class="save-button" onclick="saveData()">Save</button>
     <br><br><br>
 
     <script>
@@ -216,7 +216,6 @@
                 }
             });
 
-            // Load file data if available
             const fileData = sessionStorage.getItem('fileData');
             if (fileData) {
                 try {
@@ -232,15 +231,41 @@
             }
         });
 
-        function printPageArea(areaId) {
-            var printWindow = window.open('', '', 'height=600,width=800');
-            var content = document.getElementById(areaId).innerHTML;
-            printWindow.document.write('<html><head><title>Print</title></head><body>');
-            printWindow.document.write(content);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
+        function saveData() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            const temperatures = chart.series[0].data.map(point => ({
+                timestamp: point.x,
+                value: point.y
+            }));
+
+            const fileData = {
+                name: name,
+                dob: dob,
+                temperatures: temperatures
+            };
+
+            const loggedInUser = sessionStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const key = `user_${loggedInUser}_data`;
+                let existingData = [];
+
+                if (localStorage.getItem(key)) {
+                    try {
+                        existingData = JSON.parse(localStorage.getItem(key)).temperatures || [];
+                    } catch (e) {
+                        console.error('Error parsing existing file data:', e);
+                    }
+                }
+
+                // Merge existing data with new data
+                fileData.temperatures = existingData.concat(fileData.temperatures);
+
+                localStorage.setItem(key, JSON.stringify(fileData));
+                alert('Data saved successfully!');
+            } else {
+                alert('No user logged in. Cannot save data.');
+            }
         }
 
         function calculateAge() {
