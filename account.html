@@ -116,14 +116,12 @@
             const passwordElement = document.getElementById('password');
             const fileList = document.getElementById('fileList');
 
-            // Get user info from sessionStorage
             const loggedInUser = sessionStorage.getItem('loggedInUser');
             if (loggedInUser) {
                 const userPassword = localStorage.getItem(`password_${loggedInUser}`);
                 usernameElement.textContent = `Username: ${loggedInUser}`;
                 passwordElement.textContent = `Password: ${userPassword}`;
 
-                // Load saved files
                 loadFileList();
             } else {
                 usernameElement.textContent = 'No user logged in';
@@ -161,26 +159,9 @@
 
             const key = selectedFile.dataset.key;
             const fileData = JSON.parse(localStorage.getItem(key));
-            const fileContent = document.getElementById('fileContent');
 
-            fileContent.innerHTML = `<pre>${JSON.stringify(fileData, null, 2)}</pre>`;
-
-            // Store file data in sessionStorage for use in the other page
             sessionStorage.setItem('fileData', JSON.stringify(fileData));
-        }
-
-        function updateChart() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (!selectedFile) {
-                alert('Please select a file from the list.');
-                return;
-            }
-
-            // Store the selected file key in sessionStorage
-            sessionStorage.setItem('selectedFileKey', selectedFile.dataset.key);
-
-            // Redirect to the "Create New Chart" page
-            window.location.href = 'New chart.html';
+            window.location.href = 'NewChart.html';
         }
     </script>
 </body>
