@@ -154,6 +154,15 @@
                 series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
 
+            const fileData = JSON.parse(sessionStorage.getItem('fileData'));
+            if (fileData && fileData.temperatures) {
+                fileData.temperatures.forEach(point => {
+                    chart.series[0].addPoint([point.timestamp, point.value]);
+                });
+                document.getElementById('name').value = fileData.name;
+                document.getElementById('dob').value = fileData.dob;
+            }
+
             document.getElementById('addData').addEventListener('click', function() {
                 const temperature = parseFloat(document.getElementById('temperature').value);
                 if (temperature >= 95 && temperature <= 105) {
@@ -165,68 +174,47 @@
                 }
             });
 
-            // Load file data if available
-            const fileData = sessionStorage.getItem('fileData');
-            if (fileData) {
-                try {
-                    const data = JSON.parse(fileData);
-                    document.getElementById('name').value = data.name || '';
-                    document.getElementById('dob').value = data.dob || '';
-                    data.temperatures.forEach(temp => {
-                        chart.series[0].addPoint([new Date(temp.timestamp).getTime(), temp.value]);
-                    });
-                } catch (e) {
-                    console.error('Error parsing file data:', e);
+            window.calculateAge = function() {
+                const dob = new Date(document.getElementById('dob').value);
+                const now = new Date();
+                const age = now.getFullYear() - dob.getFullYear();
+                const monthDifference = now.getMonth() - dob.getMonth();
+                if (monthDifference < 0 || (monthDifference === 0 && now.getDate() < dob.getDate())) {
+                    age--;
                 }
-            }
-        });
-
-        function saveData() {
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-
-            const fileData = {
-                name: name,
-                dob: dob,
-                temperatures: temperatures
+                document.getElementById('result').textContent = `Age: ${age} years`;
             };
 
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            if (loggedInUser) {
-                const key = `user_${loggedInUser}_data`;
-                let existingData = { name: '', dob: '', temperatures: [] };
+            window.saveData = function() {
+                const name = document.getElementById('name').value;
+                const dob = document.getElementById('dob').value;
+                const temperatures = chart.series[0].data.map(point => ({
+                    timestamp: point.x,
+                    value: point.y
+                }));
+                const fileData = {
+                    name: name,
+                    dob: dob,
+                    temperatures: temperatures
+                };
 
-                if (localStorage.getItem(key)) {
-                    try {
-                        existingData = JSON.parse(localStorage.getItem(key));
-                    } catch (e) {
-                        console.error('Error parsing existing file data:', e);
-                    }
+                const fileName = prompt('Enter a name for the file:', 'chart-data');
+                if (fileName) {
+                    const key = `file_${fileName}`;
+                    localStorage.setItem(key, JSON.stringify(fileData));
+                    alert('Data saved successfully!');
+                } else {
+                    alert('File name cannot be empty.');
                 }
+            };
+        });
 
-                // Merge existing data with new data
-                fileData.temperatures = existingData.temperatures.concat(fileData.temperatures);
-                localStorage.setItem(key, JSON.stringify(fileData));
-
-                alert('Data saved successfully!');
-            } else {
-                alert('No user logged in. Cannot save data.');
-            }
-        }
-
-        function calculateAge() {
-            const dob = new Date(document.getElementById("dob").value);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-                age--;
-            }
-            document.getElementById("result").innerText = "Age: " + age;
+        function printPageArea(areaId) {
+            const printContent = document.getElementById(areaId).innerHTML;
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
         }
     </script>
 </body>
