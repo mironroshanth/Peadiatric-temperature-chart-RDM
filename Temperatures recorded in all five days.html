@@ -173,7 +173,7 @@
             <div id="container" style="width: 100%; height: 600px;"></div>
         </div>
     </div>
-    <button id="saveButton" class="save-button" onclick="printPageArea('printableArea')">Save</button>
+    <button id="saveButton" class="save-button" onclick="saveData()">Save</button>
     <br><br><br>
 
     <script>
@@ -284,9 +284,33 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-        function printPageArea(areaID){
-            var printContent = document.getElementById(areaID).innerHTML;
-            var originalContent = document.body.innerHTML;
+        window.saveData = function() {
+                const name = document.getElementById('name').value;
+                const dob = document.getElementById('dob').value;
+                const temperatures = chart.series[0].data.map(point => ({
+                    timestamp: point.x,
+                    value: point.y
+                }));
+                const fileData = {
+                    name: name,
+                    dob: dob,
+                    temperatures: temperatures
+                };
+
+                const fileName = prompt('Enter a name for the file:', 'chart-data');
+                if (fileName) {
+                    const key = `file_${fileName}`;
+                    localStorage.setItem(key, JSON.stringify(fileData));
+                    alert('Data saved successfully!');
+                } else {
+                    alert('File name cannot be empty.');
+                }
+            };
+        });
+
+        function printPageArea(areaId) {
+            const printContent = document.getElementById(areaId).innerHTML;
+            const originalContent = document.body.innerHTML;
             document.body.innerHTML = printContent;
             window.print();
             document.body.innerHTML = originalContent;
