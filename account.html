@@ -77,6 +77,18 @@
             outline: none;
             box-shadow: none;
         }
+        .selected {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        #fileContent pre {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
@@ -86,74 +98,92 @@
 
     <div class="container">
         <h1>Your Account</h1>
-        <p id="welcome-message">Welcome, <span id="username">Guest</span>!</p>
+        <p id="welcome-message">Welcome, <span id="username"></span>!</p>
         <h2>Account information</h2>
         <p><strong>Note:</strong> Your data will be saved here. Please make sure to log in to see your data.</p>
-        <button class="save-button" onclick="logOut()">Log Out</button><br><br>
-        <button class="save-button" onclick="deleteAccount()">Delete Account</button>
+        <p id="username">Username: </p>
+        <p id="password">Password: </p>
         <h2>Your charts</h2>
-        <button class="save-button" onclick="loadData()">Load Data</button><br><br>
-        <div id="savedData"></div><br><br>
+        <ul id="fileList"></ul>
+        <button id="loadFile" class="save-button" onclick="loadFile()">Load Selected File</button><br><br>
+        <div id="fileContent"></div><br><br>
         <a href="Temperature chart.html" class="save-button">Go to home</a>
     </div>
 
     <script>
-        function logOut() {
-            sessionStorage.removeItem('loggedInUser');
-            document.getElementById('username').innerText = 'Guest';
-            alert('Logged out successfully!');
-        }
-
-        function deleteAccount() {
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            if (loggedInUser) {
-                const key = `user_${loggedInUser}_data`;
-                localStorage.removeItem(key);
-                sessionStorage.removeItem('loggedInUser');
-                document.getElementById('username').innerText = 'Guest';
-                alert('Account deleted successfully!');
-            } else {
-                alert('No user logged in. Cannot delete account.');
-            }
-        }
-
-        function loadData() {
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            if (loggedInUser) {
-                const key = `user_${loggedInUser}_data`;
-                const fileData = localStorage.getItem(key);
-                if (fileData) {
-                    try {
-                        const data = JSON.parse(fileData);
-                        const savedDataDiv = document.getElementById('savedData');
-                        savedDataDiv.innerHTML = `
-                            <h3>Name: ${data.name || 'N/A'}</h3>
-                            <h3>Date of Birth: ${data.dob || 'N/A'}</h3>
-                            <h3>Temperatures:</h3>
-                            <ul>
-                                ${data.temperatures.map(temp => `<li>${new Date(temp.timestamp).toLocaleString()}: ${temp.value} °F</li>`).join('')}
-                            </ul>
-                        `;
-                    } catch (e) {
-                        console.error('Error parsing file data:', e);
-                        document.getElementById('savedData').innerText = 'Error loading data.';
-                    }
-                } else {
-                    document.getElementById('savedData').innerText = 'No data available.';
-                }
-            } else {
-                alert('No user logged in. Cannot load data.');
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
+            const usernameElement = document.getElementById('username');
+            const passwordElement = document.getElementById('password');
+            const fileList = document.getElementById('fileList');
+
+            // Get user info from sessionStorage
             const loggedInUser = sessionStorage.getItem('loggedInUser');
             if (loggedInUser) {
-                document.getElementById('username').innerText = loggedInUser;
+                const userPassword = localStorage.getItem(`password_${loggedInUser}`);
+                usernameElement.textContent = `Username: ${loggedInUser}`;
+                passwordElement.textContent = `Password: ${userPassword}`;
+
+                // Load saved files
+                loadFileList();
             } else {
-                document.getElementById('username').innerText = 'Guest';
+                usernameElement.textContent = 'No user logged in';
+                passwordElement.textContent = '';
             }
         });
+
+        function loadFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('file_')) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = key.substring(5); // Remove 'file_' prefix
+                    listItem.dataset.key = key;
+                    listItem.addEventListener('click', function() {
+                        const selectedFile = document.querySelector('#fileList .selected');
+                        if (selectedFile) {
+                            selectedFile.classList.remove('selected');
+                        }
+                        this.classList.add('selected');
+                    });
+                    fileList.appendChild(listItem);
+                }
+            });
+        }
+
+        function loadFile() {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (!selectedFile) {
+                alert('Please select a file from the list.');
+                return;
+            }
+
+            const key = selectedFile.dataset.key;
+            const fileData = JSON.parse(localStorage.getItem(key));
+            const fileContent = document.getElementById('fileContent');
+
+            fileContent.innerHTML = `<pre>${JSON.stringify(fileData, null, 2)}</pre>`;
+
+            // Store file data in sessionStorage for use in the other page
+            sessionStorage.setItem('fileData', JSON.stringify(fileData));
+        }
+
+        function updateChart() {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (!selectedFile) {
+                alert('Please select a file from the list.');
+                return;
+            }
+
+            // Store the selected file key in sessionStorage
+            sessionStorage.setItem('selectedFileKey', selectedFile.dataset.key);
+
+            // Redirect to the "Create New Chart" page
+            window.location.href = 'New chart.html';
+        }
     </script>
 </body>
 </html>
+
+
