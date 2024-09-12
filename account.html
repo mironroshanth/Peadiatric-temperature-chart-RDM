@@ -149,20 +149,6 @@
             // Store file data in sessionStorage for use in the other page
             sessionStorage.setItem('fileData', JSON.stringify(fileData));
         }
-
-        function updateChart() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (!selectedFile) {
-                alert('Please select a file from the list.');
-                return;
-            }
-
-            // Store the selected file key in sessionStorage
-            sessionStorage.setItem('selectedFileKey', selectedFile.dataset.key);
-
-            // Redirect to the "Create New Chart" page
-            window.location.href = 'create-new-chart.html';
-        }
     </script>
 </body>
 </html>
