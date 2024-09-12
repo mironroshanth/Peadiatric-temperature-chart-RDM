@@ -134,12 +134,13 @@
             const passwordElement = document.getElementById('password');
             const fileList = document.getElementById('fileList');
 
+            // Get user info from sessionStorage
             const loggedInUser = sessionStorage.getItem('loggedInUser');
             if (loggedInUser) {
-                // Display username and password
-                const userPassword = localStorage.getItem(`password_${loggedInUser}`);
+                const userPassword = localStorage.getItem(loggedInUser);
                 usernameElement.textContent = `Username: ${loggedInUser}`;
-                passwordElement.textContent = `Password: ${userPassword || 'Not set'}`;
+                passwordElement.textContent = `Password: ${userPassword}`;
+
 
 
                 loadFileList();
