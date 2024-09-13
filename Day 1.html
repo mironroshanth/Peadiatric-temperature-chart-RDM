@@ -77,46 +77,42 @@
         .save-button:hover {
             background-color: #5a0874;
         }
-        .save-button:focus,
-        .save-button:active {
-            outline: none;
-            box-shadow: none;
-        }
         .ac-button {
-  background-color: #be0d0d;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
- }
+            background-color: #be0d0d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         .ac-button:hover {
             background-color: #5e0404;
         }
-        .ac-button:focus,
-        .ac-button:active {
-            outline: none;
-            box-shadow: none;
+        #notification {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 9999;
         }
     </style>
 </head>
 <body>
     <div class="topnav">
-        <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-            <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
-        </a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-        <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
+        <a class="active" href="#">New chart</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting started.html">Getting started</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
     </div>
+
+    <div id="notification"></div>
 
     <div style="padding-left: 16px;">
         <h1>New Chart</h1>
@@ -141,7 +137,11 @@
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <button id="saveButton" class="save-button" onclick="saveData()">Save</button>
+
+    <button id="saveButton" class="save-button">Save</button>
+    <button id="downloadData" class="save-button">Download Data as JSON</button>
+    <button id="clearChart" class="save-button">Clear Chart</button>
+    <button onclick="printPageArea('printableArea')" class="save-button">Print Chart</button>
     <br><br>
     <button id="newChartSheet" class="save-button">New Chart Sheet</button>
     <br><br><br>
@@ -175,111 +175,154 @@
                 series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
 
-            const sessionFileData = JSON.parse(sessionStorage.getItem('fileData'));
-        if (sessionFileData && sessionFileData.temperatures) {
-            sessionFileData.temperatures.forEach(point => {
-                chart.series[0].addPoint([point.timestamp, point.value]);
-            });
-            document.getElementById('name').value = sessionFileData.name;
-            document.getElementById('dob').value = sessionFileData.dob;
-        }
+            // Load saved data
+            const storedData = JSON.parse(localStorage.getItem('autoSavedChartData'));
+            if (storedData && storedData.temperatures) {
+                storedData.temperatures.forEach(point => {
+                    chart.series[0].addPoint([point.timestamp, point.value]);
+                });
+                document.getElementById('name').value = storedData.name;
+                document.getElementById('dob').value = storedData.dob;
+            }
 
+            // Add temperature data
             document.getElementById('addData').addEventListener('click', function() {
+                if (!validateForm()) return;
+
                 const temperature = parseFloat(document.getElementById('temperature').value);
                 if (temperature >= 95 && temperature <= 105) {
                     const now = new Date();
                     const timestamp = now.getTime();
                     chart.series[0].addPoint([timestamp, temperature]);
+                    autoSaveChartData();
+                    showNotification('Data added to the chart.');
                 } else {
                     alert('Please enter a valid temperature value between 95 and 105.');
                 }
             });
 
+            // Save data
+            document.getElementById('saveButton').addEventListener('click', function() {
+                saveChartData();
+            });
+
+            // Download data as JSON
+            document.getElementById('downloadData').addEventListener('click', function() {
+                downloadChartData();
+            });
+
+            // Clear chart
+            document.getElementById('clearChart').addEventListener('click', function() {
+                if (confirm("Are you sure you want to clear the chart? This will remove all data.")) {
+                    chart.series[0].setData([]);
+                    localStorage.removeItem('autoSavedChartData');
+                    showNotification('Chart cleared.');
+                }
+            });
+
+            // New chart sheet
+            document.getElementById('newChartSheet').addEventListener('click', function() {
+                const fileName = prompt('Enter a name for the current file before starting a new one:', 'chart-data');
+                if (fileName) {
+                    saveChartData(fileName);
+                    window.location.href = 'new-chart.html'; // Adjust this URL to point to your new chart page
+                } else {
+                    alert('File name cannot be empty.');
+                }
+            });
+
+            // Functions
+
+            function validateForm() {
+                const name = document.getElementById('name').value.trim();
+                const dob = document.getElementById('dob').value;
+                if (!name) {
+                    alert("Please enter your name.");
+                    return false;
+                }
+                if (!dob) {
+                    alert("Please enter your date of birth.");
+                    return false;
+                }
+                return true;
+            }
+
             function calculateAge() {
-            const name = document.getElementById('name').value;
-            const dobInput = document.getElementById('dob').value;
-            if (!dobInput) {
-                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
-                return;
-            }
-            if (!name) {
-                document.getElementById('result').innerText = 'Please enter your name.';
-                return;
-            }
-
-            const dob = new Date(dobInput);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            const dayDiff = today.getDate() - dob.getDate();
-
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-                age--;
+                const dob = document.getElementById('dob').value;
+                if (!dob) {
+                    alert('Please enter a valid date of birth.');
+                    return;
+                }
+                const birthDate = new Date(dob);
+                const now = new Date();
+                let age = now.getFullYear() - birthDate.getFullYear();
+                const monthDiff = now.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                document.getElementById('result').textContent = `Age: ${age} years old`;
             }
 
-            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
-
-            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
-        }
-
-           document.getElementById('saveButton').addEventListener('click', function() {
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-            const fileData = {
-                name: name,
-                dob: dob,
-                temperatures: temperatures
-            };
-
-            const fileName = prompt('Enter a name for the file:', 'chart-data');
-            if (fileName) {
-                const key = `file_${fileName}`;
-                localStorage.setItem(key, JSON.stringify(fileData));
-                alert('Data saved successfully!');
-            } else {
-                alert('File name cannot be empty.');
+            function autoSaveChartData() {
+                const name = document.getElementById('name').value;
+                const dob = document.getElementById('dob').value;
+                const temperatures = chart.series[0].data.map(point => ({
+                    timestamp: point.x,
+                    value: point.y
+                }));
+                const fileData = { name, dob, temperatures };
+                localStorage.setItem('autoSavedChartData', JSON.stringify(fileData));
             }
-        });
-    });
 
-    function printPageArea(areaId) {
-        const printContent = document.getElementById(areaId).innerHTML;
-        const originalContent = document.body.innerHTML;
-        document.body.innerHTML = printContent;
-        window.print();
-        document.body.innerHTML = originalContent;
-    }
-        document.getElementById('newChartSheet').addEventListener('click', function() {
-            // Save current chart data to localStorage
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-            const fileData = {
-                name: name,
-                dob: dob,
-                temperatures: temperatures
-            };
+            function saveChartData(fileName = 'chartData') {
+                const name = document.getElementById('name').value;
+                const dob = document.getElementById('dob').value;
+                const temperatures = chart.series[0].data.map(point => ({
+                    timestamp: point.x,
+                    value: point.y
+                }));
+                const fileData = { name, dob, temperatures };
+                localStorage.setItem(fileName, JSON.stringify(fileData));
+                showNotification(`Data saved successfully as "${fileName}".`);
+            }
 
-            const fileName = prompt('Enter a name for the current file before starting a new one:', 'chart-data');
-            if (fileName) {
-                const key = file_${fileName};
-                localStorage.setItem(key, JSON.stringify(fileData));
-                
-                // Open a new chart page with an empty chart
-                window.location.href = 'new-chart.html'; // Adjust this URL to point to your new chart page
-            } else {
-                alert('File name cannot be empty.');
+            function downloadChartData() {
+                const name = document.getElementById('name').value;
+                const dob = document.getElementById('dob').value;
+                const temperatures = chart.series[0].data.map(point => ({
+                    timestamp: point.x,
+                    value: point.y
+                }));
+                const fileData = { name, dob, temperatures };
+                const fileName = prompt("Enter file name:", "chartData");
+                if (fileName) {
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fileData));
+                    const downloadAnchor = document.createElement('a');
+                    downloadAnchor.setAttribute("href", dataStr);
+                    downloadAnchor.setAttribute("download", `${fileName}.json`);
+                    document.body.appendChild(downloadAnchor);
+                    downloadAnchor.click();
+                    downloadAnchor.remove();
+                }
+            }
+
+            function showNotification(message, duration = 3000) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.style.display = 'block';
+                setTimeout(() => { notification.style.display = 'none'; }, duration);
+            }
+
+            function printPageArea(areaID) {
+                const printContent = document.getElementById(areaID).innerHTML;
+                const originalContent = document.body.innerHTML;
+                document.body.innerHTML = printContent;
+                window.print();
+                document.body.innerHTML = originalContent;
+                location.reload();
             }
         });
-    });
     </script>
 </body>
 </html>
+
