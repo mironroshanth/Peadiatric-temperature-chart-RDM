@@ -173,14 +173,14 @@
                 series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
 
-            const fileData = JSON.parse(sessionStorage.getItem('fileData'));
-            if (fileData && fileData.temperatures) {
-                fileData.temperatures.forEach(point => {
-                    chart.series[0].addPoint([point.timestamp, point.value]);
-                });
-                document.getElementById('name').value = fileData.name;
-                document.getElementById('dob').value = fileData.dob;
-            }
+            const sessionFileData = JSON.parse(sessionStorage.getItem('fileData'));
+        if (sessionFileData && sessionFileData.temperatures) {
+            sessionFileData.temperatures.forEach(point => {
+                chart.series[0].addPoint([point.timestamp, point.value]);
+            });
+            document.getElementById('name').value = sessionFileData.name;
+            document.getElementById('dob').value = sessionFileData.dob;
+        }
 
             document.getElementById('addData').addEventListener('click', function() {
                 const temperature = parseFloat(document.getElementById('temperature').value);
@@ -221,37 +221,37 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-            window.saveData = function() {
-                const name = document.getElementById('name').value;
-                const dob = document.getElementById('dob').value;
-                const temperatures = chart.series[0].data.map(point => ({
-                    timestamp: point.x,
-                    value: point.y
-                }));
-                const fileData = {
-                    name: name,
-                    dob: dob,
-                    temperatures: temperatures
-                };
-
-                const fileName = prompt('Enter a name for the file:', 'chart-data');
-                if (fileName) {
-                    const key = `file_${fileName}`;
-                    localStorage.setItem(key, JSON.stringify(fileData));
-                    alert('Data saved successfully!');
-                } else {
-                    alert('File name cannot be empty.');
-                }
+           document.getElementById('saveButton').addEventListener('click', function() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            const temperatures = chart.series[0].data.map(point => ({
+                timestamp: point.x,
+                value: point.y
+            }));
+            const fileData = {
+                name: name,
+                dob: dob,
+                temperatures: temperatures
             };
-        });
 
-        function printPageArea(areaId) {
-            const printContent = document.getElementById(areaId).innerHTML;
-            const originalContent = document.body.innerHTML;
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
-        }
+            const fileName = prompt('Enter a name for the file:', 'chart-data');
+            if (fileName) {
+                const key = `file_${fileName}`;
+                localStorage.setItem(key, JSON.stringify(fileData));
+                alert('Data saved successfully!');
+            } else {
+                alert('File name cannot be empty.');
+            }
+        });
+    });
+
+    function printPageArea(areaId) {
+        const printContent = document.getElementById(areaId).innerHTML;
+        const originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+    }
     </script>
 </body>
 </html>
