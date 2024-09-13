@@ -85,7 +85,6 @@
             list-style-type: none;
             padding: 0;
         }
-
         #fileList li {
             cursor: pointer;
             color: #007bff;
@@ -95,11 +94,9 @@
             border: 1px solid transparent;
             border-radius: 4px;
         }
-
         #fileList li:hover {
             background-color: #e2e6ea;
         }
-
         #fileContent pre {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
@@ -110,21 +107,17 @@
     </style>
 </head>
 <body>
-    
-      
-        
-
     <div class="container">
         <h1>Your Account</h1>
-        <h2>Account information</h2>
+        <h2>Account Information</h2>
         <p><strong>Note:</strong> Your data will be saved here. Please make sure to log in to see your data.</p>
         <p id="username">Username: </p>
         <p id="password">Password: </p>
-        <h2>Your charts</h2>
+        <h2>Your Charts</h2>
         <ul id="fileList"></ul>
         <button id="loadFile" class="save-button" onclick="loadFile()">Load Selected File</button><br><br>
-        <div id="fileContent"><a></a></div><br><br>
-        <a href="Temperature chart.html" class="save-button">Go to home</a>
+        <div id="fileContent"><pre></pre></div><br><br>
+        <a href="Temperature chart.html" class="save-button">Go to Home</a>
     </div>
 
     <script>
@@ -139,8 +132,6 @@
                 const userPassword = localStorage.getItem(loggedInUser);
                 usernameElement.textContent = `Username: ${loggedInUser}`;
                 passwordElement.textContent = `Password: ${userPassword}`;
-
-
 
                 loadFileList();
             } else {
@@ -179,6 +170,9 @@
 
             const key = selectedFile.dataset.key;
             const fileData = JSON.parse(localStorage.getItem(key));
+            
+            const fileContent = document.getElementById('fileContent');
+            fileContent.innerHTML = '<pre>' + JSON.stringify(fileData, null, 2) + '</pre>';
 
             sessionStorage.setItem('fileData', JSON.stringify(fileData));
             window.location.href = 'Day 1.html';
@@ -186,5 +180,3 @@
     </script>
 </body>
 </html>
-
-
