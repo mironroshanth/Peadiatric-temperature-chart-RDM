@@ -225,29 +225,22 @@
         }
 
         function saveChartData() {
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-            const fileData = { name, dob, temperatures };
-            localStorage.setItem('chartData', JSON.stringify(fileData));
-        }
-
-        document.getElementById('saveButton').addEventListener('click', function() {
-            saveChartData();
-            alert('Data saved successfully!');
-        });
-
-        document.getElementById('newChartSheet').addEventListener('click', function() {
-            // Save current chart data to localStorage
-            saveChartData();
-
-            // Open a new chart page with an empty chart
-            window.location.href = 'new-chart.html'; // Adjust this URL to point to your new chart page
-        });
-    });
+    const name = document.getElementById('name').value;
+    const dob = document.getElementById('dob').value;
+    const temperatures = chart.series[0].data.map(point => ({
+        timestamp: point.x,
+        value: point.y
+    }));
+    const fileData = { name, dob, temperatures };
+    const fileName = prompt('Enter a name for the file:', 'chart-data');
+    if (fileName) {
+        const key = 'file_' + fileName;
+        localStorage.setItem(key, JSON.stringify(fileData));
+        alert('Data saved successfully as ' + fileName + '!');
+    } else {
+        alert('File name cannot be empty.');
+    }
+}
 </script>
 
 </body>
