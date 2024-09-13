@@ -146,54 +146,57 @@
     <button id="newChartSheet" class="save-button">New Chart Sheet</button>
     <br><br><br>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const chart = Highcharts.chart('container', {
-                chart: { type: 'line' },
-                title: { text: 'Temperature Over Time' },
-                xAxis: { 
-                    type: 'datetime',
-                    title: { text: 'Time of Input' },
-                    labels: { 
-                        formatter: function() {
-                            var date = new Date(this.value);
-                            var options = { 
-                                year: 'numeric', 
-                                month: '2-digit', 
-                                day: '2-digit', 
-                                hour: '2-digit', 
-                                minute: '2-digit', 
-                                second: '2-digit', 
-                                timeZone: 'Asia/Kolkata',
-                                timeZoneName: 'short'
-                            };
-                            return date.toLocaleString('en-IN', options);
-                        }
+ 
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chart = Highcharts.chart('container', {
+            chart: { type: 'line' },
+            title: { text: 'Temperature Over Time' },
+            xAxis: { 
+                type: 'datetime',
+                title: { text: 'Time of Input' },
+                labels: { 
+                    formatter: function() {
+                        var date = new Date(this.value);
+                        var options = { 
+                            year: 'numeric', 
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            hour: '2-digit', 
+                            minute: '2-digit', 
+                            second: '2-digit', 
+                            timeZone: 'Asia/Kolkata',
+                            timeZoneName: 'short'
+                        };
+                        return date.toLocaleString('en-IN', options);
                     }
-                },
-                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
-            });
-
-            const storedData = JSON.parse(localStorage.getItem('chartData'));
-            if (storedData && storedData.temperatures) {
-                storedData.temperatures.forEach(point => {
-                    chart.series[0].addPoint([point.timestamp, point.value]);
-                });
-            }
-
-            document.getElementById('addData').addEventListener('click', function() {
-                const temperature = parseFloat(document.getElementById('temperature').value);
-                if (temperature >= 95 && temperature <= 105) {
-                    const now = new Date();
-                    const timestamp = now.getTime();
-                    chart.series[0].addPoint([timestamp, temperature]);
-                } else {
-                    alert('Please enter a valid temperature value between 95 and 105.');
                 }
-            });
+            },
+            yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+            series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
+        });
 
-            function calculateAge() {
+        // Load data from localStorage if it exists
+        const storedData = JSON.parse(localStorage.getItem('chartData'));
+        if (storedData && storedData.temperatures) {
+            storedData.temperatures.forEach(point => {
+                chart.series[0].addPoint([point.timestamp, point.value]);
+            });
+        }
+
+        document.getElementById('addData').addEventListener('click', function() {
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            if (temperature >= 95 && temperature <= 105) {
+                const now = new Date();
+                const timestamp = now.getTime();
+                chart.series[0].addPoint([timestamp, temperature]);
+                saveChartData(); // Save the updated data
+            } else {
+                alert('Please enter a valid temperature value between 95 and 105.');
+            }
+        });
+
+        function calculateAge() {
             const name = document.getElementById('name').value;
             const dobInput = document.getElementById('dob').value;
             if (!dobInput) {
@@ -218,61 +221,34 @@
             const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
             const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
 
-            document.getElementById('result').innerText = ${name} is ${age} years, ${months} months, and ${days} days old.;
+            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-          
-
-            document.getElementById('saveButton').addEventListener('click', function() {
-                saveChartData();
-            });
-
-            function saveChartData() {
-                const name = document.getElementById('name').value;
-                const dob = document.getElementById('dob').value;
-                const temperatures = chart.series[0].data.map(point => ({
-                    timestamp: point.x,
-                    value: point.y
-                }));
-                const filename = document.getElementById('filename').value.trim() || 'chartData';
-                const fileData = { name, dob, temperatures };
-                localStorage.setItem(filename, JSON.stringify(fileData));
-                alert('Data saved successfully as ' + filename + '!');
-            }
-
-    function printPageArea(areaId) {
-        const printContent = document.getElementById(areaId).innerHTML;
-        const originalContent = document.body.innerHTML;
-        document.body.innerHTML = printContent;
-        window.print();
-        document.body.innerHTML = originalContent;
-    }
-        document.getElementById('newChartSheet').addEventListener('click', function() {
-            // Save current chart data to localStorage
+        function saveChartData() {
             const name = document.getElementById('name').value;
             const dob = document.getElementById('dob').value;
             const temperatures = chart.series[0].data.map(point => ({
                 timestamp: point.x,
                 value: point.y
             }));
-            const fileData = {
-                name: name,
-                dob: dob,
-                temperatures: temperatures
-            };
+            const fileData = { name, dob, temperatures };
+            localStorage.setItem('chartData', JSON.stringify(fileData));
+        }
 
-            const fileName = prompt('Enter a name for the current file before starting a new one:', 'chart-data');
-            if (fileName) {
-                const key = file_${fileName};
-                localStorage.setItem(key, JSON.stringify(fileData));
-                
-                // Open a new chart page with an empty chart
-                window.location.href = 'new-chart.html'; // Adjust this URL to point to your new chart page
-            } else {
-                alert('File name cannot be empty.');
-            }
+        document.getElementById('saveButton').addEventListener('click', function() {
+            saveChartData();
+            alert('Data saved successfully!');
+        });
+
+        document.getElementById('newChartSheet').addEventListener('click', function() {
+            // Save current chart data to localStorage
+            saveChartData();
+
+            // Open a new chart page with an empty chart
+            window.location.href = 'new-chart.html'; // Adjust this URL to point to your new chart page
         });
     });
-    </script>
+</script>
+
 </body>
 </html>
