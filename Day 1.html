@@ -131,8 +131,8 @@
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button>
-    <button id="newChartSheet" class="save-button">New Chart Sheet</button>
+    <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
+    <button id="newChartSheet" class="save-button">New Chart Sheet</button><br><br>
 
     <script>
         let chart;
@@ -238,6 +238,20 @@
                 alert('File name cannot be empty.');
             }
         }
+        function newChartSheet() {
+    // Clear all input fields
+    document.getElementById('name').value = '';
+    document.getElementById('dob').value = '';
+
+    // Clear chart data
+    const chart = Highcharts.charts[0]; // Assumes there's only one chart on the page
+    if (chart) {
+        chart.series[0].setData([]); // Clear all data points
+    }
+
+    // Optionally, clear any additional chart settings if needed
+    // For example, you might want to reset the chart title or other properties
+}
         </script>
 </body>
 </html>
