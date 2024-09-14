@@ -179,22 +179,33 @@
                 }
             });
 
-            document.getElementById('calculateAge').addEventListener('click', function() {
-                const dob = document.getElementById('dob').value;
-                if (dob) {
-                    const dobDate = new Date(dob);
-                    const now = new Date();
-                    const age = now.getFullYear() - dobDate.getFullYear();
-                    const monthDiff = now.getMonth() - dobDate.getMonth();
-                    if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dobDate.getDate())) {
-                        age--;
-                    }
-                    document.getElementById('result').textContent = `Age: ${age} years`;
-                } else {
-                    alert('Please enter a valid date of birth.');
-                }
-            });
-        });
+            function calculateAge() {
+            const name = document.getElementById('name').value;
+            const dobInput = document.getElementById('dob').value;
+            if (!dobInput) {
+                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
+                return;
+            }
+            if (!name) {
+                document.getElementById('result').innerText = 'Please enter your name.';
+                return;
+            }
+
+            const dob = new Date(dobInput);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            const dayDiff = today.getDate() - dob.getDate();
+
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+            }
+
+            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
+            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
+
+            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
+        }
     </script>
 </body>
 </html>
