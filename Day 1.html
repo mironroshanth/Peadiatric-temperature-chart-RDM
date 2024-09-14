@@ -120,23 +120,28 @@
                 <input type="text" id="name" placeholder="Enter name">
                 <label for="dob">Date of Birth:</label>
                 <input type="date" id="dob">
-                <button id="calculateAgeBtn">Calculate Age</button>
+                <button onclick="calculateAge()">Calculate Age</button>
                 <p id="result"></p>
             </div>
             <div id="container" style="width: 100%; height: 700px;"></div>
         </div>
     </div>
-
     <h3>
         <label for="temperature">Enter Temperature (°F):</label>
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <button id="saveButton" class="save-button">Save</button>
+    <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button>
+    <button id="newChartSheet" class="save-button">New Chart Sheet</button>
 
     <script>
+        let chart;
+
         document.addEventListener('DOMContentLoaded', function() {
-            const chart = Highcharts.chart('container', {
+            const fileData = JSON.parse(sessionStorage.getItem('fileData'));
+
+            // Initialize an empty chart
+            chart = Highcharts.chart('container', {
                 chart: { type: 'line' },
                 title: { text: 'Temperature Over Time' },
                 xAxis: { 
@@ -144,7 +149,7 @@
                     title: { text: 'Time of Input' },
                     labels: { 
                         formatter: function() {
-                            var date = new Date(this.value);
+                            const date = new Date(this.value);
                             return date.toLocaleString('en-IN', {
                                 year: 'numeric', 
                                 month: '2-digit', 
@@ -162,67 +167,44 @@
                 series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
 
-            // Temporary array to store chart data
-            let tempData = [];
+            // If there is file data, populate the fields and chart
+            if (fileData) {
+                // Prefill the name and dob fields with the saved data
+                document.getElementById('name').value = fileData.name;
+                document.getElementById('dob').value = fileData.dob;
 
-            // Add data to the chart, but don't save it yet
+                // Add the saved temperature data to the chart
+                fileData.temperatures.forEach(point => {
+                    chart.series[0].addPoint([point.timestamp, point.value]);
+                });
+            }
+
+            // Add temperature data to chart on button click
             document.getElementById('addData').addEventListener('click', function() {
                 const temperature = parseFloat(document.getElementById('temperature').value);
                 if (temperature >= 95 && temperature <= 105) {
                     const now = new Date().getTime();
-                    tempData.push([now, temperature]);  // Store data temporarily
-                    chart.series[0].addPoint([now, temperature]);  // Show it on the chart
+                    chart.series[0].addPoint([now, temperature]);
                 } else {
                     alert('Please enter a valid temperature value between 95 and 105.');
                 }
             });
-
-            // Save the data to localStorage only when the Save button is clicked
-            document.getElementById('saveButton').addEventListener('click', function() {
-                const name = document.getElementById('name').value;
-                const dob = document.getElementById('dob').value;
-
-                if (!name || !dob) {
-                    alert('Please enter name and date of birth before saving.');
-                    return;
-                }
-
-                const existingData = chart.series[0].data.map(point => ({
-                    timestamp: point.x,
-                    value: point.y
-                }));
-
-                const fileData = { name, dob, temperatures: existingData };
-                const fileName = prompt('Enter a name for the file:', 'chart-data');
-                if (fileName) {
-                    const key = 'file_' + fileName;
-                    localStorage.setItem(key, JSON.stringify(fileData));
-                    alert('Data saved successfully as ' + fileName + '!');
-                } else {
-                    alert('File name cannot be empty.');
-                }
-            });
         });
-
-        // Calculate age function
-        document.getElementById('calculateAgeBtn').addEventListener('click', calculateAge);
 
         function calculateAge() {
             const name = document.getElementById('name').value;
             const dobInput = document.getElementById('dob').value;
-
-            if (!name) {
-                document.getElementById('result').innerText = 'Please enter your name.';
-                return;
-            }
             if (!dobInput) {
                 document.getElementById('result').innerText = 'Please enter a valid date of birth.';
+                return;
+            }
+            if (!name) {
+                document.getElementById('result').innerText = 'Please enter your name.';
                 return;
             }
 
             const dob = new Date(dobInput);
             const today = new Date();
-
             let age = today.getFullYear() - dob.getFullYear();
             const monthDiff = today.getMonth() - dob.getMonth();
             const dayDiff = today.getDate() - dob.getDate();
@@ -236,6 +218,26 @@
 
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
-    </script>
+
+        function saveChartData() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            
+            const temperatures = chart.series[0].data.map(point => ({
+                timestamp: point.x,
+                value: point.y
+            }));
+            const fileData = { name, dob, temperatures };
+            const fileName = prompt('Enter a name for the file:', 'chart-data');
+            
+            if (fileName) {
+                const key = 'file_' + fileName;
+                localStorage.setItem(key, JSON.stringify(fileData));
+                alert('Data saved successfully as ' + fileName + '!');
+            } else {
+                alert('File name cannot be empty.');
+            }
+        }
+        </script>
 </body>
 </html>
