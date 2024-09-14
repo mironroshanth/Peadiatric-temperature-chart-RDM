@@ -121,62 +121,63 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const usernameElement = document.getElementById('username');
-            const passwordElement = document.getElementById('password');
-            const fileList = document.getElementById('fileList');
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameElement = document.getElementById('username');
+        const passwordElement = document.getElementById('password');
+        const fileList = document.getElementById('fileList');
 
-            // Get user info from sessionStorage
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            if (loggedInUser) {
-                const userPassword = localStorage.getItem(loggedInUser);
-                usernameElement.textContent = `Username: ${loggedInUser}`;
-                passwordElement.textContent = `Password: ${userPassword}`;
+        // Get user info from sessionStorage
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
+        if (loggedInUser) {
+            const userPassword = localStorage.getItem(loggedInUser);
+            usernameElement.textContent = `Username: ${loggedInUser}`;
+            passwordElement.textContent = `Password: ${userPassword}`;
 
-                loadFileList();
-            } else {
-                usernameElement.textContent = 'No user logged in';
-                passwordElement.textContent = '';
+            loadFileList();
+        } else {
+            usernameElement.textContent = 'No user logged in';
+            passwordElement.textContent = '';
+        }
+    });
+
+    function loadFileList() {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('file_')) {
+                const listItem = document.createElement('li');
+                listItem.textContent = key.substring(5); // Remove 'file_' prefix
+                listItem.dataset.key = key;
+                listItem.addEventListener('click', function() {
+                    const selectedFile = document.querySelector('#fileList .selected');
+                    if (selectedFile) {
+                        selectedFile.classList.remove('selected');
+                    }
+                    this.classList.add('selected');
+                });
+                fileList.appendChild(listItem);
             }
         });
+    }
 
-        function loadFileList() {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('file_')) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = key.substring(5); // Remove 'file_' prefix
-                    listItem.dataset.key = key;
-                    listItem.addEventListener('click', function() {
-                        const selectedFile = document.querySelector('#fileList .selected');
-                        if (selectedFile) {
-                            selectedFile.classList.remove('selected');
-                        }
-                        this.classList.add('selected');
-                    });
-                    fileList.appendChild(listItem);
-                }
-            });
+    function loadFile() {
+        const selectedFile = document.querySelector('#fileList .selected');
+        if (!selectedFile) {
+            alert('Please select a file from the list.');
+            return;
         }
 
-        function loadFile() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (!selectedFile) {
-                alert('Please select a file from the list.');
-                return;
-            }
+        const key = selectedFile.dataset.key;
+        const fileData = JSON.parse(localStorage.getItem(key));
+        
+        // Store fileData in sessionStorage to access it in the new chart page
+        sessionStorage.setItem('fileData', JSON.stringify(fileData));
 
-            const key = selectedFile.dataset.key;
-            const fileData = JSON.parse(localStorage.getItem(key));
-            
-            const fileContent = document.getElementById('fileContent');
-            fileContent.innerHTML = '<pre>' + JSON.stringify(fileData, null, 2) + '</pre>';
+        // Redirect to the new chart page (Day 1.html)
+        window.location.href = 'Day 1.html';
+    }
+</script>
 
-            sessionStorage.setItem('fileData', JSON.stringify(fileData));
-            window.location.href = 'Day 1.html';
-        }
-    </script>
 </body>
 </html>
