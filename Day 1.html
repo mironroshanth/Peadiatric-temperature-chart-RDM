@@ -57,13 +57,6 @@
         button:hover {
             background-color: #5a0874;
         }
-        .rounded-input {
-            border-radius: 25px;
-            border: 2px solid #ccc;
-            padding: 10px;
-            width: 200px;
-            margin: 10px;
-        }
         .save-button {
             background-color: #7c0b9ed0;
             color: white;
@@ -83,16 +76,16 @@
             box-shadow: none;
         }
         .ac-button {
-  background-color: #be0d0d;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
- }
+            background-color: #be0d0d;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
         .ac-button:hover {
             background-color: #5e0404;
         }
@@ -120,7 +113,6 @@
 
     <div style="padding-left: 16px;">
         <h1>New Chart</h1>
-        <br><br>
         <div id="printableArea">
             <div class="container">
                 <h2>Details</h2>
@@ -128,88 +120,109 @@
                 <input type="text" id="name" placeholder="Enter name">
                 <label for="dob">Date of Birth:</label>
                 <input type="date" id="dob">
-                <button onclick="calculateAge()">Calculate Age</button>
+                <button id="calculateAgeBtn">Calculate Age</button>
                 <p id="result"></p>
             </div>
-            <br><br><br><br>
             <div id="container" style="width: 100%; height: 700px;"></div>
         </div>
     </div>
+
     <h3>
-        <br><br>
-        <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert temperature):</label>
+        <label for="temperature">Enter Temperature (°F):</label>
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
-    <button id="saveButton" class="save-button" onclick="saveData()">Save</button>
-    <br><br>
-    <button id="newChartSheet" class="save-button">New Chart Sheet</button>
-    <br><br><br>
+    <button id="saveButton" class="save-button">Save</button>
 
- 
-        <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const chart = Highcharts.chart('container', {
-            chart: { type: 'line' },
-            title: { text: 'Temperature Over Time' },
-            xAxis: { 
-                type: 'datetime',
-                title: { text: 'Time of Input' },
-                labels: { 
-                    formatter: function() {
-                        var date = new Date(this.value);
-                        var options = { 
-                            year: 'numeric', 
-                            month: '2-digit', 
-                            day: '2-digit', 
-                            hour: '2-digit', 
-                            minute: '2-digit', 
-                            second: '2-digit', 
-                            timeZone: 'Asia/Kolkata',
-                            timeZoneName: 'short'
-                        };
-                        return date.toLocaleString('en-IN', options);
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chart = Highcharts.chart('container', {
+                chart: { type: 'line' },
+                title: { text: 'Temperature Over Time' },
+                xAxis: { 
+                    type: 'datetime',
+                    title: { text: 'Time of Input' },
+                    labels: { 
+                        formatter: function() {
+                            var date = new Date(this.value);
+                            return date.toLocaleString('en-IN', {
+                                year: 'numeric', 
+                                month: '2-digit', 
+                                day: '2-digit', 
+                                hour: '2-digit', 
+                                minute: '2-digit', 
+                                second: '2-digit',
+                                timeZone: 'Asia/Kolkata',
+                                timeZoneName: 'short'
+                            });
+                        }
                     }
-                }
-            },
-            yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-            series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
-        });
-
-        // Load data from localStorage if it exists
-        const storedData = JSON.parse(localStorage.getItem('chartData'));
-        if (storedData && storedData.temperatures) {
-            storedData.temperatures.forEach(point => {
-                chart.series[0].addPoint([point.timestamp, point.value]);
+                },
+                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
-        }
 
-        document.getElementById('addData').addEventListener('click', function() {
-            const temperature = parseFloat(document.getElementById('temperature').value);
-            if (temperature >= 95 && temperature <= 105) {
-                const now = new Date();
-                const timestamp = now.getTime();
-                chart.series[0].addPoint([timestamp, temperature]);
-                saveChartData(); // Save the updated data
-            } else {
-                alert('Please enter a valid temperature value between 95 and 105.');
-            }
+            // Temporary array to store chart data
+            let tempData = [];
+
+            // Add data to the chart, but don't save it yet
+            document.getElementById('addData').addEventListener('click', function() {
+                const temperature = parseFloat(document.getElementById('temperature').value);
+                if (temperature >= 95 && temperature <= 105) {
+                    const now = new Date().getTime();
+                    tempData.push([now, temperature]);  // Store data temporarily
+                    chart.series[0].addPoint([now, temperature]);  // Show it on the chart
+                } else {
+                    alert('Please enter a valid temperature value between 95 and 105.');
+                }
+            });
+
+            // Save the data to localStorage only when the Save button is clicked
+            document.getElementById('saveButton').addEventListener('click', function() {
+                const name = document.getElementById('name').value;
+                const dob = document.getElementById('dob').value;
+
+                if (!name || !dob) {
+                    alert('Please enter name and date of birth before saving.');
+                    return;
+                }
+
+                const existingData = chart.series[0].data.map(point => ({
+                    timestamp: point.x,
+                    value: point.y
+                }));
+
+                const fileData = { name, dob, temperatures: existingData };
+                const fileName = prompt('Enter a name for the file:', 'chart-data');
+                if (fileName) {
+                    const key = 'file_' + fileName;
+                    localStorage.setItem(key, JSON.stringify(fileData));
+                    alert('Data saved successfully as ' + fileName + '!');
+                } else {
+                    alert('File name cannot be empty.');
+                }
+            });
         });
+
+        // Calculate age function
+        document.getElementById('calculateAgeBtn').addEventListener('click', calculateAge);
 
         function calculateAge() {
             const name = document.getElementById('name').value;
             const dobInput = document.getElementById('dob').value;
-            if (!dobInput) {
-                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
-                return;
-            }
+
             if (!name) {
                 document.getElementById('result').innerText = 'Please enter your name.';
+                return;
+            }
+            if (!dobInput) {
+                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
                 return;
             }
 
             const dob = new Date(dobInput);
             const today = new Date();
+
             let age = today.getFullYear() - dob.getFullYear();
             const monthDiff = today.getMonth() - dob.getMonth();
             const dayDiff = today.getDate() - dob.getDate();
@@ -223,25 +236,6 @@
 
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
-
-        function saveChartData() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
-    const fileData = { name, dob, temperatures };
-    const fileName = prompt('Enter a name for the file:', 'chart-data');
-    if (fileName) {
-        const key = 'file_' + fileName;
-        localStorage.setItem(key, JSON.stringify(fileData));
-        alert('Data saved successfully as ' + fileName + '!');
-    } else {
-        alert('File name cannot be empty.');
-    }
-}
-</script>
-
+    </script>
 </body>
 </html>
