@@ -304,6 +304,9 @@
         }
 
        function saveChartData() {
+
+            sessionStorage.setItem('sourcePage', 'Temperatures recorded in all five days');
+           
             const name = document.getElementById('name').value;
             const dob = document.getElementById('dob').value;
             const startDate = document.getElementById('startDate').value;
