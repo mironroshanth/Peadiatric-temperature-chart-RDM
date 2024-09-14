@@ -303,30 +303,25 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-       function saveData() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
-    const fileData = {
-        name: name,
-        dob: dob,
-        temperatures: temperatures,
-        sourcePage: 'Mark fever history' // Add a source page marker
-    };
-
-    const fileName = prompt('Enter a name for the file:', 'chart-data');
-    if (fileName) {
-        const key = `file_${fileName}`;
-        localStorage.setItem(key, JSON.stringify(fileData));
-        alert('Data saved successfully!');
-    } else {
-        alert('File name cannot be empty.');
-    }
-}
-
+       function saveChartData() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            const startDate = document.getElementById('startDate').value;
+            const temperatures = chart.series[0].data.map(point => ({
+                timestamp: point.x,
+                value: point.y
+            }));
+            const fileData = { name, dob, temperatures };
+            const fileName = prompt('Enter a name for the file:', 'chart-data');
+            
+            if (fileName) {
+                const key = 'file_' + fileName;
+                localStorage.setItem(key, JSON.stringify(fileData));
+                alert('Data saved successfully as ' + fileName + '!');
+            } else {
+                alert('File name cannot be empty.');
+            }
+        }
         function printPageArea(areaId) {
             const printContent = document.getElementById(areaId).innerHTML;
             const originalContent = document.body.innerHTML;
