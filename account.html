@@ -120,6 +120,7 @@
         <a href="Temperature chart.html" class="save-button">Go to Home</a>
     </div>
 
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const usernameElement = document.getElementById('username');
@@ -174,22 +175,20 @@
         // Store fileData in sessionStorage to access it in the new chart page
         sessionStorage.setItem('fileData', JSON.stringify(fileData));
 
-        // Redirect to the new chart page (Day 1.html)
-        window.location.href = 'Day 1.html';
-    }
-        document.addEventListener('DOMContentLoaded', function() {
-    // Check localStorage for files
-    const files = Object.keys(localStorage).filter(key => key.startsWith('file_'));
-    files.forEach(fileKey => {
-        const fileData = JSON.parse(localStorage.getItem(fileKey));
-        if (fileData.sourcePage === 'Mark fever history') {
-            // Redirect to 'Mark fever history' page
-            window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html';
+        // Check the source page and redirect accordingly
+        const sourcePage = sessionStorage.getItem('sourcePage');
+        if (sourcePage === 'Day 1') {
+            window.location.href = 'Day 1.html';
+        } else if (sourcePage === 'Temperatures recorded in all five days') {
+            window.location.href = 'Temperatures recorded in all five days.html';
+        } else {
+            // Default fallback
+            window.location.href = 'default.html';
         }
-    });
-});
-
+    }
 </script>
+
+
 
 </body>
 </html>
