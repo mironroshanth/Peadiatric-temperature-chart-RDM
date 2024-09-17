@@ -193,7 +193,9 @@
         </div>
     </div>
     <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button>
-    <br><br><br>
+    <br><br>
+    <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
+    <br>
 
     <script>
         let chart;
@@ -361,6 +363,20 @@
             const fileData = { name, dob, startDate, temperatures }; // Include startDate when saving
 
 });
+        function newChartSheet() {
+    // Clear all input fields
+    document.getElementById('name').value = '';
+    document.getElementById('dob').value = '';
+    document.getElementById('startDate').value = '';
+    document.getElementById('dateInput').value = '';
+    document.getElementById('timeInput').value = '';
+    document.getElementById('tempInput').value = '';
+
+    // Clear chart data
+    const chart = Highcharts.charts[0]; // Assumes there's only one chart on the page
+    if (chart) {
+        chart.series[0].setData([]); // Clear all data points
+    }
 
     </script>
 </body>
