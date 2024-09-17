@@ -138,32 +138,26 @@
         let chart;
 
         document.addEventListener('DOMContentLoaded', function() {
-            const savedData = JSON.parse(localStorage.getItem('chartData'));
+        const fileData = JSON.parse(sessionStorage.getItem('fileData'));
 
-            chart = Highcharts.chart('container', {
-                chart: { type: 'line' },
-                title: { text: 'Temperature Over Time' },
-                xAxis: { 
-                    type: 'datetime',
-                    title: { text: 'Time of Input' },
-                    labels: { 
-                        formatter: function() {
-                            const date = new Date(this.value);
-                            return date.toLocaleString();
-                        }
-                    }
-                },
-                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
+        // If fileData exists, populate the fields and chart
+        if (fileData) {
+            document.getElementById('name').value = fileData.name;
+            document.getElementById('dob').value = fileData.dob;
+            fileData.temperatures.forEach(point => {
+                chart.series[0].addPoint([point.timestamp, point.value]);
             });
+        }
 
-            if (savedData) {
-                document.getElementById('name').value = savedData.name;
-                document.getElementById('dob').value = savedData.dob;
-                savedData.temperatures.forEach(point => {
-                    chart.series[0].addPoint([point.timestamp, point.value]);
-                });
-            }
+        // Existing chart initialization code
+        chart = Highcharts.chart('container', {
+            chart: { type: 'line' },
+            title: { text: 'Temperature Over Time' },
+            xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
+            yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+            series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
+        });
+    });
 
             document.getElementById('addData').addEventListener('click', function() {
                 const temperature = parseFloat(document.getElementById('temperature').value);
