@@ -177,6 +177,8 @@
 
     // Check the source page and redirect accordingly
     const sourcePage = sessionStorage.getItem('sourcePage');
+    console.log('Source page:', sourcePage); // Add this line to debug
+
     if (sourcePage === 'Day 1') {
         window.location.href = 'Day 1.html';
     } else if (sourcePage === 'Temperatures recorded in all five days') {
