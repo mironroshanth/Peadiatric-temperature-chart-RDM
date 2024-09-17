@@ -325,6 +325,11 @@
                 alert('File name cannot be empty.');
             }
         }
+        if (localStorage.getItem(key)) {
+    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+    if (!overwrite) return;
+}
+
         function printPageArea(areaId) {
             const printContent = document.getElementById(areaId).innerHTML;
             const originalContent = document.body.innerHTML;
@@ -332,6 +337,31 @@
             window.print();
             document.body.innerHTML = originalContent;
         }
+        document.addEventListener('DOMContentLoaded', function() {
+    const savedData = sessionStorage.getItem('fileData');
+    
+    if (savedData) {
+        const fileData = JSON.parse(savedData);
+        document.getElementById('name').value = fileData.name;
+        document.getElementById('dob').value = fileData.dob;
+
+        // Set the start date if it's available
+        if (fileData.startDate) {
+            document.getElementById('startDate').value = fileData.startDate;
+        }
+
+        // Load the temperature data into the chart
+        fileData.temperatures.forEach(temp => {
+            data.push([temp.timestamp, temp.value]);
+        });
+
+        // Generate the chart with the loaded data
+        generateChart();
+    }
+            const fileData = { name, dob, startDate, temperatures }; // Include startDate when saving
+
+});
+
     </script>
 </body>
 </html>
