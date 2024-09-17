@@ -122,91 +122,74 @@
 
 
     <script>
-        let chart;
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameElement = document.getElementById('username');
+        const passwordElement = document.getElementById('password');
+        const fileList = document.getElementById('fileList');
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedData = JSON.parse(localStorage.getItem('chartData'));
+        // Get user info from sessionStorage
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
+        if (loggedInUser) {
+            const userPassword = localStorage.getItem(loggedInUser);
+            usernameElement.textContent = Username: ${loggedInUser};
+            passwordElement.textContent = Password: ${userPassword};
 
-            chart = Highcharts.chart('container', {
-                chart: { type: 'line' },
-                title: { text: 'Temperature Over Time' },
-                xAxis: { 
-                    type: 'datetime',
-                    title: { text: 'Time of Input' },
-                    labels: { 
-                        formatter: function() {
-                            const date = new Date(this.value);
-                            return date.toLocaleString();
-                        }
+            loadFileList();
+        } else {
+            usernameElement.textContent = 'No user logged in';
+            passwordElement.textContent = '';
+        }
+    });
+
+    function loadFileList() {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('file_')) {
+                const listItem = document.createElement('li');
+                listItem.textContent = key.substring(5); // Remove 'file_' prefix
+                listItem.dataset.key = key;
+                listItem.addEventListener('click', function() {
+                    const selectedFile = document.querySelector('#fileList .selected');
+                    if (selectedFile) {
+                        selectedFile.classList.remove('selected');
                     }
-                },
-                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
-            });
-
-            if (savedData) {
-                document.getElementById('name').value = savedData.name;
-                document.getElementById('dob').value = savedData.dob;
-                savedData.temperatures.forEach(point => {
-                    chart.series[0].addPoint([point.timestamp, point.value]);
+                    this.classList.add('selected');
                 });
+                fileList.appendChild(listItem);
             }
-
-            document.getElementById('addData').addEventListener('click', function() {
-                const temperature = parseFloat(document.getElementById('temperature').value);
-                if (temperature >= 95 && temperature <= 105) {
-                    const now = new Date().getTime();
-                    chart.series[0].addPoint([now, temperature]);
-                } else {
-                    alert('Please enter a valid temperature value between 95 and 105.');
-                }
-            });
         });
+    }
 
-        function calculateAge() {
-            const name = document.getElementById('name').value;
-            const dobInput = document.getElementById('dob').value;
-            if (!dobInput || !name) {
-                document.getElementById('result').innerText = 'Please enter both name and date of birth.';
-                return;
-            }
+    function loadFile() {
+    const selectedFile = document.querySelector('#fileList .selected');
+    if (!selectedFile) {
+        alert('Please select a file from the list.');
+        return;
+    }
 
-            const dob = new Date(dobInput);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            const dayDiff = today.getDate() - dob.getDate();
+    const key = selectedFile.dataset.key;
+    const fileData = JSON.parse(localStorage.getItem(key));
+    
+    // Store fileData in sessionStorage to access it in the new chart page
+    sessionStorage.setItem('fileData', JSON.stringify(fileData));
 
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
-            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
+    // Check the source page and redirect accordingly
+    const sourcePage = sessionStorage.getItem('sourcePage');
 
-            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
-        }
+    // Redirect only if it's not the current page
+    if (sourcePage === 'Day 1' && window.location.pathname !== '/Day%201.html') {
+        window.location.href = 'Day%201.html';
+    } else if (sourcePage === 'Temperatures recorded in all five days' && window.location.pathname !== '/Temperatures%20recorded%20in%20all%20five%20days.html') {
+        window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
+    } else if (sourcePage === 'Account' && window.location.pathname !== '/account.html') {
+        window.location.href = 'account.html'; // Only redirect if not already on the account page
+    } else {
+        alert('Source page not recognized. Staying on the current page.');
+    }
+}
 
-        function saveChartData() {
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-            if (!name || !dob) {
-                alert('Please enter both name and date of birth.');
-                return;
-            }
-
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-            const chartData = { name, dob, temperatures };
-            localStorage.setItem('chartData', JSON.stringify(chartData));
-            alert('Data saved successfully!');
-        }
-
-        function newChartSheet() {
-            document.getElementById('name').value = '';
-            document.getElementById('dob').value = '';
-            chart.series[0].setData([]);
-        }
-    </script>
 
 </script>
 
