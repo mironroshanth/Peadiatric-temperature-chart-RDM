@@ -198,189 +198,200 @@
     <br>
 
     <script>
-        let chart;
-        const data = [];
+    let chart;
+    const data = [];
 
-        function generateChart() {
-            if (chart) {
-                chart.destroy(); // Destroy previous chart instance if it exists
-            }
+    function generateChart() {
+        if (chart) {
+            console.log("Destroying previous chart...");
+            chart.destroy(); // Destroy previous chart instance if it exists
+        }
 
-            chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'line',
-                    events: {
-                        click: function (event) {
-                            var chart = this,
-                                point = chart.series[0].searchPoint(event, true);
+        console.log("Generating new chart with data:", data);
 
-                            if (point) {
-                                var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
-                                if (newTemperature) {
-                                    point.update(Number(newTemperature));
-                                }
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                events: {
+                    click: function (event) {
+                        var chart = this,
+                            point = chart.series[0].searchPoint(event, true);
+
+                        if (point) {
+                            var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
+                            if (newTemperature) {
+                                point.update(Number(newTemperature));
                             }
                         }
                     }
-                },
+                }
+            },
+            title: {
+                text: 'Temperature Record'
+            },
+            xAxis: {
+                type: 'datetime',
                 title: {
-                    text: 'Temperature Record'
+                    text: 'Time'
                 },
-                xAxis: {
-                    type: 'datetime', // Set xAxis type to datetime
-                    title: {
-                        text: 'Time'
-                    },
-                    labels: {
-                        format: '{value:%Y-%m-%d %H:%M}',
-                        rotation: -45,
-                        style: {
-                            fontSize: '10px'
-                        }
+                labels: {
+                    format: '{value:%Y-%m-%d %H:%M}',
+                    rotation: -45,
+                    style: {
+                        fontSize: '10px'
                     }
-                },
-                yAxis: {
-                    title: {
-                        text: 'Temperature (°F)'
-                    }
-                },
-                series: [{
-                    name: 'Temperature',
-                    color: '#7c0b9ed0',
-                    data: data // Initialize with existing data
-                }]
-            });
-        }
-
-        function addData() {
-            const dateInput = document.getElementById('dateInput').value;
-            const timeInput = document.getElementById('timeInput').value;
-            const tempInput = document.getElementById('tempInput').value;
-
-            if (!dateInput || !timeInput || tempInput === '') {
-                alert('Please enter date, time, and temperature.');
-                return;
-            }
-
-            // Create a JavaScript Date object from the input values
-            const dateTimeString = `${dateInput}T${timeInput}`;
-            const dateTime = new Date(dateTimeString).getTime();
-            const newTemperature = parseFloat(tempInput);
-
-            data.push([dateTime, newTemperature]);
-
-            if (chart) {
-                chart.series[0].setData(data, false); // Update series data
-                chart.redraw(); // Redraw chart
-            } else {
-                alert('Please generate the chart first.');
-            }
-        }
-
-        function calculateAge() {
-            const name = document.getElementById('name').value;
-            const dobInput = document.getElementById('dob').value;
-            if (!dobInput) {
-                document.getElementById('result').innerText = 'Please enter a valid date of birth.';
-                return;
-            }
-            if (!name) {
-                document.getElementById('result').innerText = 'Please enter your name.';
-                return;
-            }
-
-            const dob = new Date(dobInput);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            const dayDiff = today.getDate() - dob.getDate();
-
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-                age--;
-            }
-
-            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
-
-            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
-        }
-
-       function saveChartData() {
-    sessionStorage.setItem('sourcePage', 'Temperatures recorded in all five days');
-
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
-    const startDate = document.getElementById('startDate').value;
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
-    const fileData = { name, dob, startDate, temperatures }; // Include startDate when saving
-    const fileName = prompt('Enter a name for the file:', 'chart-data');
-
-    if (!fileName) {
-        alert('File name cannot be empty.');
-        return;
-    }
-
-    const key = 'file_' + fileName;
-    
-    // Check if file already exists and confirm overwrite
-    if (localStorage.getItem(key)) {
-        const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-        if (!overwrite) return;
-    }
-
-    localStorage.setItem(key, JSON.stringify(fileData));
-    alert('Data saved successfully as ' + fileName + '!');
-}
-        function printPageArea(areaId) {
-            const printContent = document.getElementById(areaId).innerHTML;
-            const originalContent = document.body.innerHTML;
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-    const savedData = sessionStorage.getItem('fileData');
-    
-    document.addEventListener('DOMContentLoaded', function() {
-    const savedData = sessionStorage.getItem('fileData');
-    
-    if (savedData) {
-        const fileData = JSON.parse(savedData);
-        document.getElementById('name').value = fileData.name;
-        document.getElementById('dob').value = fileData.dob;
-
-        if (fileData.startDate) {
-            document.getElementById('startDate').value = fileData.startDate;
-        }
-
-        fileData.temperatures.forEach(temp => {
-            data.push([temp.timestamp, temp.value]);
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature (°F)'
+                }
+            },
+            series: [{
+                name: 'Temperature',
+                color: '#7c0b9ed0',
+                data: data // Initialize with existing data
+            }]
         });
 
-        generateChart();
+        console.log("Chart generated with data:", data);
     }
 
-            const fileData = { name, dob, startDate, temperatures }; // Include startDate when saving
+    function addData() {
+        const dateInput = document.getElementById('dateInput').value;
+        const timeInput = document.getElementById('timeInput').value;
+        const tempInput = parseFloat(document.getElementById('tempInput').value);
 
-});
-       function newChartSheet() {
-    // Clear all input fields
-    document.getElementById('name').value = '';
-    document.getElementById('dob').value = '';
-    document.getElementById('startDate').value = '';
-    document.getElementById('dateInput').value = '';
-    document.getElementById('timeInput').value = '';
-    document.getElementById('tempInput').value = '';
+        if (!dateInput || !timeInput || isNaN(tempInput)) {
+            alert('Please enter a valid date, time, and temperature.');
+            return;
+        }
 
-    // Clear chart data and the global data array
-    if (chart) {
-        chart.series[0].setData([]); // Clear all data points
-        data.length = 0; // Clear the global data array
+        const dateTimeString = `${dateInput}T${timeInput}`;
+        const dateTime = new Date(dateTimeString).getTime();
+
+        console.log("Date:", dateInput, "Time:", timeInput, "Temperature:", tempInput);
+        console.log("Parsed DateTime:", dateTime);
+
+        data.push([dateTime, tempInput]);
+        console.log("Updated Data Array:", data);
+
+        if (chart) {
+            chart.series[0].setData(data, true);
+            console.log("Chart updated successfully.");
+        } else {
+            console.log("Chart not initialized.");
+            alert('Please generate the chart first.');
+        }
     }
-}
-    </script>
+
+    function calculateAge() {
+        const name = document.getElementById('name').value;
+        const dobInput = document.getElementById('dob').value;
+        if (!dobInput) {
+            document.getElementById('result').innerText = 'Please enter a valid date of birth.';
+            return;
+        }
+        if (!name) {
+            document.getElementById('result').innerText = 'Please enter your name.';
+            return;
+        }
+
+        const dob = new Date(dobInput);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        const dayDiff = today.getDate() - dob.getDate();
+
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+        }
+
+        const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
+        const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
+
+        document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
+    }
+
+    function saveChartData() {
+        sessionStorage.setItem('sourcePage', 'Temperatures recorded in all five days');
+
+        const name = document.getElementById('name').value;
+        const dob = document.getElementById('dob').value;
+        const startDate = document.getElementById('startDate').value;
+        const temperatures = chart.series[0].data.map(point => ({
+            timestamp: point.x,
+            value: point.y
+        }));
+        const fileData = { name, dob, startDate, temperatures };
+        const fileName = prompt('Enter a name for the file:', 'chart-data');
+
+        if (!fileName) {
+            alert('File name cannot be empty.');
+            return;
+        }
+
+        const key = 'file_' + fileName;
+
+        if (localStorage.getItem(key)) {
+            const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+            if (!overwrite) return;
+        }
+
+        localStorage.setItem(key, JSON.stringify(fileData));
+        alert('Data saved successfully as ' + fileName + '!');
+    }
+
+    function printPageArea(areaId) {
+        const printContent = document.getElementById(areaId).innerHTML;
+        const originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedData = sessionStorage.getItem('fileData');
+        
+        if (savedData) {
+            const fileData = JSON.parse(savedData);
+            document.getElementById('name').value = fileData.name;
+            document.getElementById('dob').value = fileData.dob;
+            document.getElementById('startDate').value = fileData.startDate;
+
+            fileData.temperatures.forEach(temp => {
+                data.push([temp.timestamp, temp.value]);
+            });
+
+            generateChart(); // Ensure chart is generated with the loaded data
+        }
+    });
+
+    function newChartSheet() {
+        // Clear all input fields
+        document.getElementById('name').value = '';
+        document.getElementById('dob').value = '';
+        document.getElementById('startDate').value = '';
+        document.getElementById('dateInput').value = '';
+        document.getElementById('timeInput').value = '';
+        document.getElementById('tempInput').value = '';
+
+        // Check if chart exists and clear it
+        if (chart) {
+            console.log("Clearing chart data...");
+            chart.series[0].setData([], true); // Clear chart data
+            console.log("Chart data cleared.");
+        } else {
+            console.log("Chart not found.");
+        }
+
+        // Clear the global data array
+        data.length = 0;
+        console.log("Global data array cleared:", data);
+
+        alert('Chart and inputs cleared for new entry!');
+    }
+</script>
+
 </body>
 </html>
