@@ -241,6 +241,11 @@
                 alert('File name cannot be empty.');
             }
         }
+        if (localStorage.getItem(key)) {
+    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+    if (!overwrite) return;
+}
+
         function newChartSheet() {
     // Clear all input fields
     document.getElementById('name').value = '';
