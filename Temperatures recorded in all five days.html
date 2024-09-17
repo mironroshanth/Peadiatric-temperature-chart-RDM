@@ -306,32 +306,34 @@
         }
 
        function saveChartData() {
+    sessionStorage.setItem('sourcePage', 'Temperatures recorded in all five days');
 
-            sessionStorage.setItem('sourcePage', 'Temperatures recorded in all five days');
-           
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-            const startDate = document.getElementById('startDate').value;
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-            const fileData = { name, dob, temperatures };
-            const fileName = prompt('Enter a name for the file:', 'chart-data');
-            
-            if (fileName) {
-                const key = 'file_' + fileName;
-                localStorage.setItem(key, JSON.stringify(fileData));
-                alert('Data saved successfully as ' + fileName + '!');
-            } else {
-                alert('File name cannot be empty.');
-            }
-        }
-        if (localStorage.getItem(key)) {
-    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-    if (!overwrite) return;
+    const name = document.getElementById('name').value;
+    const dob = document.getElementById('dob').value;
+    const startDate = document.getElementById('startDate').value;
+    const temperatures = chart.series[0].data.map(point => ({
+        timestamp: point.x,
+        value: point.y
+    }));
+    const fileData = { name, dob, startDate, temperatures }; // Include startDate when saving
+    const fileName = prompt('Enter a name for the file:', 'chart-data');
+
+    if (!fileName) {
+        alert('File name cannot be empty.');
+        return;
+    }
+
+    const key = 'file_' + fileName;
+    
+    // Check if file already exists and confirm overwrite
+    if (localStorage.getItem(key)) {
+        const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+        if (!overwrite) return;
+    }
+
+    localStorage.setItem(key, JSON.stringify(fileData));
+    alert('Data saved successfully as ' + fileName + '!');
 }
-
         function printPageArea(areaId) {
             const printContent = document.getElementById(areaId).innerHTML;
             const originalContent = document.body.innerHTML;
@@ -342,28 +344,29 @@
         document.addEventListener('DOMContentLoaded', function() {
     const savedData = sessionStorage.getItem('fileData');
     
+    document.addEventListener('DOMContentLoaded', function() {
+    const savedData = sessionStorage.getItem('fileData');
+    
     if (savedData) {
         const fileData = JSON.parse(savedData);
         document.getElementById('name').value = fileData.name;
         document.getElementById('dob').value = fileData.dob;
 
-        // Set the start date if it's available
         if (fileData.startDate) {
             document.getElementById('startDate').value = fileData.startDate;
         }
 
-        // Load the temperature data into the chart
         fileData.temperatures.forEach(temp => {
             data.push([temp.timestamp, temp.value]);
         });
 
-        // Generate the chart with the loaded data
         generateChart();
     }
+
             const fileData = { name, dob, startDate, temperatures }; // Include startDate when saving
 
 });
-        function newChartSheet() {
+       function newChartSheet() {
     // Clear all input fields
     document.getElementById('name').value = '';
     document.getElementById('dob').value = '';
@@ -372,12 +375,12 @@
     document.getElementById('timeInput').value = '';
     document.getElementById('tempInput').value = '';
 
-    // Clear chart data
-    const chart = Highcharts.charts[0]; // Assumes there's only one chart on the page
+    // Clear chart data and the global data array
     if (chart) {
         chart.series[0].setData([]); // Clear all data points
+        data.length = 0; // Clear the global data array
     }
-
+}
     </script>
 </body>
 </html>
