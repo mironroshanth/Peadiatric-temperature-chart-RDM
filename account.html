@@ -163,29 +163,30 @@
     }
 
     function loadFile() {
-        const selectedFile = document.querySelector('#fileList .selected');
-        if (!selectedFile) {
-            alert('Please select a file from the list.');
-            return;
-        }
-
-        const key = selectedFile.dataset.key;
-        const fileData = JSON.parse(localStorage.getItem(key));
-        
-        // Store fileData in sessionStorage to access it in the new chart page
-        sessionStorage.setItem('fileData', JSON.stringify(fileData));
-
-        // Check the source page and redirect accordingly
-        const sourcePage = sessionStorage.getItem('sourcePage');
-        if (sourcePage === 'Day 1') {
-            window.location.href = 'Day 1.html';
-        } else if (sourcePage === 'Temperatures recorded in all five days') {
-            window.location.href = 'Temperatures recorded in all five days.html';
-        } else {
-            // Default fallback
-            window.location.href = 'default.html';
-        }
+    const selectedFile = document.querySelector('#fileList .selected');
+    if (!selectedFile) {
+        alert('Please select a file from the list.');
+        return;
     }
+
+    const key = selectedFile.dataset.key;
+    const fileData = JSON.parse(localStorage.getItem(key));
+    
+    // Store fileData in sessionStorage to access it in the new chart page
+    sessionStorage.setItem('fileData', JSON.stringify(fileData));
+
+    // Check the source page and redirect accordingly
+    const sourcePage = sessionStorage.getItem('sourcePage');
+    if (sourcePage === 'Day 1') {
+        window.location.href = 'Day 1.html';
+    } else if (sourcePage === 'Temperatures recorded in all five days') {
+        window.location.href = 'Temperatures recorded in all five days.html';
+    } else {
+        // If sourcePage is not set or not recognized, stay on the same page or provide a fallback
+        alert('Source page not recognized. Staying on the current page.');
+    }
+}
+
 </script>
 
 
