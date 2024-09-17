@@ -105,7 +105,7 @@
         <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting started.html">Getting started</a>
+        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
@@ -217,19 +217,25 @@
         }
 
         function saveChartData() {
+            // Set the source page for redirection later
             sessionStorage.setItem('sourcePage', 'Day 1');
 
-           
             const name = document.getElementById('name').value;
             const dob = document.getElementById('dob').value;
-            
+
+            // Check if name and dob are provided
+            if (!name || !dob) {
+                alert('Please enter both name and date of birth.');
+                return;
+            }
+
             const temperatures = chart.series[0].data.map(point => ({
                 timestamp: point.x,
                 value: point.y
             }));
             const fileData = { name, dob, temperatures };
             const fileName = prompt('Enter a name for the file:', 'chart-data');
-            
+
             if (fileName) {
                 const key = 'file_' + fileName;
                 if (localStorage.getItem(key)) {
@@ -238,8 +244,10 @@
                 }
                 localStorage.setItem(key, JSON.stringify(fileData));
                 alert('Data saved successfully as ' + fileName + '!');
-                // Redirect to the appropriate page based on the source page
+
+                // Redirect based on source page
                 const sourcePage = sessionStorage.getItem('sourcePage');
+                console.log('Redirecting from source page:', sourcePage); // Debugging
                 switch (sourcePage) {
                     case 'Day 1':
                         window.location.href = 'Day%201.html';
@@ -249,6 +257,7 @@
                         break;
                     default:
                         window.location.href = 'Temperature%20chart.html';
+                        break;
                 }
             } else {
                 alert('File name cannot be empty.');
@@ -261,14 +270,13 @@
             document.getElementById('dob').value = '';
 
             // Clear chart data
-            const chart = Highcharts.charts[0]; // Assumes there's only one chart on the page
             if (chart) {
                 chart.series[0].setData([]); // Clear all data points
                 chart.setTitle({ text: 'Temperature Over Time' }); // Reset title if needed
             }
-
-            // Optionally, reinitialize chart settings if needed
         }
     </script>
 </body>
+</html>
+
 </html>
