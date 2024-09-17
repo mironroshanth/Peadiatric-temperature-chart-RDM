@@ -169,11 +169,8 @@
 
             // If there is file data, populate the fields and chart
             if (fileData) {
-                // Prefill the name and dob fields with the saved data
                 document.getElementById('name').value = fileData.name;
                 document.getElementById('dob').value = fileData.dob;
-
-                // Add the saved temperature data to the chart
                 fileData.temperatures.forEach(point => {
                     chart.series[0].addPoint([point.timestamp, point.value]);
                 });
@@ -220,9 +217,8 @@
         }
 
         function saveChartData() {
-
             sessionStorage.setItem('sourcePage', 'Day 1');
-            
+
             const name = document.getElementById('name').value;
             const dob = document.getElementById('dob').value;
             
@@ -235,31 +231,43 @@
             
             if (fileName) {
                 const key = 'file_' + fileName;
+                if (localStorage.getItem(key)) {
+                    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+                    if (!overwrite) return;
+                }
                 localStorage.setItem(key, JSON.stringify(fileData));
                 alert('Data saved successfully as ' + fileName + '!');
+                // Redirect to the appropriate page based on the source page
+                const sourcePage = sessionStorage.getItem('sourcePage');
+                switch (sourcePage) {
+                    case 'Day 1':
+                        window.location.href = 'Day%201.html';
+                        break;
+                    case 'Account':
+                        window.location.href = 'account.html';
+                        break;
+                    default:
+                        window.location.href = 'Temperature%20chart.html';
+                }
             } else {
                 alert('File name cannot be empty.');
             }
         }
-        if (localStorage.getItem(key)) {
-    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-    if (!overwrite) return;
-}
 
         function newChartSheet() {
-    // Clear all input fields
-    document.getElementById('name').value = '';
-    document.getElementById('dob').value = '';
+            // Clear all input fields
+            document.getElementById('name').value = '';
+            document.getElementById('dob').value = '';
 
-    // Clear chart data
-    const chart = Highcharts.charts[0]; // Assumes there's only one chart on the page
-    if (chart) {
-        chart.series[0].setData([]); // Clear all data points
-    }
+            // Clear chart data
+            const chart = Highcharts.charts[0]; // Assumes there's only one chart on the page
+            if (chart) {
+                chart.series[0].setData([]); // Clear all data points
+                chart.setTitle({ text: 'Temperature Over Time' }); // Reset title if needed
+            }
 
-    // Optionally, clear any additional chart settings if needed
-    // For example, you might want to reset the chart title or other properties
-}
-        </script>
+            // Optionally, reinitialize chart settings if needed
+        }
+    </script>
 </body>
 </html>
