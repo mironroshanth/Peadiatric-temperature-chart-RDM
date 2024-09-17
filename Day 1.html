@@ -123,9 +123,10 @@
                 <button onclick="calculateAge()">Calculate Age</button>
                 <p id="result"></p>
             </div>
-            <div id="container" style="width: 100%; height: 700px;"></div>
+            <div id="container" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
+
     <h3>
         <label for="temperature">Enter Temperature (°F):</label>
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
@@ -138,26 +139,23 @@
         let chart;
 
         document.addEventListener('DOMContentLoaded', function() {
-        const fileData = JSON.parse(sessionStorage.getItem('fileData'));
-
-        // If fileData exists, populate the fields and chart
-        if (fileData) {
-            document.getElementById('name').value = fileData.name;
-            document.getElementById('dob').value = fileData.dob;
-            fileData.temperatures.forEach(point => {
-                chart.series[0].addPoint([point.timestamp, point.value]);
+            chart = Highcharts.chart('container', {
+                chart: { type: 'line' },
+                title: { text: 'Temperature Over Time' },
+                xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
+                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
             });
-        }
 
-        // Existing chart initialization code
-        chart = Highcharts.chart('container', {
-            chart: { type: 'line' },
-            title: { text: 'Temperature Over Time' },
-            xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
-            yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-            series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
-        });
-    });
+            // Load existing data from session storage
+            const fileData = JSON.parse(sessionStorage.getItem('fileData'));
+            if (fileData) {
+                document.getElementById('name').value = fileData.name;
+                document.getElementById('dob').value = fileData.dob;
+                fileData.temperatures.forEach(point => {
+                    chart.series[0].addPoint([point.timestamp, point.value]);
+                });
+            }
 
             document.getElementById('addData').addEventListener('click', function() {
                 const temperature = parseFloat(document.getElementById('temperature').value);
@@ -191,44 +189,38 @@
             document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
         }
 
-        <script>
-    function saveChartData() {
-        const name = document.getElementById('name').value;
-        const dob = document.getElementById('dob').value;
+        function saveChartData() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
 
-        if (!name || !dob) {
-            alert('Please enter both name and date of birth.');
-            return;
-        }
-
-        const temperatures = chart.series[0].data.map(point => ({
-            timestamp: point.x,
-            value: point.y
-        }));
-
-        const fileData = { name, dob, temperatures };
-        const fileName = prompt('Enter a name for the file:', 'chart-data');
-        const sourcePage = 'Day 1'; // This page identifier
-
-        if (fileName) {
-            const key = 'file_' + fileName;
-            if (localStorage.getItem(key)) {
-                const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-                if (!overwrite) return;
+            if (!name || !dob) {
+                alert('Please enter both name and date of birth.');
+                return;
             }
 
-            // Save file data with additional sourcePage info
-            localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-            alert('Data saved successfully as ' + fileName + '!');
+            const temperatures = chart.series[0].data.map(point => ({
+                timestamp: point.x,
+                value: point.y
+            }));
 
-            // Redirect to relevant page after save
-            window.location.href = 'account.html'; // Redirecting to the account page
-        } else {
-            alert('File name cannot be empty.');
+            const fileData = { name, dob, temperatures };
+            const fileName = prompt('Enter a name for the file:', 'chart-data');
+            const sourcePage = 'Day 1'; // This page identifier
+
+            if (fileName) {
+                const key = 'file_' + fileName;
+                if (localStorage.getItem(key)) {
+                    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+                    if (!overwrite) return;
+                }
+
+                localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
+                alert('Data saved successfully as ' + fileName + '!');
+                window.location.href = 'account.html'; // Redirecting to the account page
+            } else {
+                alert('File name cannot be empty.');
+            }
         }
-    }
-
-
 
         function newChartSheet() {
             document.getElementById('name').value = '';
@@ -238,4 +230,3 @@
     </script>
 </body>
 </html>
-
