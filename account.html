@@ -177,17 +177,19 @@
 
     // Check the source page and redirect accordingly
     const sourcePage = sessionStorage.getItem('sourcePage');
-    console.log('Source page:', sourcePage); // Add this line to debug
 
-    if (sourcePage === 'Day 1') {
-        window.location.href = 'Day 1.html';
-    } else if (sourcePage === 'Temperatures recorded in all five days') {
-        window.location.href = 'Temperatures recorded in all five days.html';
+    // Redirect only if it's not the current page
+    if (sourcePage === 'Day 1' && window.location.pathname !== '/Day%201.html') {
+        window.location.href = 'Day%201.html';
+    } else if (sourcePage === 'Temperatures recorded in all five days' && window.location.pathname !== '/Temperatures%20recorded%20in%20all%20five%20days.html') {
+        window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
+    } else if (sourcePage === 'Account' && window.location.pathname !== '/account.html') {
+        window.location.href = 'account.html'; // Only redirect if not already on the account page
     } else {
-        // If sourcePage is not set or not recognized, stay on the same page or provide a fallback
         alert('Source page not recognized. Staying on the current page.');
     }
 }
+
 
 </script>
 
