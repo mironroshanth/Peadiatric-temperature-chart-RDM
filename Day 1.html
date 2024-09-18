@@ -226,7 +226,12 @@
             document.getElementById('name').value = '';
             document.getElementById('dob').value = '';
             chart.series[0].setData([]);
-        }
+        
+        data.length = 0;
+        console.log("Global data array cleared:", data);
+
+        alert('Chart and inputs cleared for new entry!');
+    }
     </script>
 </body>
 </html>
