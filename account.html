@@ -120,19 +120,17 @@
         <a href="Temperature chart.html" class="save-button">Go to Home</a>
     </div>
 
-
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const usernameElement = document.getElementById('username');
         const passwordElement = document.getElementById('password');
-        const fileList = document.getElementById('fileList');
 
         // Get user info from sessionStorage
         const loggedInUser = sessionStorage.getItem('loggedInUser');
         if (loggedInUser) {
             const userPassword = localStorage.getItem(loggedInUser);
-            usernameElement.textContent = Username: ${loggedInUser};
-            passwordElement.textContent = Password: ${userPassword};
+            usernameElement.textContent = `Username: ${loggedInUser}`;
+            passwordElement.textContent = `Password: ${userPassword}`;
 
             loadFileList();
         } else {
@@ -162,28 +160,6 @@
         });
     }
 
-    <script>
-    function loadFileList() {
-        const fileList = document.getElementById('fileList');
-        fileList.innerHTML = '';
-
-        Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('file_')) {
-                const listItem = document.createElement('li');
-                listItem.textContent = key.substring(5); // Remove 'file_' prefix
-                listItem.dataset.key = key;
-                listItem.addEventListener('click', function() {
-                    const selectedFile = document.querySelector('#fileList .selected');
-                    if (selectedFile) {
-                        selectedFile.classList.remove('selected');
-                    }
-                    this.classList.add('selected');
-                });
-                fileList.appendChild(listItem);
-            }
-        });
-    }
-
     function loadFile() {
         const selectedFile = document.querySelector('#fileList .selected');
         if (!selectedFile) {
@@ -192,28 +168,24 @@
         }
 
         const key = selectedFile.dataset.key;
-        const { fileData, sourcePage } = JSON.parse(localStorage.getItem(key));
+        const fileData = JSON.parse(localStorage.getItem(key));
 
-        // Save fileData in sessionStorage to access it in the corresponding page
-        sessionStorage.setItem('fileData', JSON.stringify(fileData));
+        // Store fileData in sessionStorage to access it in the new chart page
+        sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
 
-        // Redirect based on the source page (where the file was originally saved)
-        switch (sourcePage) {
-            case 'Day 1':
-                window.location.href = 'Day%201.html';
-                break;
-            case 'Temperatures recorded in all five days':
-                window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
-                break;
-            default:
-                window.location.href = 'account.html'; // Default case if source page is not recognized
+        // Check the source page in the fileData object and redirect accordingly
+        const sourcePage = fileData.sourcePage;
+        
+        if (sourcePage === 'Day 1' && window.location.pathname !== '/Day%201.html') {
+            window.location.href = 'Day%201.html';
+        } else if (sourcePage === 'Temperatures recorded in all five days' && window.location.pathname !== '/Temperatures%20recorded%20in%20all%20five%20days.html') {
+            window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
+        } else if (sourcePage === 'Account' && window.location.pathname !== '/account.html') {
+            window.location.href = 'account.html'; // Only redirect if not already on the account page
+        } else {
+            alert('Source page not recognized. Staying on the current page.');
         }
     }
-</script>
-
-</script>
-
-
-
+    </script>
 </body>
 </html>
