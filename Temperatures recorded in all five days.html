@@ -314,33 +314,37 @@
     }
 
     function saveChartData() {
-        sessionStorage.setItem('sourcePage', 'Temperatures recorded in all five days');
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
 
-        const name = document.getElementById('name').value;
-        const dob = document.getElementById('dob').value;
-        const startDate = document.getElementById('startDate').value;
-        const temperatures = chart.series[0].data.map(point => ({
-            timestamp: point.x,
-            value: point.y
-        }));
-        const fileData = { name, dob, startDate, temperatures };
-        const fileName = prompt('Enter a name for the file:', 'chart-data');
+            if (!name || !dob) {
+                alert('Please enter both name and date of birth.');
+                return;
+            }
 
-        if (!fileName) {
-            alert('File name cannot be empty.');
-            return;
+            const temperatures = chart.series[0].data.map(point => ({
+                timestamp: point.x,
+                value: point.y
+            }));
+
+            const fileData = { name, dob, temperatures };
+            const fileName = prompt('Enter a name for the file:', 'chart-data');
+            const sourcePage = 'Temperatures recorded in all five days'; // This page identifier
+
+            if (fileName) {
+                const key = 'file_' + fileName;
+                if (localStorage.getItem(key)) {
+                    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+                    if (!overwrite) return;
+                }
+
+                localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
+                alert('Data saved successfully as ' + fileName + ' in your account!');
+                window.location.href = 'account.html'; // Redirecting to the account page
+            } else {
+                alert('File name cannot be empty.');
+            }
         }
-
-        const key = 'file_' + fileName;
-
-        if (localStorage.getItem(key)) {
-            const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-            if (!overwrite) return;
-        }
-
-        localStorage.setItem(key, JSON.stringify(fileData));
-        alert('Data saved successfully as ' + fileName + '!');
-    }
 
     function printPageArea(areaId) {
         const printContent = document.getElementById(areaId).innerHTML;
