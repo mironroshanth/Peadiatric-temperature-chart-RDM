@@ -132,6 +132,7 @@
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
         <button id="addData">Add Data</button>
     </h3>
+    <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
     <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
     <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
 
@@ -232,6 +233,20 @@
 
         alert('Chart and inputs cleared for new entry!');
     }
+        function toggleGrid() {
+            isGridVisible = !isGridVisible;
+            chart.update({
+                xAxis: {
+                    gridLineColor: isGridVisible ? '#53535381' : null,
+                    gridLineWidth: isGridVisible ? 1 : 0
+                },
+                yAxis: {
+                    gridLineColor: isGridVisible ? '#53535381' : null,
+                    gridLineWidth: isGridVisible ? 1 : 0
+                }
+            });
+            document.getElementById('toggleGridButton').innerText = isGridVisible ? 'Hide Grid' : 'Show Grid';
+        }
     </script>
 </body>
 </html>
