@@ -128,20 +128,23 @@
             width: 200px;
             margin: 10px;
         }
+
         .ac-button {
-  background-color: #be0d0d;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
- }
+            background-color: #be0d0d;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         .ac-button:hover {
             background-color: #5e0404;
         }
+
         .ac-button:focus,
         .ac-button:active {
             outline: none;
@@ -192,14 +195,16 @@
             <div id="container" style="width: 100%; height: 600px;"></div>
         </div>
     </div>
-    <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button>
-    <br><br>
+    <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
+    <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
     <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
+    
     <br>
 
     <script>
     let chart;
     const data = [];
+    let isGridVisible = false; // Initialize grid visibility state
 
     function generateChart() {
         if (chart) {
@@ -240,12 +245,16 @@
                     style: {
                         fontSize: '10px'
                     }
-                }
+                },
+                gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
+                gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
             },
             yAxis: {
                 title: {
                     text: 'Temperature (°F)'
-                }
+                },
+                gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
+                gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
             },
             series: [{
                 name: 'Temperature',
@@ -314,37 +323,37 @@
     }
 
     function saveChartData() {
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
+        const name = document.getElementById('name').value;
+        const dob = document.getElementById('dob').value;
 
-            if (!name || !dob) {
-                alert('Please enter both name and date of birth.');
-                return;
-            }
-
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-
-            const fileData = { name, dob, temperatures };
-            const fileName = prompt('Enter a name for the file:', 'chart-data');
-            const sourcePage = 'Temperatures recorded in all five days'; // This page identifier
-
-            if (fileName) {
-                const key = 'file_' + fileName;
-                if (localStorage.getItem(key)) {
-                    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-                    if (!overwrite) return;
-                }
-
-                localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-                alert('Data saved successfully as ' + fileName + ' in your account!');
-                window.location.href = 'account.html'; // Redirecting to the account page
-            } else {
-                alert('File name cannot be empty.');
-            }
+        if (!name || !dob) {
+            alert('Please enter both name and date of birth.');
+            return;
         }
+
+        const temperatures = chart.series[0].data.map(point => ({
+            timestamp: point.x,
+            value: point.y
+        }));
+
+        const fileData = { name, dob, temperatures };
+        const fileName = prompt('Enter a name for the file:', 'chart-data');
+        const sourcePage = 'Temperatures recorded in all five days'; // This page identifier
+
+        if (fileName) {
+            const key = 'file_' + fileName;
+            if (localStorage.getItem(key)) {
+                const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+                if (!overwrite) return;
+            }
+
+            localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
+            alert('Data saved successfully as ' + fileName + ' in your account!');
+            window.location.href = 'account.html'; // Redirecting to the account page
+        } else {
+            alert('File name cannot be empty.');
+        }
+    }
 
     function printPageArea(areaId) {
         const printContent = document.getElementById(areaId).innerHTML;
@@ -395,7 +404,14 @@
 
         alert('Chart and inputs cleared for new entry!');
     }
-</script>
 
+    function toggleGrid() {
+        isGridVisible = !isGridVisible; // Toggle grid visibility
+        generateChart(); // Regenerate the chart with updated grid settings
+
+        const button = document.getElementById('toggleGridButton');
+        button.innerText = isGridVisible ? 'Hide Grid' : 'Show Grid'; // Update button text
+    }
+    </script>
 </body>
 </html>
