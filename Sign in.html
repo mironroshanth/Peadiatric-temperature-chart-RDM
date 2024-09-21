@@ -41,25 +41,31 @@
             border-radius: 4px;
         }
 
-        button {
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin: 5px 0;
-        }
-        button:hover {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        button:focus {
-    outline: none;
+       button {
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    margin: 5px 0;
+    font-size: 16px; /* Adjusted font size */
 }
+
+button:hover {
+    background: linear-gradient(45deg, #2575fc, #6a11cb);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Outline for accessibility */
+}
+
 
         p {
             margin-top: 10px;
