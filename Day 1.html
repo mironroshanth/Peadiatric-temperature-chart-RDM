@@ -12,22 +12,23 @@
         }
         .topnav {
             overflow: hidden;
-            background-color: #7c0b9ed0;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .topnav a {
             float: left;
-            color: #fefffb;
+            color: white;
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
             font-size: 17px;
+            transition: background 0.3s ease;
         }
         .topnav a:hover {
-            background-color: #ddd;
-            color: black;
+            background: rgba(255, 255, 255, 0.1);
         }
         .topnav a.active {
-            background-color: #000000;
+            background: #000000;
             color: white;
         }
         .container {
@@ -57,38 +58,38 @@
         button:hover {
             background-color: #5a0874;
         }
-        .save-button {
-            background-color: #7c0b9ed0;
+        .save-button{
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-weight: bold;
-            text-decoration: none;
             cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin: 5px 0;
         }
-        .save-button:hover {
-            background-color: #5a0874;
-        }
-        .save-button:focus,
-        .save-button:active {
-            outline: none;
-            box-shadow: none;
+        .save-button:hover{
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .ac-button {
-            background-color: #be0d0d;
+            background: linear-gradient(45deg, #be0d0d, #ff4d4d);
             color: white;
-            font-family: Arial, Helvetica, sans-serif;
             border: none;
             border-radius: 8px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-weight: bold;
-            text-decoration: none;
             cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
+
         .ac-button:hover {
-            background-color: #5e0404;
+            background: linear-gradient(45deg, #ff4d4d, #be0d0d);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
         .ac-button:focus,
         .ac-button:active {
             outline: none;
@@ -175,7 +176,7 @@
                 <input type="text" id="name" placeholder="Enter name">
                 <label for="dob">Date of Birth:</label>
                 <input type="date" id="dob">
-                <button onclick="calculateAge()">Calculate Age</button>
+                <button class="save-button"onclick="calculateAge()">Calculate Age</button>
                 <p id="result"></p>
             </div>
             <div id="container" style="width: 100%; height: 500px;"></div>
@@ -185,7 +186,7 @@
     <h3>
         <label for="temperature">Enter Temperature (°F):</label>
         <input type="number" id="temperature" min="95" max="105" step="0.1" />
-        <button id="addData">Add Data</button>
+        <button class="save-button" id="addData">Add Data</button>
     </h3>
     <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
     <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
@@ -196,13 +197,25 @@
         let isGridVisible = false; // Define globally to track grid visibility
 
         document.addEventListener('DOMContentLoaded', function() {
-            chart = Highcharts.chart('container', {
-                chart: { type: 'line' },
-                title: { text: 'Temperature Over Time' },
-                xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
-                yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-                series: [{ name: 'Temperature', color: '#7c0b9ed0', data: [] }]
-            });
+    chart = Highcharts.chart('container', {
+        chart: { type: 'line' },
+        title: { text: 'Temperature Over Time' },
+        xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
+        yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+        series: [{
+            name: 'Temperature',
+            color: {
+                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, // Horizontal gradient
+                stops: [
+                    [0, '#6a11cb'], // Start color
+                    [1, '#2575fc']  // End color
+                ]
+            },
+            data: []
+        }]
+    });
+
+
 
             // Load existing data from session storage
             const fileData = JSON.parse(sessionStorage.getItem('fileData'));
