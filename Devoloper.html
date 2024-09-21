@@ -59,7 +59,60 @@ body {
             outline: none;
             box-shadow: none;
         }
+/* Media queries for mobile responsiveness */
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 90%; /* Make container width 90% of the screen */
+                margin: 10px auto; /* Reduce margins */
+                padding: 15px; /* Adjust padding */
+            }
 
+            .topnav a {
+                float: none; /* Stack navigation links vertically */
+                display: block; /* Full width */
+                text-align: left; /* Left-align text */
+                font-size: 14px; /* Smaller font size */
+                padding: 10px; /* Reduce padding */
+            }
+
+            .topnav img {
+                width: 25px; /* Smaller image size */
+                height: 25px; /* Smaller image size */
+            }
+
+            button, .save-button, .ac-button {
+                font-size: 14px; /* Smaller button text size */
+                padding: 8px; /* Reduce padding */
+            }
+
+            h3, h1, h2 {
+                font-size: 18px; /* Reduce heading sizes */
+            }
+        }
+
+        @media screen and (max-width: 400px) {
+            .container {
+                width: 95%; /* Full width for very small screens */
+            }
+
+            .topnav a {
+                font-size: 12px; /* Further reduce font size */
+                padding: 8px; /* Further reduce padding */
+            }
+
+            button, .save-button, .ac-button {
+                font-size: 12px; /* Smaller button text size */
+                padding: 6px; /* Reduce padding */
+            }
+
+            h3, h1, h2 {
+                font-size: 16px; /* Further reduce heading sizes */
+            }
+
+            #container {
+                height: 300px; /* Reduce chart height */
+            }
+        }
 </style>
 </head>
 <body>
