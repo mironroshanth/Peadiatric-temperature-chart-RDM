@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -219,53 +220,60 @@
         console.log("Generating new chart with data:", data);
 
         chart = Highcharts.chart('container', {
-            chart: {
-                type: 'line',
-                events: {
-                    click: function (event) {
-                        var chart = this,
-                            point = chart.series[0].searchPoint(event, true);
+    chart: {
+        type: 'line',
+        events: {
+            click: function (event) {
+                var chart = this,
+                    point = chart.series[0].searchPoint(event, true);
 
-                        if (point) {
-                            var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
-                            if (newTemperature) {
-                                point.update(Number(newTemperature));
-                            }
-                        }
+                if (point) {
+                    var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
+                    if (newTemperature) {
+                        point.update(Number(newTemperature));
                     }
                 }
-            },
-            title: {
-                text: 'Temperature Record'
-            },
-            xAxis: {
-                type: 'datetime',
-                title: {
-                    text: 'Time'
-                },
-                labels: {
-                    format: '{value:%Y-%m-%d %H:%M}',
-                    rotation: -45,
-                    style: {
-                        fontSize: '10px'
-                    }
-                },
-                gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
-                gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
-            },
-            yAxis: {
-                title: {
-                    text: 'Temperature (°F)'
-                },
-                gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
-                gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
-            },
-            series: [{
-                name: 'Temperature',
-                color: '#7c0b9ed0',
-                data: data // Initialize with existing data
-            }]
-        });
+            }
+        }
+    },
+    title: {
+        text: 'Temperature Record'
+    },
+    xAxis: {
+        type: 'datetime',
+        title: {
+            text: 'Time'
+        },
+        labels: {
+            format: '{value:%Y-%m-%d %H:%M}',
+            rotation: -45,
+            style: {
+                fontSize: '10px'
+            }
+        },
+        gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
+        gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
+    },
+    yAxis: {
+        title: {
+            text: 'Temperature (°F)'
+        },
+        gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
+        gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
+    },
+    series: [{
+        name: 'Temperature',
+        color: {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, // Horizontal gradient
+            stops: [
+                [0, '#6a11cb'], // Start color
+                [1, '#2575fc']  // End color
+            ]
+        },
+        data: data // Initialize with existing data
+    }]
+});
+
 
         console.log("Chart generated with data:", data);
     }
