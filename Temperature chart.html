@@ -191,11 +191,19 @@
         display: none; /* Hide on mobile */
     }
 }
+ @media screen and (max-width: 768px) {
+    .mobile-header {
+        display: allow; /* Hide on mobile */
+        color: white; 
+        text-align: center; 
+        flex-grow: 1;
+    }
+}
 </style>
 </head>
 <body>
 <div class="topnav">
-    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 style="color: white; text-align: center; flex-grow: 1;">Temperature chart</h1>                                                   
+    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 class="mobile-header">Temperature chart</h1>                                                   
     
     <!-- Desktop navigation links -->
     <div class="desktop-nav">
