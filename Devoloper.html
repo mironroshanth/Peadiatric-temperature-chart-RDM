@@ -184,6 +184,19 @@
             height: 300px; /* Reduce chart height */
          }
         }
+        @media screen and (max-width: 768px) {
+    .desktop-header {
+        display: none; /* Hide on mobile */
+    }
+}
+ @media screen and (max-width: 768px) {
+    .mobile-header {
+        display: allow; /* Hide on mobile */
+        color: white; 
+        text-align: center; 
+        flex-grow: 1;
+    }
+}
         .content {
   padding-left: 16px;
   margin-top: 80px;
@@ -197,7 +210,7 @@
 </head>
 <body>
 <div class="topnav">
-    <span class="menu-icon" onclick="openNav()">&#9776;</span>
+    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 class="mobile-header">Temperature chart</h1>
     
     <!-- Desktop navigation links -->
     <div class="desktop-nav">
@@ -216,7 +229,7 @@
 </div>
 
 <!-- Sidebar navigation -->
-<div id="mySidebar" class="sidebar">
+<div id="mySidebar" class="sidebar"><h1 style="padding-left: 16px;">Menu</h1>
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
@@ -238,5 +251,14 @@
   </h3>
 </div>
 </body>
+    <script>
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "250px"; // Set the width of the sidebar when opened
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0"; // Set the width of the sidebar to 0 when closed
+    }
+</script>
 </html>
 
