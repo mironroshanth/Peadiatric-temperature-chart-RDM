@@ -5,210 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Temperature Chart</title>
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/tc.jpeg') no-repeat center center fixed;
-            background-size: cover;
-        }
-        .topnav {
-            overflow: hidden;
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 3px 16px;
-        }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/tc.jpeg') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .topnav {
+        overflow: hidden;
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 3px 16px;
+    }
+    .topnav .menu-icon {
+        font-size: 26px;
+        cursor: pointer;
+        color: white;
+        display: none; /* Initially hidden */
+    }
+    .topnav .logo {
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+    }
+    .topnav a.active {
+        background: #000000;
+        color: white;
+    }
+    .sidebar {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        background-color: #302e2e;
+        overflow-x: hidden;
+        transition: 0.3s;
+        padding-top: 60px;
+    }
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+    .sidebar a:hover {
+        color: #f1f1f1b7;
+    }
+    .sidebar .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 36px;
+        margin-left: 50px;
+        color: white;
+    }
+    .sidebar a.active {
+        background: #0f0f0f;
+        color: white;
+    }
+    .container {
+        margin-top: 60px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        margin: 80px auto;
+    }
+    input {
+        margin: 10px 0;
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+    button {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin: 5px 0;
+    }
+    button:hover {
+        background: linear-gradient(45deg, #2575fc, #6a11cb);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .save-button {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin: 5px 0;
+        text-decoration: none; /* Add this line to remove underline */
+    }
+    .ac-button {
+        background: linear-gradient(45deg, #be0d0d, #ff4d4d);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ac-button:hover {
+        background: linear-gradient(45deg, #ff4d4d, #be0d0d);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    /* Full navigation links for desktop view */
+    .topnav .desktop-nav {
+        display: flex;
+        margin: 0;
+    }
+    .desktop-nav a {
+        color: white;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+        transition: background 0.3s ease;
+    }
+    .desktop-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    /* Media queries for mobile responsiveness */
+    @media screen and (max-width: 768px) {
         .topnav .menu-icon {
-            font-size: 26px;
-            cursor: pointer;
-            color: white;
-            display: none; /* Initially hidden */
+            display: block; /* Show hamburger icon on mobile */
         }
-        .topnav .logo {
-            color: white;
-            font-size: 20px;
-            text-decoration: none;
-        }
-        .topnav a.active {
-            background: #000000;
-            color: white;
-        }
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 2;
-            top: 0;
-            left: 0;
-            background-color: #302e2e;
-            overflow-x: hidden;
-            transition: 0.3s;
-            padding-top: 60px;
-        }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            color: #f1f1f1b7;
-        }
-        .sidebar .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 36px;
-            margin-left: 50px;
-            color: white;
-        }
-        .sidebar a.active {
-            background: #0f0f0f;
-            color: white;
-        }
-        .container {
-            margin-top: 60px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            margin: 80px auto;
-        }
-        input {
-            margin: 10px 0;
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        button {
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin: 5px 0;
-        }
-        button:hover {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .save-button {
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin: 5px 0;
-            text-decoration: none; /* Add this line to remove underline */
-        }
-        .ac-button {
-            background: linear-gradient(45deg, #be0d0d, #ff4d4d);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-        .ac-button:hover {
-            background: linear-gradient(45deg, #ff4d4d, #be0d0d);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        /* Full navigation links for desktop view */
         .topnav .desktop-nav {
-            display: flex;
-            margin: 0;
+            display: none; /* Hide desktop nav on mobile */
         }
-        .desktop-nav a {
-            color: white;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 18px;
-            transition: background 0.3s ease;
+        h3, h1, h2 {
+            font-size: 20px; /* Further reduce heading sizes */
         }
-        .desktop-nav a:hover {
-            background: rgba(255, 255, 255, 0.1);
+    }
+    @media screen and (max-width: 600px) {
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            padding: 15px;
         }
-        /* Media queries for mobile responsiveness */
-        @media screen and (max-width: 768px) {
-            .topnav .menu-icon {
-                display: block; /* Show hamburger icon on mobile */
-            }
-            .topnav .desktop-nav {
-                display: none; /* Hide desktop nav on mobile */
-            }
+        button, .ac-button {
+            font-size: 14px;
+            padding: 8px;
         }
-        @media screen and (max-width: 600px) {
-            .container {
-                width: 90%;
-                margin: 20px auto;
-                padding: 15px;
-            }
-            button, .ac-button {
-                font-size: 14px;
-                padding: 8px;
-            }
+    }
+    @media screen and (max-width: 400px) {
+        .container {
+            width: 95%;
         }
-        @media screen and (max-width: 400px) {
-            .container {
-                width: 95%;
-            }
-            button, .ac-button {
-                font-size: 12px;
-                padding: 6px;
-            }
+        button, .ac-button {
+            font-size: 12px;
+            padding: 6px;
         }
-    </style>
+        h3, h1, h2 {
+            font-size: 16px; /* Further reduce heading sizes */
+        }
+
+            #container {
+            height: 300px; /* Reduce chart height */
+         }
+        }
+</style>
 </head>
 <body>
-    <div class="topnav">
-        <span class="menu-icon" onclick="openNav()">&#9776;</span>
-        
-        <!-- Desktop navigation links -->
-        <div class="desktop-nav">
-            <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-            <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
-        </a>
-            <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
-        </div>
-    </div>
-
-    <!-- Sidebar navigation -->
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-        <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+<div class="topnav">
+    <span class="menu-icon" onclick="openNav()">&#9776;</span>
+    
+    <!-- Desktop navigation links -->
+    <div class="desktop-nav">
+        <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
+        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
+    </a>
+        <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
+        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
     </div>
+</div>
+
+<!-- Sidebar navigation -->
+<div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+    <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
+</div>
     <br><br><br><br>
     <div style="padding: 16px; color: white;">
         
