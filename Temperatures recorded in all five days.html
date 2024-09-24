@@ -153,16 +153,16 @@
     }
     /* Media queries for mobile responsiveness */
     @media screen and (max-width: 768px) {
-        .topnav .menu-icon {
-            display: block; /* Show hamburger icon on mobile */
-        }
-        .topnav .desktop-nav {
-            display: none; /* Hide desktop nav on mobile */
-        }
-        h3, h1, h2 {
-            font-size: 20px; /* Further reduce heading sizes */
-        }
+    .topnav .menu-icon {
+        display: block; /* Show hamburger icon on mobile */
     }
+    .topnav .desktop-nav {
+        display: none; /* Hide desktop nav on mobile */
+    }
+    .mobile-header {
+        display: block; /* Show mobile header on mobile */
+    }
+}
     @media screen and (max-width: 600px) {
         .container {
             width: 90%;
@@ -193,6 +193,11 @@
         @media screen and (max-width: 768px) {
     .desktop-header {
         display: none; /* Hide on mobile */
+    }
+}
+        @media screen and (min-width: 769px) {
+    .mobile-header {
+        display: none; /* Hide mobile header on desktop */
     }
 }
  @media screen and (max-width: 768px) {
