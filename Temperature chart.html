@@ -54,7 +54,7 @@
         padding: 10px 15px;
         text-decoration: none;
         font-size: 18px;
-        color: #818181;
+        color: white;
         display: block;
         transition: 0.3s;
     }
@@ -214,7 +214,7 @@
 </div>
 
 <!-- Sidebar navigation -->
-<div id="mySidebar" class="sidebar">
+<div id="mySidebar" class="sidebar"><h1 style="padding-left: 16px;">Menu</h1>
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
     <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
@@ -268,275 +268,14 @@
         </ul>
     </div>
 </body>
-</html>
+<script>
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "250px"; // Set the width of the sidebar when opened
+    }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Temperature Chart</title>
-    <style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        margin: 0;
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0"; // Set the width of the sidebar to 0 when closed
     }
-    .topnav {
-        overflow: hidden;
-        background: linear-gradient(45deg, #6a11cb, #2575fc);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 3px 16px;
-    }
-    .topnav .menu-icon {
-        font-size: 26px;
-        cursor: pointer;
-        color: white;
-        display: none; /* Initially hidden */
-    }
-    .topnav .logo {
-        color: white;
-        font-size: 20px;
-        text-decoration: none;
-    }
-    .topnav a.active {
-        background: #000000;
-        color: white;
-    }
-    .sidebar {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        z-index: 2;
-        top: 0;
-        left: 0;
-        background-color: #302e2e;
-        overflow-x: hidden;
-        transition: 0.3s;
-        padding-top: 60px;
-    }
-    .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 18px;
-        color: #818181;
-        display: block;
-        transition: 0.3s;
-    }
-    .sidebar a:hover {
-        color: #f1f1f1b7;
-    }
-    .sidebar .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 36px;
-        margin-left: 50px;
-        color: white;
-    }
-    .sidebar a.active {
-        background: #0f0f0f;
-        color: white;
-    }
-    .container {
-        margin-top: 60px;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 300px;
-        margin: 80px auto;
-    }
-    input {
-        margin: 10px 0;
-        padding: 8px;
-        width: 100%;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
-    button {
-        background: linear-gradient(45deg, #6a11cb, #2575fc);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 20px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 100%;
-        margin: 5px 0;
-    }
-    button:hover {
-        background: linear-gradient(45deg, #2575fc, #6a11cb);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    .save-button {
-        background: linear-gradient(45deg, #6a11cb, #2575fc);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 20px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 100%;
-        margin: 5px 0;
-        text-decoration: none; /* Add this line to remove underline */
-    }
-    .ac-button {
-        background: linear-gradient(45deg, #be0d0d, #ff4d4d);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 20px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-    .ac-button:hover {
-        background: linear-gradient(45deg, #ff4d4d, #be0d0d);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    /* Full navigation links for desktop view */
-    .topnav .desktop-nav {
-        display: flex;
-        margin: 0;
-    }
-    .desktop-nav a {
-        color: white;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 17px;
-        transition: background 0.3s ease;
-    }
-    .desktop-nav a:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-    /* Media queries for mobile responsiveness */
-    @media screen and (max-width: 768px) {
-        .topnav .menu-icon {
-            display: block; /* Show hamburger icon on mobile */
-        }
-        .topnav .desktop-nav {
-            display: none; /* Hide desktop nav on mobile */
-        }
-        h3, h1, h2 {
-            font-size: 20px; /* Further reduce heading sizes */
-        }
-    }
-    @media screen and (max-width: 600px) {
-        .container {
-            width: 90%;
-            margin: 20px auto;
-            padding: 15px;
-        }
-        button, .ac-button {
-            font-size: 14px;
-            padding: 8px;
-        }
-    }
-    @media screen and (max-width: 400px) {
-        .container {
-            width: 95%;
-        }
-        button, .ac-button {
-            font-size: 12px;
-            padding: 6px;
-        }
-        h3, h1, h2 {
-            font-size: 16px; /* Further reduce heading sizes */
-        }
+</script>
 
-            #container {
-            height: 300px; /* Reduce chart height */
-         }
-        }
-        @media screen and (max-width: 768px) {
-    .desktop-header {
-        display: none; /* Hide on mobile */
-    }
-}
-</style>
-</head>
-<body>
-<div class="topnav">
-    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 style="color: white; text-align: center; flex-grow: 1;">Temperature chart</h1>                                                   
-    
-    <!-- Desktop navigation links -->
-    <div class="desktop-nav">
-        <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
-    </a>
-        <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
-    </div>
-</div>
-
-<!-- Sidebar navigation -->
-<div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-    <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
-</div>
-    <br><br><br><br>
-    <div style="padding: 16px;">
-        
-        <div class="desktop-header">
-    <h1 style="display: none;">Temperature Chart</h1> <!-- This will be hidden on mobile -->
-</div>
-        <h3>This open-source website can be used to mark down body temperatures of a person. The temperature chart website is used for medical purposes.
-        <p>For more details about the usage methods of this website, go through the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">getting started</a> interface. To know more about this website, read the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">about this website</a> page.</p>
-            
-        </h3><br><br>
-            <div>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html" class="save-button">Record live temperatures</a><br><br><br><br>
-            
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html" class="save-button">Record fever history</a>    
-        </div>
-        <br><br>
-        <ul>
-            <li><h1>About this website</h1></li>
-            <h3>
-                <p>This is a website used for marking the temperatures of a person. All the copyrights of this website belong to Daniel Miron Roshhanth. The website is created for medical purposes. If you are new to this website you can find the user instructions by <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">clicking here</a> or by reading the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a> interface.</p>
-                <ul>
-                    <li>You can input the temperature recorded by your thermometer. Each time you input the temperature, the website will automatically mark down the time the data was given.</li>
-                    <li>The temperature you input is in °F. If it is in °C, you can convert it to °F by going to the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">temperature converter</a> in the menu bar.</li>
-                    <li>In this version, the time will be marked in <a href="https://www.google.com/search?q=indian+standard+time">Indian Standard Time</a>.</li>
-                </ul>
-            </h3>
-        </ul>
-        <br><br>
-        <ul>
-            <li><h1>Getting Started</h1></li>
-            <h3>
-                <p>This website is used to mark the body temperatures of a person. The methods of using the app are explained below.</p>
-                <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Screenshot%20(91).png" width="800" height="500" /><br>
-                <p>First, click the new chart button on the menu bar to access the page as shown above. Then enter the name and date of birth (MM-DD-YYYY) of the person as shown below.</p>
-                <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Screenshot%20(92).png" width="800" height="500" /><br>
-                <p>Then input the temperature you measured. Make sure the temperature was measured at the time you input the value. Also note that the temperature you enter is in Fahrenheit. If it is in Celsius, <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">click here</a> to convert to Fahrenheit.</p>
-                <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Screenshot%20(93).png" width="800" height="500" /><br>
-                <p>Click the 'Add data' button to mark the temperature as shown below.</p>
-                <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Screenshot%20(94).png" width="800" height="500" /><br>
-                <p>Click the 'Save' button to save the file.</p>
-                <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Screenshot%20(95).png" width="800" height="500" /><br>
-            </h3>
-        </ul>
-    </div>
-</body>
 </html>
