@@ -285,6 +285,8 @@
     </div>
     <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
     <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
+    <button id="shareGmail" class="save-button" onclick="shareGmail()">Share via Gmail</button><br><br>
+    <button id="shareWhatsApp" class="save-button" onclick="shareWhatsApp()">Share via WhatsApp</button><br><br>
     <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
     
     <br>
@@ -514,6 +516,47 @@
     function closeNav() {
         document.getElementById("mySidebar").style.width = "0"; // Set the width of the sidebar to 0 when closed
     }
+        function shareGmail() {
+    const name = document.getElementById('name').value;
+    const dob = document.getElementById('dob').value;
+
+    if (!name || !dob) {
+        alert('Please enter both name and date of birth before sharing.');
+        return;
+    }
+
+    const temperatures = chart.series[0].data.map(point => ({
+        timestamp: point.x,
+        value: point.y
+    }));
+
+    const emailBody = `Name: ${name}\nDate of Birth: ${dob}\nTemperatures: ${JSON.stringify(temperatures, null, 2)}`;
+    const mailtoLink = `mailto:?subject=Shared Temperature Data&body=${encodeURIComponent(emailBody)}`;
+
+    window.location.href = mailtoLink;
+}
+
+function shareWhatsApp() {
+    const name = document.getElementById('name').value;
+    const dob = document.getElementById('dob').value;
+
+    if (!name || !dob) {
+        alert('Please enter both name and date of birth before sharing.');
+        return;
+    }
+
+    const temperatures = chart.series[0].data.map(point => ({
+        timestamp: point.x,
+        value: point.y
+    }));
+
+    const message = `Name: ${name}\nDate of Birth: ${dob}\nTemperatures: ${JSON.stringify(temperatures, null, 2)}`;
+    const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappLink, '_blank');
+}
+
+
     </script>
 </body>
 </html>
