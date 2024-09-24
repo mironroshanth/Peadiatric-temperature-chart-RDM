@@ -9,8 +9,7 @@
     body {
         font-family: Arial, Helvetica, sans-serif;
         margin: 0;
-        background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/tc.jpeg') no-repeat center center fixed;
-        background-size: cover;
+        background-color: rgba(255, 255, 255, 0.699);
     }
     .topnav {
         overflow: hidden;
@@ -239,15 +238,15 @@
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
 </div>
 <div style="padding-left: 16px;">
-    <h1 style="color: white;">New Chart</h1>
-    <h2 style="color: white;">
+    <h1 >New Chart</h1>
+    <h2 >
         <ul>
             <li>
                 What is a 'New Chart'?
-                <h3 style="color: white;">
+                <h3 >
                     <ul>
                         <li>
-                            <b>New chart</b> is the name defined for the chart in this page. You can use a new chart to record body temperatures of a person, live. The speaciality of this chart is that it can mark tempretures at your present time when you input the data(temperatures)
+                            <b>New chart</b> is the name defined for the chart on this page. You can use a new chart to record the body temperatures of a person, then and there. The speciality of this chart is that it can mark temperatures at your present time when you input the data (temperatures).
                         </li>
                     </ul>
                 </h3>
@@ -277,7 +276,8 @@
 </h2>
 <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
 <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
-<button id="shareGmail" class="save-button" onclick="shareGmail()">Share via Gmail</button><br><br>
+<button class="save-button" onclick="printPrintableArea()">Print</button><br><br>
+<button id="shareGmail" class="save-button" onclick="shareGmail()">Share via Email</button><br><br>
 <button id="shareWhatsApp" class="save-button" onclick="shareWhatsApp()">Share via WhatsApp</button><br><br>
 <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
 
@@ -448,6 +448,31 @@ function shareWhatsApp() {
 
     window.open(whatsappLink, '_blank');
 }
+function printPrintableArea() {
+    const printableArea = document.getElementById('printableArea');
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(`
+        <html>
+        <head>
+            <title>Print</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                }
+                h1, h2, h3 {
+                    color: #333;
+                }
+            </style>
+        </head>
+        <body onload="window.print(); window.close();">
+            ${printableArea.innerHTML}
+        </body>
+        </html>
+    `);
+    newWindow.document.close();
+}
+
 
 
 </script>
