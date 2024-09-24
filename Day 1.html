@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,163 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Chart</title>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/tc.jpeg') no-repeat center center fixed;
-            background-size: cover;
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/tc.jpeg') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .topnav {
+        overflow: hidden;
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 3px 16px;
+    }
+    .topnav .menu-icon {
+        font-size: 26px;
+        cursor: pointer;
+        color: white;
+        display: none; /* Initially hidden */
+    }
+    .topnav .logo {
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+    }
+    .topnav a.active {
+        background: #000000;
+        color: white;
+    }
+    .sidebar {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        background-color: #302e2e;
+        overflow-x: hidden;
+        transition: 0.3s;
+        padding-top: 60px;
+    }
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+    .sidebar a:hover {
+        color: #f1f1f1b7;
+    }
+    .sidebar .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 36px;
+        margin-left: 50px;
+        color: white;
+    }
+    .sidebar a.active {
+        background: #0f0f0f;
+        color: white;
+    }
+    .container {
+        margin-top: 60px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        margin: 80px auto;
+    }
+    input {
+        margin: 10px 0;
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+    button {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin: 5px 0;
+    }
+    button:hover {
+        background: linear-gradient(45deg, #2575fc, #6a11cb);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .save-button {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin: 5px 0;
+        text-decoration: none; /* Add this line to remove underline */
+    }
+    .ac-button {
+        background: linear-gradient(45deg, #be0d0d, #ff4d4d);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ac-button:hover {
+        background: linear-gradient(45deg, #ff4d4d, #be0d0d);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    /* Full navigation links for desktop view */
+    .topnav .desktop-nav {
+        display: flex;
+        margin: 0;
+    }
+    .desktop-nav a {
+        color: white;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+        transition: background 0.3s ease;
+    }
+    .desktop-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    /* Media queries for mobile responsiveness */
+    @media screen and (max-width: 768px) {
+        .topnav .menu-icon {
+            display: block; /* Show hamburger icon on mobile */
         }
-        .topnav {
-            overflow: hidden;
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .topnav .desktop-nav {
+            display: none; /* Hide desktop nav on mobile */
         }
-        .topnav a {
-            float: left;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 17px;
-            transition: background 0.3s ease;
-        }
-        .topnav a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .topnav a.active {
-            background: #000000;
-            color: white;
-        }
+    }
+    @media screen and (max-width: 600px) {
         .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            width: 90%;
             margin: 20px auto;
+            padding: 15px;
         }
-        input {
-            margin: 10px 0;
+        button, .ac-button {
+            font-size: 14px;
             padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
-        button {
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin: 5px 0;
+    }
+    @media screen and (max-width: 400px) {
+        .container {
+            width: 95%;
         }
-        button:hover {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        button, .ac-button {
+            font-size: 12px;
+            padding: 6px;
         }
-        .save-button{
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin: 5px 0;
-        }
-        .save-button:hover{
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .ac-button {
-            background: linear-gradient(45deg, #be0d0d, #ff4d4d);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .ac-button:hover {
-            background: linear-gradient(45deg, #ff4d4d, #be0d0d);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .ac-button:focus,
-        .ac-button:active {
-            outline: none;
-            box-shadow: none;
-        }
-        /* Media queries for mobile responsiveness */
-        @media screen and (max-width: 600px) {
-            .container {
-                width: 90%; /* Make container width 90% of the screen */
-                margin: 10px auto; /* Reduce margins */
-                padding: 15px; /* Adjust padding */
-            }
-
-            .topnav a {
-                float: none; /* Stack navigation links vertically */
-                display: block; /* Full width */
-                text-align: left; /* Left-align text */
-                font-size: 14px; /* Smaller font size */
-                padding: 10px; /* Reduce padding */
-            }
-
-            .topnav img {
-                width: 25px; /* Smaller image size */
-                height: 25px; /* Smaller image size */
-            }
-
-            button, .save-button, .ac-button {
-                font-size: 14px; /* Smaller button text size */
-                padding: 8px; /* Reduce padding */
-            }
-
-            h3, h1, h2 {
-                font-size: 18px; /* Reduce heading sizes */
-            }
-        }
-
-        @media screen and (max-width: 400px) {
-            .container {
-                width: 95%; /* Full width for very small screens */
-            }
-
-            .topnav a {
-                font-size: 12px; /* Further reduce font size */
-                padding: 8px; /* Further reduce padding */
-            }
-
-            button, .save-button, .ac-button {
-                font-size: 12px; /* Smaller button text size */
-                padding: 6px; /* Reduce padding */
-            }
-
-            h3, h1, h2 {
-                font-size: 16px; /* Further reduce heading sizes */
-            }
-
-            #container {
-                height: 300px; /* Reduce chart height */
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <div class="topnav">
+<div class="topnav">
+    <span class="menu-icon" onclick="openNav()">&#9776;</span>
+    
+    <!-- Desktop navigation links -->
+    <div class="desktop-nav">
         <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-            <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
-        </a>
+        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
+    </a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
         <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
@@ -172,169 +198,180 @@
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
     </div>
+</div>
 
-    <div style="padding-left: 16px;">
-        <h1 style="color: white;">New Chart</h1>
-        <h2 style="color: white;">
-            <ul>
-                <li>
-                    What is a 'New Chart'?
-                    <h3 style="color: white;"></h3>
-                        <ul>
-                            <li>
-                                <b>New chart</b> is the name defined for the chart in this page. You can use a new chart to record body temperatures of a person, live. The speaciality of this chart is that it can mark tempretures at your present time when you input the data(temperatures)
-                            </li>
-                        </ul>
-                    </h3>
-                </li>
-            </ul>
+<!-- Sidebar navigation -->
+<div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
+</div>
+<div style="padding-left: 16px;">
+    <h1 style="color: white;">New Chart</h1>
+    <h2 style="color: white;">
+        <ul>
+            <li>
+                What is a 'New Chart'?
+                <h3 style="color: white;"></h3>
+                    <ul>
+                        <li>
+                            <b>New chart</b> is the name defined for the chart in this page. You can use a new chart to record body temperatures of a person, live. The speaciality of this chart is that it can mark tempretures at your present time when you input the data(temperatures)
+                        </li>
+                    </ul>
+                </h3>
+            </li>
+        </ul>
 
 
-        </h2>
-        <div id="printableArea">
-            <div class="container">
-                <h2>Details</h2>
-                <label for="name">Name:</label>
-                <input type="text" id="name" placeholder="Enter name">
-                <label for="dob">Date of Birth:</label>
-                <input type="date" id="dob">
-                <button class="save-button"onclick="calculateAge()">Calculate Age</button>
-                <p id="result"></p>
-            </div>
-            <div id="container" style="width: 100%; height: 500px; border-radius: 8px;"></div>
-        </div>
-    </div>
-
-    <h2 style="color: #ffffff;">
-        <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert your temperature):</label>
-        <input type="number" id="temperature" min="95" max="105" step="0.1" />
-        <button class="save-button" id="addData">Add Data</button>
     </h2>
-    <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
-    <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
-    <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
+    <div id="printableArea">
+        <div class="container">
+            <h2>Details</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter name">
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob">
+            <button class="save-button"onclick="calculateAge()">Calculate Age</button>
+            <p id="result"></p>
+        </div>
+        <div id="container" style="width: 100%; height: 500px; border-radius: 8px;"></div>
+    </div>
+</div>
 
-    <script>
-        let chart;
-        let isGridVisible = false; // Define globally to track grid visibility
+<h2 style="color: #ffffff;">
+    <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert your temperature):</label>
+    <input type="number" id="temperature" min="95" max="105" step="0.1" />
+    <button class="save-button" id="addData">Add Data</button>
+</h2>
+<button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
+<button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
+<button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
 
-        document.addEventListener('DOMContentLoaded', function() {
-    chart = Highcharts.chart('container', {
-        chart: { type: 'line' },
-        title: { text: 'Temperature Over Time' },
-        xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
-        yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
-        series: [{
-            name: 'Temperature',
-            color: {
-                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, // Horizontal gradient
-                stops: [
-                    [0, '#6a11cb'], // Start color
-                    [1, '#2575fc']  // End color
-                ]
-            },
-            data: []
-        }]
+<script>
+    let chart;
+    let isGridVisible = false; // Define globally to track grid visibility
+
+    document.addEventListener('DOMContentLoaded', function() {
+chart = Highcharts.chart('container', {
+    chart: { type: 'line' },
+    title: { text: 'Temperature Over Time' },
+    xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
+    yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+    series: [{
+        name: 'Temperature',
+        color: {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, // Horizontal gradient
+            stops: [
+                [0, '#6a11cb'], // Start color
+                [1, '#2575fc']  // End color
+            ]
+        },
+        data: []
+    }]
+});
+
+
+
+        // Load existing data from session storage
+        const fileData = JSON.parse(sessionStorage.getItem('fileData'));
+        if (fileData) {
+            document.getElementById('name').value = fileData.name;
+            document.getElementById('dob').value = fileData.dob;
+            fileData.temperatures.forEach(point => {
+                chart.series[0].addPoint([point.timestamp, point.value]);
+            });
+        }
+
+        document.getElementById('addData').addEventListener('click', function() {
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            if (temperature >= 95 && temperature <= 105) {
+                const now = new Date().getTime();
+                chart.series[0].addPoint([now, temperature]);
+            } else {
+                alert('Please enter a valid temperature value between 95 and 105.');
+            }
+        });
     });
 
+    function calculateAge() {
+        const name = document.getElementById('name').value;
+        const dobInput = document.getElementById('dob').value;
+        if (!dobInput || !name) {
+            document.getElementById('result').innerText = 'Please enter both name and date of birth.';
+            return;
+        }
 
+        const dob = new Date(dobInput);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        const dayDiff = today.getDate() - dob.getDate();
 
-            // Load existing data from session storage
-            const fileData = JSON.parse(sessionStorage.getItem('fileData'));
-            if (fileData) {
-                document.getElementById('name').value = fileData.name;
-                document.getElementById('dob').value = fileData.dob;
-                fileData.temperatures.forEach(point => {
-                    chart.series[0].addPoint([point.timestamp, point.value]);
-                });
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
+        const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
+        const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
+
+        document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
+    }
+
+    function saveChartData() {
+        const name = document.getElementById('name').value;
+        const dob = document.getElementById('dob').value;
+
+        if (!name || !dob) {
+            alert('Please enter both name and date of birth.');
+            return;
+        }
+
+        const temperatures = chart.series[0].data.map(point => ({
+            timestamp: point.x,
+            value: point.y
+        }));
+
+        const fileData = { name, dob, temperatures };
+        const fileName = prompt('Enter a name for the file:', 'chart-data');
+        const sourcePage = 'Day 1'; // This page identifier
+
+        if (fileName) {
+            const key = 'file_' + fileName;
+            if (localStorage.getItem(key)) {
+                const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+                if (!overwrite) return;
             }
 
-            document.getElementById('addData').addEventListener('click', function() {
-                const temperature = parseFloat(document.getElementById('temperature').value);
-                if (temperature >= 95 && temperature <= 105) {
-                    const now = new Date().getTime();
-                    chart.series[0].addPoint([now, temperature]);
-                } else {
-                    alert('Please enter a valid temperature value between 95 and 105.');
-                }
-            });
+            localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
+            alert('Data saved successfully as ' + fileName + ' in your account!');
+            window.location.href = 'account.html'; // Redirecting to the account page
+        } else {
+            alert('File name cannot be empty.');
+        }
+    }
+
+    function newChartSheet() {
+        document.getElementById('name').value = '';
+        document.getElementById('dob').value = '';
+        chart.series[0].setData([]);
+        alert('Chart and inputs cleared for new entry!');
+    }
+
+    function toggleGrid() {
+        isGridVisible = !isGridVisible;
+        chart.update({
+            xAxis: {
+                gridLineColor: isGridVisible ? '#53535381' : null,
+                gridLineWidth: isGridVisible ? 1 : 0
+            },
+            yAxis: {
+                gridLineColor: isGridVisible ? '#53535381' : null,
+                gridLineWidth: isGridVisible ? 1 : 0
+            }
         });
-
-        function calculateAge() {
-            const name = document.getElementById('name').value;
-            const dobInput = document.getElementById('dob').value;
-            if (!dobInput || !name) {
-                document.getElementById('result').innerText = 'Please enter both name and date of birth.';
-                return;
-            }
-
-            const dob = new Date(dobInput);
-            const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            const dayDiff = today.getDate() - dob.getDate();
-
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
-            const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-            const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
-
-            document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
-        }
-
-        function saveChartData() {
-            const name = document.getElementById('name').value;
-            const dob = document.getElementById('dob').value;
-
-            if (!name || !dob) {
-                alert('Please enter both name and date of birth.');
-                return;
-            }
-
-            const temperatures = chart.series[0].data.map(point => ({
-                timestamp: point.x,
-                value: point.y
-            }));
-
-            const fileData = { name, dob, temperatures };
-            const fileName = prompt('Enter a name for the file:', 'chart-data');
-            const sourcePage = 'Day 1'; // This page identifier
-
-            if (fileName) {
-                const key = 'file_' + fileName;
-                if (localStorage.getItem(key)) {
-                    const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-                    if (!overwrite) return;
-                }
-
-                localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-                alert('Data saved successfully as ' + fileName + ' in your account!');
-                window.location.href = 'account.html'; // Redirecting to the account page
-            } else {
-                alert('File name cannot be empty.');
-            }
-        }
-
-        function newChartSheet() {
-            document.getElementById('name').value = '';
-            document.getElementById('dob').value = '';
-            chart.series[0].setData([]);
-            alert('Chart and inputs cleared for new entry!');
-        }
-
-        function toggleGrid() {
-            isGridVisible = !isGridVisible;
-            chart.update({
-                xAxis: {
-                    gridLineColor: isGridVisible ? '#53535381' : null,
-                    gridLineWidth: isGridVisible ? 1 : 0
-                },
-                yAxis: {
-                    gridLineColor: isGridVisible ? '#53535381' : null,
-                    gridLineWidth: isGridVisible ? 1 : 0
-                }
-            });
-            document.getElementById('toggleGridButton').innerText = isGridVisible ? 'Hide Grid' : 'Show Grid';
-        }
-    </script>
+        document.getElementById('toggleGridButton').innerText = isGridVisible ? 'Hide Grid' : 'Show Grid';
+    }
+</script>
 </body>
 </html>
