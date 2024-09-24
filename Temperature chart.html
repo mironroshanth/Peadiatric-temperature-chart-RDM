@@ -22,7 +22,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 16px;
+            padding: 3px 16px;
         }
         .topnav .menu-icon {
             font-size: 26px;
@@ -35,6 +35,10 @@
             font-size: 20px;
             text-decoration: none;
         }
+        .topnav a.active {
+            background: #000000;
+            color: white;
+        }
         .sidebar {
             height: 100%;
             width: 0;
@@ -42,7 +46,7 @@
             z-index: 2;
             top: 0;
             left: 0;
-            background-color: #111;
+            background-color: #302e2e;
             overflow-x: hidden;
             transition: 0.3s;
             padding-top: 60px;
@@ -56,7 +60,7 @@
             transition: 0.3s;
         }
         .sidebar a:hover {
-            color: #f1f1f1;
+            color: #f1f1f1b7;
         }
         .sidebar .close-btn {
             position: absolute;
@@ -64,6 +68,10 @@
             right: 20px;
             font-size: 36px;
             margin-left: 50px;
+            color: white;
+        }
+        .sidebar a.active {
+            background: #0f0f0f;
             color: white;
         }
         .container {
@@ -128,13 +136,13 @@
         /* Full navigation links for desktop view */
         .topnav .desktop-nav {
             display: flex;
-            gap: 15px;
+            margin: 0;
         }
         .desktop-nav a {
             color: white;
             padding: 14px 16px;
             text-decoration: none;
-            font-size: 17px;
+            font-size: 18px;
             transition: background 0.3s ease;
         }
         .desktop-nav a:hover {
@@ -180,7 +188,7 @@
             <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
             <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
         </a>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+            <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
@@ -194,22 +202,23 @@
     <!-- Sidebar navigation -->
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+        <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
     </div>
-
+    <br><br><br><br>
     <div style="padding: 16px; color: white;">
+        
         <h1>Temperature Chart</h1>
         <h3>This open-source website can be used to mark down body temperatures of a person. The temperature chart website is used for medical purposes.
         <p>For more details about the usage methods of this website, go through the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">getting started</a> interface. To know more about this website, read the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">about this website</a> page.</p>
             
-        </h3>
+        </h3><br><br>
             <div>
-            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html" class="save-button">Create temperature chart</a>
+            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html" class="save-button">Record live temperatures</a><br><br><br><br>
             
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html" class="save-button">Record fever history</a>    
         </div>
