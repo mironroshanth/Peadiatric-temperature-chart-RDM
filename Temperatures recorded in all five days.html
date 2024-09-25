@@ -301,99 +301,116 @@
     let isGridVisible = false; // Initialize grid visibility state
 
     function generateChart() {
-        if (chart) {
-            console.log("Destroying previous chart...");
-            chart.destroy(); // Destroy previous chart instance if it exists
-        }
+    if (chart) {
+        console.log("Destroying previous chart...");
+        chart.destroy(); // Destroy previous chart instance if it exists
+    }
 
-        console.log("Generating new chart with data:", data);
+    console.log("Generating new chart with data:", data);
 
-        chart = Highcharts.chart('container', {
-    chart: {
-        type: 'line',
-        events: {
-            click: function (event) {
-                var chart = this,
-                    point = chart.series[0].searchPoint(event, true);
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'line',
+            events: {
+                click: function (event) {
+                    var chart = this,
+                        point = chart.series[0].searchPoint(event, true);
 
-                if (point) {
-                    var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
-                    if (newTemperature) {
-                        point.update(Number(newTemperature));
+                    if (point) {
+                        var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
+                        if (newTemperature) {
+                            point.update(Number(newTemperature));
+                        }
                     }
                 }
             }
-        }
-    },
-    title: {
-        text: 'Temperature Record'
-    },
-    xAxis: {
-        type: 'datetime',
-        title: {
-            text: 'Time'
         },
-        labels: {
-            format: '{value:%Y-%m-%d %H:%M}',
-            rotation: -45,
-            style: {
-                fontSize: '10px'
+        title: {
+            text: 'Temperature Record'
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Time'
+            },
+            labels: {
+                format: '{value:%Y-%m-%d %H:%M}',
+                rotation: -45,
+                style: {
+                    fontSize: '10px'
+                }
+            },
+            gridLineWidth: isGridVisible ? 1 : 0,
+            gridLineColor: isGridVisible ? '#53535381' : null
+        },
+        yAxis: {
+            title: {
+                text: 'Temperature (°F)'
+            },
+            gridLineWidth: isGridVisible ? 1 : 0,
+            gridLineColor: isGridVisible ? '#53535381' : null
+        },
+        tooltip: {
+            formatter: function () {
+                return '<b>Date: </b>' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) + 
+                       '<br/><b>Temperature: </b>' + this.y + '°F';
             }
         },
-        gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
-        gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
-    },
-    yAxis: {
-        title: {
-            text: 'Temperature (°F)'
-        },
-        gridLineWidth: isGridVisible ? 1 : 0, // Set grid line visibility
-        gridLineColor: isGridVisible ? '#53535381' : null // Set grid line color
-    },
-    series: [{
-        name: 'Temperature',
-        color: {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, // Horizontal gradient
-            stops: [
-                [0, '#6a11cb'], // Start color
-                [1, '#2575fc']  // End color
-            ]
-        },
-        data: data // Initialize with existing data
-    }]
-});
+        series: [{
+            name: 'Temperature',
+            color: {
+                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+                stops: [
+                    [0, '#6a11cb'],
+                    [1, '#2575fc']
+                ]
+            },
+            data: data,
+            dataLabels: {
+                enabled: true,
+                format: '{y}°F',
+                style: {
+                    color: '#000',
+                    fontSize: '10px',
+                    textOutline: 'none'
+                }
+            }
+        }]
+    });
 
+    console.log("Chart generated with data:", data);
+}
 
-        console.log("Chart generated with data:", data);
-    }
 
     function addData() {
-        const dateInput = document.getElementById('dateInput').value;
-        const timeInput = document.getElementById('timeInput').value;
-        const tempInput = parseFloat(document.getElementById('tempInput').value);
+    const dateInput = document.getElementById('dateInput').value;
+    const timeInput = document.getElementById('timeInput').value;
+    const tempInput = parseFloat(document.getElementById('tempInput').value);
 
-        if (!dateInput || !timeInput || isNaN(tempInput)) {
-            alert('Please enter a valid date, time, and temperature.');
-            return;
-        }
-
-        const dateTimeString = `${dateInput}T${timeInput}`;
-        const dateTime = new Date(dateTimeString).getTime();
-
-        console.log("Date:", dateInput, "Time:", timeInput, "Temperature:", tempInput);
-        console.log("Parsed DateTime:", dateTime);
-
-        data.push([dateTime, tempInput]);
-        console.log("Updated Data Array:", data);
-
-        if (chart) {
-            chart.series[0].setData(data, true);
-            console.log("Chart updated successfully.");
-        } else {
-            console.log("Chart not initialized.");
-            alert('Please generate the chart first.');
-        }
+    if (!dateInput || !timeInput || isNaN(tempInput)) {
+        alert('Please enter a valid date, time, and temperature.');
+        return;
     }
+
+    // Combine date and time
+    const dateTimeString = `${dateInput}T${timeInput}`;
+    const dateTime = new Date(dateTimeString).getTime();
+
+    console.log("Date:", dateInput, "Time:", timeInput, "Temperature:", tempInput);
+    console.log("Parsed DateTime:", dateTime);
+
+    // Push the data point with date and temperature
+    data.push([dateTime, tempInput]);
+    console.log("Updated Data Array:", data);
+
+    if (chart) {
+        chart.series[0].setData(data, true);
+        console.log("Chart updated successfully.");
+    } else {
+        console.log("Chart not initialized.");
+        alert('Please generate the chart first.');
+    }
+}
 
     function calculateAge() {
         const name = document.getElementById('name').value;
