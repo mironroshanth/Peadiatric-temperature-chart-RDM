@@ -83,22 +83,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const usernameElement = document.getElementById('username');
-        const passwordElement = document.getElementById('password');
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    const usernameElement = document.getElementById('username');
+    const passwordElement = document.getElementById('password');
 
-        // Get user info from sessionStorage
-        const loggedInUser = sessionStorage.getItem('loggedInUser');
-        if (loggedInUser) {
-            const userPassword = localStorage.getItem(loggedInUser);
-            usernameElement.textContent = `Username: ${loggedInUser}`;
-            passwordElement.textContent = `Password: ${userPassword}`;
+    if (loggedInUser) {
+        const userPassword = localStorage.getItem(loggedInUser);
+        usernameElement.textContent = `Username: ${loggedInUser}`;
+        passwordElement.textContent = `Password: ${userPassword}`;
+        loadFileList(); // Load files associated with this user
+    } else {
+        usernameElement.textContent = 'No user logged in';
+        passwordElement.textContent = '';
+    }
+});
+console.log('Logged in user:', loggedInUser);
+console.log('User password:', userPassword);
 
-            loadFileList();
-        } else {
-            usernameElement.textContent = 'No user logged in';
-            passwordElement.textContent = '';
-        }
-    });
 
     function loadFileList() {
         const fileList = document.getElementById('fileList');
@@ -214,7 +215,7 @@
 
         const qrcodeContainer = document.getElementById('qrcode');
         qrcodeContainer.innerHTML = ''; // Clear previous QR code
-        const qrCodeUrl = `https://yourwebsite.com/account.html?user=${encodeURIComponent(loggedInUser)}`;
+        const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html?user=${encodeURIComponent(loggedInUser)}`;
 
         const qrCode = new QRCode(qrcodeContainer, {
             text: qrCodeUrl,
@@ -227,6 +228,12 @@
 
         document.getElementById('printQRCode').style.display = 'inline-block'; // Show print button
     }
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+const loggedInUser = getQueryParam('user');
 
     function printQRCode() {
         const qrcodeContainer = document.getElementById('qrcode');
