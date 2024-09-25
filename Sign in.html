@@ -41,31 +41,30 @@
             border-radius: 4px;
         }
 
-       button {
-    background: linear-gradient(45deg, #6a11cb, #2575fc);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    width: 100%;
-    margin: 5px 0;
-    font-size: 16px; /* Adjusted font size */
-}
+        button {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            margin: 5px 0;
+            font-size: 16px;
+        }
 
-button:hover {
-    background: linear-gradient(45deg, #2575fc, #6a11cb);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px); /* Slight lift effect on hover */
-}
+        button:hover {
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
 
-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Outline for accessibility */
-}
-
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+        }
 
         p {
             margin-top: 10px;
@@ -80,82 +79,71 @@ button:focus {
         a:hover {
             text-decoration: underline;
         }
+
         /* Media queries for mobile responsiveness */
         @media screen and (max-width: 600px) {
             .container {
-                width: 90%; /* Make container width 90% of the screen */
-                margin: 10px auto; /* Reduce margins */
-                padding: 15px; /* Adjust padding */
+                width: 90%;
+                margin: 10px auto;
+                padding: 15px;
             }
-
-            .topnav a {
-                float: none; /* Stack navigation links vertically */
-                display: block; /* Full width */
-                text-align: left; /* Left-align text */
-                font-size: 14px; /* Smaller font size */
-                padding: 10px; /* Reduce padding */
-            }
-
-            .topnav img {
-                width: 25px; /* Smaller image size */
-                height: 25px; /* Smaller image size */
-            }
-
-            button, .save-button, .ac-button {
-                font-size: 14px; /* Smaller button text size */
-                padding: 8px; /* Reduce padding */
-            }
-
-            h3, h1, h2 {
-                font-size: 18px; /* Reduce heading sizes */
+            button {
+                font-size: 14px;
+                padding: 8px;
             }
         }
 
         @media screen and (max-width: 400px) {
             .container {
-                width: 95%; /* Full width for very small screens */
+                width: 95%;
             }
-
-            .topnav a {
-                font-size: 12px; /* Further reduce font size */
-                padding: 8px; /* Further reduce padding */
-            }
-
-            button, .save-button, .ac-button {
-                font-size: 12px; /* Smaller button text size */
-                padding: 6px; /* Reduce padding */
-            }
-
-            h3, h1, h2 {
-                font-size: 16px; /* Further reduce heading sizes */
-            }
-
-            #container {
-                height: 300px; /* Reduce chart height */
+            button {
+                font-size: 12px;
+                padding: 6px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="form-container">
+        <div id="initial-question">
+            <h1>Do you already have an account?</h1>
+            <button id="yes-btn">Yes</button>
+            <button id="no-btn">No</button>
+        </div>
+        
+        <div id="form-container" style="display: none;">
             <form id="auth-form">
-                <h1>Sign up to Temperature Chart</h1>
                 <h2 id="form-title">Sign Up</h2>
                 <label for="username">Username:</label>
                 <input type="text" id="username" required>
                 <label for="password">Password:</label>
                 <input type="password" id="password" required>
                 <button type="submit">Submit</button>
-                <p id="toggle-link">Already have an account? <a href="#" id="toggle-form">Sign In</a></p>
+                <p id="toggle-link">Don't have an account? <a href="#" id="toggle-form">Sign Up</a></p>
             </form>
         </div>
     </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('auth-form');
+            const formContainer = document.getElementById('form-container');
+            const initialQuestion = document.getElementById('initial-question');
             const toggleLink = document.getElementById('toggle-form');
             const formTitle = document.getElementById('form-title');
+
+            // Show the form based on the user's choice
+            document.getElementById('yes-btn').addEventListener('click', function () {
+                initialQuestion.style.display = 'none';
+                formTitle.textContent = 'Sign In';
+                formContainer.style.display = 'block';
+            });
+
+            document.getElementById('no-btn').addEventListener('click', function () {
+                initialQuestion.style.display = 'none';
+                formTitle.textContent = 'Sign Up';
+                formContainer.style.display = 'block';
+            });
 
             // Toggle between sign up and sign in
             toggleLink.addEventListener('click', function (e) {
@@ -167,11 +155,11 @@ button:focus {
                     formTitle.textContent = 'Sign Up';
                     toggleLink.textContent = 'Already have an account? Sign In';
                 }
-                form.reset();
+                document.getElementById('auth-form').reset();
             });
 
             // Handle form submission
-            form.addEventListener('submit', function (e) {
+            document.getElementById('auth-form').addEventListener('submit', function (e) {
                 e.preventDefault();
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
@@ -186,14 +174,13 @@ button:focus {
                         alert('Sign Up successful! You can now Sign In.');
                         formTitle.textContent = 'Sign In';
                         toggleLink.textContent = 'Don\'t have an account? Sign Up';
-                        form.reset();
+                        document.getElementById('auth-form').reset();
                     }
                 } else {
                     if (existingUser === password) {
                         alert('Sign In successful!');
-                        // Store username in sessionStorage and redirect
                         sessionStorage.setItem('loggedInUser', username);
-                        window.location.href = 'Temperature chart.html'; // Redirect to the second page
+                        window.location.href = 'Temperature chart.html';
                     } else {
                         alert('Invalid username or password.');
                     }
