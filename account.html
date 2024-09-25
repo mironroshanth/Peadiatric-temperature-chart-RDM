@@ -39,6 +39,9 @@
         #qrcode {
             text-align: center;
         }
+        .selected {
+            background-color: #e0e0e0; /* Highlight selected file */
+        }
     </style>
 </head>
 <body>
@@ -48,36 +51,29 @@
         <p id="password">Password: </p>
         <h2>Your Charts</h2>
         <ul id="fileList"></ul>
-        <button id="loadFile" class="save-button" onclick="loadFile()">Load Selected File</button><br><br>
-        <button id="downloadFile" class="save-button" onclick="downloadFile()">Download Selected File</button><br><br>
-        <input type="file" id="uploadFile" class="save-button" onchange="uploadFile(event)" style="display: none;" />
-        <label for="uploadFile" class="save-button">Upload Chart</label><br><br>
-        <button id="deleteFile" class="save-button" onclick="deleteFile()">Delete Selected File</button><br><br>
-        <!-- Get QR Code Button -->
-        <button id="getQRCode" class="save-button" onclick="generateQRCode()">Get QR Code</button><br><br>
-        <div id="qrcode"></div><br><br>
-        <!-- Print QR Code Button (hidden initially) -->
-        <button id="printQRCode" class="save-button" onclick="printQRCode()" style="display: none;">Print QR Code</button><br><br>
+        <button id="loadFile" onclick="loadFile()">Load Selected File</button>
+        <button id="downloadFile" onclick="downloadFile()">Download Selected File</button>
+        <input type="file" id="uploadFile" onchange="uploadFile(event)" style="display: none;" />
+        <label for="uploadFile" class="save-button">Upload Chart</label>
+        <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button>
+        <button id="getQRCode" onclick="generateQRCode()">Get QR Code</button>
+        <div id="qrcode"></div>
+        <button id="printQRCode" onclick="printQRCode()" style="display: none;">Print QR Code</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
     <script>
-    // Add event listener to load the page and retrieve user info
     document.addEventListener('DOMContentLoaded', function() {
         const usernameElement = document.getElementById('username');
         const passwordElement = document.getElementById('password');
-
-        // Get username from the URL parameter
         const urlParams = new URLSearchParams(window.location.search);
         const loggedInUser = urlParams.get('user') || sessionStorage.getItem('loggedInUser');
-        
+
         if (loggedInUser) {
             const userPassword = localStorage.getItem(loggedInUser);
             usernameElement.textContent = `Username: ${loggedInUser}`;
             passwordElement.textContent = `Password: ${userPassword}`;
-
-            sessionStorage.setItem('loggedInUser', loggedInUser); // Save the logged-in user in session storage
+            sessionStorage.setItem('loggedInUser', loggedInUser);
             loadFileList();
         } else {
             usernameElement.textContent = 'No user logged in';
@@ -92,7 +88,7 @@
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith('file_')) {
                 const listItem = document.createElement('li');
-                listItem.textContent = key.substring(5); // Remove 'file_' prefix
+                listItem.textContent = key.substring(5);
                 listItem.dataset.key = key;
                 listItem.addEventListener('click', function() {
                     const selectedFile = document.querySelector('#fileList .selected');
@@ -115,8 +111,6 @@
 
         const key = selectedFile.dataset.key;
         const fileData = JSON.parse(localStorage.getItem(key));
-
-        // Store fileData in sessionStorage to access it in the new chart page
         sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
 
         const sourcePage = fileData.sourcePage;
@@ -150,21 +144,22 @@
 
     function uploadFile(event) {
         const file = event.target.files[0];
-        if (!file) {
-            return;
-        }
+        if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function (event) {
-            const fileData = JSON.parse(event.target.result);
-
-            if (fileData.fileData) {
-                const fileName = `file_${file.name.replace('.json', '')}`;
-                localStorage.setItem(fileName, JSON.stringify(fileData));
-                loadFileList();
-                alert('File uploaded successfully!');
-            } else {
-                alert('Invalid file format.');
+        reader.onload = function(event) {
+            try {
+                const fileData = JSON.parse(event.target.result);
+                if (fileData.fileData) {
+                    const fileName = `file_${file.name.replace('.json', '')}`;
+                    localStorage.setItem(fileName, JSON.stringify(fileData));
+                    loadFileList();
+                    alert('File uploaded successfully!');
+                } else {
+                    alert('Invalid file format.');
+                }
+            } catch (e) {
+                alert('Error parsing file: ' + e.message);
             }
         };
         reader.readAsText(file);
@@ -183,24 +178,21 @@
             localStorage.removeItem(key);
             selectedFile.remove();
             alert(`File "${selectedFile.textContent}" has been deleted.`);
+            loadFileList(); // Refresh the file list after deletion
         }
     }
 
-    // Generate QR code for the user's account page
     function generateQRCode() {
         const loggedInUser = sessionStorage.getItem('loggedInUser');
-        
+
         if (!loggedInUser) {
             alert('No user is logged in. Please log in first.');
             return;
         }
 
         const accountUrl = `${window.location.origin}/account.html?user=${encodeURIComponent(loggedInUser)}`;
-        
-        // Clear any existing QR code
         document.getElementById('qrcode').innerHTML = '';
-        
-        // Generate a new QR code
+
         new QRCode(document.getElementById('qrcode'), {
             text: accountUrl,
             width: 200,
@@ -208,21 +200,16 @@
         });
 
         alert('QR code generated! You can scan it to open your account page.');
-
-        // Show the Print QR Code button
         document.getElementById('printQRCode').style.display = 'inline-block';
     }
 
-    // Print the QR code
     function printQRCode() {
         const qrCodeElement = document.getElementById('qrcode');
-
-        if (qrCodeElement.innerHTML.trim() === '') {
+        if (!qrCodeElement.innerHTML.trim()) {
             alert('Please generate a QR code first.');
             return;
         }
 
-        // Open the print dialog and print only the QR code
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
             <html>
