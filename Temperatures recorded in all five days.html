@@ -302,11 +302,8 @@
 
     function generateChart() {
     if (chart) {
-        console.log("Destroying previous chart...");
         chart.destroy(); // Destroy previous chart instance if it exists
     }
-
-    console.log("Generating new chart with data:", data);
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -317,7 +314,7 @@
                         point = chart.series[0].searchPoint(event, true);
 
                     if (point) {
-                        var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x));
+                        var newTemperature = prompt("Enter a new temperature value for " + Highcharts.dateFormat('%A, %dth of %m %Y  %H:%M', point.x));
                         if (newTemperature) {
                             point.update(Number(newTemperature));
                         }
@@ -352,8 +349,11 @@
         },
         tooltip: {
             formatter: function () {
-                return '<b>Date: </b>' + Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) + 
-                       '<br/><b>Temperature: </b>' + this.y + '°F';
+                // Display the date and the custom time entered by the user
+                const customTime = this.point.customTime;
+                return `<b>Date: </b>${Highcharts.dateFormat('%Y-%m-%d', this.x)}<br/>` +
+                       `<b>Time: </b>${customTime}<br/>` +
+                       `<b>Temperature: </b>${this.y}°F`;
             }
         },
         series: [{
@@ -382,6 +382,7 @@
 }
 
 
+
     function addData() {
     const dateInput = document.getElementById('dateInput').value;
     const timeInput = document.getElementById('timeInput').value;
@@ -392,25 +393,28 @@
         return;
     }
 
-    // Combine date and time
+    // Combine the date and time from inputs
     const dateTimeString = `${dateInput}T${timeInput}`;
-    const dateTime = new Date(dateTimeString).getTime();
+    const dateTime = new Date(dateTimeString).getTime(); // Convert to a timestamp
 
-    console.log("Date:", dateInput, "Time:", timeInput, "Temperature:", tempInput);
-    console.log("Parsed DateTime:", dateTime);
+    // Push the data point (dateTime for x-axis and tempInput for y-axis)
+    data.push({
+        x: dateTime, // Time value from the inputs
+        y: tempInput,
+        customTime: timeInput // Store the exact input time for reference
+    });
 
-    // Push the data point with date and temperature
-    data.push([dateTime, tempInput]);
+    console.log("Added Data:", { dateInput, timeInput, tempInput });
     console.log("Updated Data Array:", data);
 
+    // Update chart if it exists
     if (chart) {
         chart.series[0].setData(data, true);
-        console.log("Chart updated successfully.");
     } else {
-        console.log("Chart not initialized.");
         alert('Please generate the chart first.');
     }
 }
+
 
     function calculateAge() {
         const name = document.getElementById('name').value;
