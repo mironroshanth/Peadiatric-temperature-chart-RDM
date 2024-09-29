@@ -36,20 +36,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .save-button {
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin: 5px 0;
             font-size: 14px;
-        }
-        .save-button:hover {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         #qrcode {
             text-align: center;
@@ -71,9 +58,9 @@
         <ul class="abc" id="fileList"></ul>
         <button id="loadFile" onclick="loadFile()">Load Selected File</button>
         <button id="downloadFile" onclick="downloadFile()">Download Selected File</button>
-        <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button><br><br>
+        <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button>
         <input type="file" id="uploadFile" onchange="uploadFile(event)" style="display: none;" />
-        <label for="uploadFile" class="save-button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upload Chart&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><br><br>
+        <label for="uploadFile" class="save-button">Upload Chart</label>
         <p>By getting a QR code, you will be able to show your saved files to another person by scanning it.</p>
         <button id="getQRCode" onclick="generateQRCode()">Get QR Code</button>
         <div id="qrcode"></div>
@@ -82,172 +69,164 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const loggedInUser = getQueryParam('user');  // Fetch username from URL parameter, not sessionStorage
-    const usernameElement = document.getElementById('username');
-    const passwordElement = document.getElementById('password');
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = sessionStorage.getItem('loggedInUser');
+            const usernameElement = document.getElementById('username');
+            const passwordElement = document.getElementById('password');
 
-    if (loggedInUser) {
-        const userPassword = localStorage.getItem(loggedInUser);  // Retrieve user-specific password from localStorage
-        usernameElement.textContent = `Username: ${loggedInUser}`;
-        passwordElement.textContent = `Password: ${userPassword}`;
-        loadFileList(loggedInUser);  // Pass the username to load user-specific files
-    } else {
-        usernameElement.textContent = 'No user found';
-        passwordElement.textContent = '';
-    }
-});
-
-console.log('Logged in user:', loggedInUser);
-console.log('User password:', userPassword);
-
-
-    function loadFileList(username) {
-    const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';  // Clear existing file list
-
-    // Loop through all keys in localStorage to find files belonging to the logged-in user
-    Object.keys(localStorage).forEach(key => {
-        if (key.startsWith(`file_${username}_`)) {  // Filter files based on username prefix
-            const listItem = document.createElement('li');
-            listItem.textContent = key.substring(`file_${username}_`.length);  // Remove 'file_' and username prefix
-            listItem.dataset.key = key;  // Store the full key for future use
-            listItem.addEventListener('click', function() {
-                const selectedFile = document.querySelector('#fileList .selected');
-                if (selectedFile) {
-                    selectedFile.classList.remove('selected');
-                }
-                this.classList.add('selected');
-            });
-            fileList.appendChild(listItem);  // Append each file to the list
-        }
-    });
-}
-
-
-    function loadFile() {
-        const selectedFile = document.querySelector('#fileList .selected');
-        if (!selectedFile) {
-            alert('Please select a file from the list.');
-            return;
-        }
-
-        const key = selectedFile.dataset.key;
-        const fileData = JSON.parse(localStorage.getItem(key));
-
-        sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
-        const sourcePage = fileData.sourcePage;
-
-        if (sourcePage === 'Day 1' && window.location.pathname !== '/Day%201.html') {
-            window.location.href = 'Day%201.html';
-        } else if (sourcePage === 'Temperatures recorded in all five days' && window.location.pathname !== '/Temperatures%20recorded%20in%20all%20five%20days.html') {
-            window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
-        } else if (sourcePage === 'Account' && window.location.pathname !== '/account.html') {
-            window.location.href = 'account.html';
-        } else {
-            alert('Source page not recognized. Staying on the current page.');
-        }
-    }
-
-    function downloadFile() {
-        const selectedFile = document.querySelector('#fileList .selected');
-        if (!selectedFile) {
-            alert('Please select a file from the list.');
-            return;
-        }
-
-        const key = selectedFile.dataset.key;
-        const fileData = JSON.parse(localStorage.getItem(key));
-
-        const blob = new Blob([JSON.stringify(fileData)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${selectedFile.textContent}.json`;
-        a.click();
-
-        URL.revokeObjectURL(url);
-    }
-
-    function uploadFile(event) {
-        const file = event.target.files[0];
-        if (!file) {
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const fileData = JSON.parse(event.target.result);
-
-            if (fileData.fileData) {
-                const fileName = `file_${file.name.replace('.json', '')}`;
-                localStorage.setItem(fileName, JSON.stringify(fileData));
-                loadFileList();
-                alert('File uploaded successfully!');
+            if (loggedInUser) {
+                const userPassword = localStorage.getItem(loggedInUser);
+                usernameElement.textContent = `Username: ${loggedInUser}`;
+                passwordElement.textContent = `Password: ${userPassword}`;
+                loadFileList(); // Load files associated with this user
             } else {
-                alert('Invalid file format.');
+                usernameElement.textContent = 'No user logged in';
+                passwordElement.textContent = '';
             }
-        };
-        reader.readAsText(file);
-    }
+        });
 
-    function deleteFile() {
-        const selectedFile = document.querySelector('#fileList .selected');
-        if (!selectedFile) {
-            alert('Please select a file from the list.');
-            return;
+        function loadFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('file_')) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = key.substring(5); // Remove 'file_' prefix
+                    listItem.dataset.key = key;
+                    listItem.addEventListener('click', function() {
+                        const selectedFile = document.querySelector('#fileList .selected');
+                        if (selectedFile) {
+                            selectedFile.classList.remove('selected');
+                        }
+                        this.classList.add('selected');
+                    });
+                    fileList.appendChild(listItem);
+                }
+            });
         }
 
-        const key = selectedFile.dataset.key;
+        function loadFile() {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (!selectedFile) {
+                alert('Please select a file from the list.');
+                return;
+            }
 
-        const confirmDelete = confirm(`Are you sure you want to delete the file: ${selectedFile.textContent}?`);
-        if (confirmDelete) {
-            localStorage.removeItem(key);
-            selectedFile.remove();
-            alert(`File "${selectedFile.textContent}" has been deleted.`);
+            const key = selectedFile.dataset.key;
+            const fileData = JSON.parse(localStorage.getItem(key));
+
+            sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
+            const sourcePage = fileData.sourcePage;
+
+            const pages = {
+                'Day 1': 'Day%201.html',
+                'Temperatures recorded in all five days': 'Temperatures%20recorded%20in%20all%20five%20days.html',
+                'Account': 'account.html'
+            };
+
+            if (pages[sourcePage] && window.location.pathname !== `/${pages[sourcePage]}`) {
+                window.location.href = pages[sourcePage];
+            } else {
+                alert('Source page not recognized. Staying on the current page.');
+            }
         }
-    }
 
-    function generateQRCode() {
-    const loggedInUser = sessionStorage.getItem('loggedInUser');
-    if (!loggedInUser) {
-        alert('No user is logged in to generate a QR code.');
-        return;
-    }
+        function downloadFile() {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (!selectedFile) {
+                alert('Please select a file from the list.');
+                return;
+            }
 
-    const qrcodeContainer = document.getElementById('qrcode');
-    qrcodeContainer.innerHTML = ''; // Clear previous QR code
-    const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html?user=${encodeURIComponent(loggedInUser)}`;
+            const key = selectedFile.dataset.key;
+            const fileData = JSON.parse(localStorage.getItem(key));
 
-    const qrCode = new QRCode(qrcodeContainer, {
-        text: qrCodeUrl,
-        width: 128,
-        height: 128,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-    });
+            const blob = new Blob([JSON.stringify(fileData)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
 
-    document.getElementById('printQRCode').style.display = 'inline-block'; // Show print button
-}
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${selectedFile.textContent}.json`;
+            a.click();
 
-function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
+            URL.revokeObjectURL(url);
+        }
 
-const loggedInUser = getQueryParam('user');
+        function uploadFile(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
 
-    function printQRCode() {
-        const qrcodeContainer = document.getElementById('qrcode');
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<html><head><title>Print QR Code</title></head><body>`);
-        printWindow.document.write(qrcodeContainer.innerHTML);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.print();
-    }
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                try {
+                    const fileData = JSON.parse(event.target.result);
+                    if (fileData.fileData) {
+                        const fileName = `file_${file.name.replace('.json', '')}`;
+                        localStorage.setItem(fileName, JSON.stringify(fileData));
+                        loadFileList();
+                        alert('File uploaded successfully!');
+                    } else {
+                        alert('Invalid file format.');
+                    }
+                } catch (e) {
+                    alert('Error reading file. Make sure it is a valid JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function deleteFile() {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (!selectedFile) {
+                alert('Please select a file from the list.');
+                return;
+            }
+
+            const key = selectedFile.dataset.key;
+
+            const confirmDelete = confirm(`Are you sure you want to delete the file: ${selectedFile.textContent}?`);
+            if (confirmDelete) {
+                localStorage.removeItem(key);
+                selectedFile.remove();
+                alert(`File "${selectedFile.textContent}" has been deleted.`);
+            }
+        }
+
+        function generateQRCode() {
+            const loggedInUser = sessionStorage.getItem('loggedInUser');
+            if (!loggedInUser) {
+                alert('No user is logged in to generate a QR code.');
+                return;
+            }
+
+            const qrcodeContainer = document.getElementById('qrcode');
+            qrcodeContainer.innerHTML = ''; // Clear previous QR code
+            const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html?user=${encodeURIComponent(loggedInUser)}`;
+
+            new QRCode(qrcodeContainer, {
+                text: qrCodeUrl,
+                width: 128,
+                height: 128,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            document.getElementById('printQRCode').style.display = 'inline-block'; // Show print button
+        }
+
+        function printQRCode() {
+            const qrcodeContainer = document.getElementById('qrcode');
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+            printWindow.document.write(qrcodeContainer.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
     </script>
 </body>
 </html>
