@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,21 +76,30 @@
         }
 
         function loadFile(key) {
-            const fileData = JSON.parse(localStorage.getItem(key));
-            // Assuming fileData has a property called 'fileData' and 'sourcePage'
-            sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
-            const sourcePage = fileData.sourcePage;
+    const fileData = JSON.parse(localStorage.getItem(key));  // Fetch the file data from localStorage
+    sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Store file data in sessionStorage
+    const sourcePage = fileData.sourcePage;
 
-            if (sourcePage === 'Day 1') {
-                window.location.href = 'Day%201.html';
-            } else if (sourcePage === 'Temperatures recorded in all five days') {
-                window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
-            } else if (sourcePage === 'Account') {
-                window.location.href = 'account.html';
-            } else {
-                alert('Source page not recognized. Staying on the current page.');
-            }
-        }
+    // Redirect to the correct page
+    if (sourcePage === 'Day 1') {
+        window.location.href = 'Day%201.html';  // Go to the Day 1 page
+    } else if (sourcePage === 'Temperatures recorded in all five days') {
+        window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';  // Redirect to Temperatures page
+    } else {
+        alert('Source page not recognized. Staying on the current page.');
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const fileData = JSON.parse(sessionStorage.getItem('fileData'));  // Retrieve file data from sessionStorage
+
+    if (fileData) {
+        // Display the file data in some way, for example:
+        document.getElementById('patientData').textContent = JSON.stringify(fileData, null, 2);
+    } else {
+        alert('No file data found.');
+    }
+});
+
     </script>
 </body>
 </html>
