@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,9 +75,10 @@
         <ul class="abc" id="fileList"></ul>
         <button id="loadFile" onclick="loadFile()">Load Selected File</button>
         <button id="downloadFile" onclick="downloadFile()">Download Selected File</button>
-        <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button>
-        <input type="file" id="uploadFile" onchange="uploadFile(event)" style="display: none;" />
-        <label for="uploadFile">                      Upload Chart                       </label>
+        <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button><br><br>
+        <input type="file" id="uploadFile" onchange="uploadFile(event)" style="display: none;" /><p>You can upload and view JSON files </p>
+        <label for="uploadFile">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upload chart&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+
         <p>By getting a QR code, you will be able to show your saved files to another person by scanning it.</p>
         <button id="getQRCode" onclick="generateQRCode()">Get QR Code</button>
         <div id="qrcode"></div>
