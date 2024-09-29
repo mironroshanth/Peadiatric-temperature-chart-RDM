@@ -19,6 +19,22 @@
             width: 300px;
             margin: 20px auto;
         }
+        label {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        label:hover {
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
         button {
             background: linear-gradient(45deg, #6a11cb, #2575fc);
             color: white;
@@ -60,7 +76,7 @@
         <button id="downloadFile" onclick="downloadFile()">Download Selected File</button>
         <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button>
         <input type="file" id="uploadFile" onchange="uploadFile(event)" style="display: none;" />
-        <label for="uploadFile" class="save-button">Upload Chart</label>
+        <label for="uploadFile">                      Upload Chart                       </label>
         <p>By getting a QR code, you will be able to show your saved files to another person by scanning it.</p>
         <button id="getQRCode" onclick="generateQRCode()">Get QR Code</button>
         <div id="qrcode"></div>
