@@ -83,44 +83,47 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    const loggedInUser = getQueryParam('user');  // Fetch username from URL parameter, not sessionStorage
     const usernameElement = document.getElementById('username');
     const passwordElement = document.getElementById('password');
 
     if (loggedInUser) {
-        const userPassword = localStorage.getItem(loggedInUser);
+        const userPassword = localStorage.getItem(loggedInUser);  // Retrieve user-specific password from localStorage
         usernameElement.textContent = `Username: ${loggedInUser}`;
         passwordElement.textContent = `Password: ${userPassword}`;
-        loadFileList(); // Load files associated with this user
+        loadFileList(loggedInUser);  // Pass the username to load user-specific files
     } else {
-        usernameElement.textContent = 'No user logged in';
+        usernameElement.textContent = 'No user found';
         passwordElement.textContent = '';
     }
 });
+
 console.log('Logged in user:', loggedInUser);
 console.log('User password:', userPassword);
 
 
-    function loadFileList() {
-        const fileList = document.getElementById('fileList');
-        fileList.innerHTML = '';
+    function loadFileList(username) {
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = '';  // Clear existing file list
 
-        Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('file_')) {
-                const listItem = document.createElement('li');
-                listItem.textContent = key.substring(5); // Remove 'file_' prefix
-                listItem.dataset.key = key;
-                listItem.addEventListener('click', function() {
-                    const selectedFile = document.querySelector('#fileList .selected');
-                    if (selectedFile) {
-                        selectedFile.classList.remove('selected');
-                    }
-                    this.classList.add('selected');
-                });
-                fileList.appendChild(listItem);
-            }
-        });
-    }
+    // Loop through all keys in localStorage to find files belonging to the logged-in user
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith(`file_${username}_`)) {  // Filter files based on username prefix
+            const listItem = document.createElement('li');
+            listItem.textContent = key.substring(`file_${username}_`.length);  // Remove 'file_' and username prefix
+            listItem.dataset.key = key;  // Store the full key for future use
+            listItem.addEventListener('click', function() {
+                const selectedFile = document.querySelector('#fileList .selected');
+                if (selectedFile) {
+                    selectedFile.classList.remove('selected');
+                }
+                this.classList.add('selected');
+            });
+            fileList.appendChild(listItem);  // Append each file to the list
+        }
+    });
+}
+
 
     function loadFile() {
         const selectedFile = document.querySelector('#fileList .selected');
