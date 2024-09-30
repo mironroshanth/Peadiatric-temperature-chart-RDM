@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,72 +40,78 @@
         <button onclick="loadFile">Load selected file</button>
     </div>
 
-        <script>
-    // Helper function to get query parameters from URL
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
+    <script>
+        // Firebase configuration (replace with your project details)
+        const firebaseConfig = {
+            apiKey: "No Web API Key for this project",
+            authDomain: "temperature-chart-47839.firebaseapp.com",
+            databaseURL: "https://temperature-chart-47839-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "temperature-chart-47839",
+            storageBucket: "temperature-chart-47839.appspot.com",
+            messagingSenderId: "764348196897",
+            appId: "1:764348196897:web:10e513dc51e6e839665b60"
+        };
 
-    // Retrieve the 'user' query parameter from the URL
-    const username = getQueryParam('user');
-    const patientDataDiv = document.getElementById('patientData');
-    const fileList = document.getElementById('fileList');
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-    if (username) {
-        const password = localStorage.getItem(username);  // Get the user's password
-        patientDataDiv.innerHTML = `<p>Username: ${username}</p><p>Password: ${password}</p>`;  // Display user info
+        // Function to load user files from Firebase
+        function loadUserFilesFromFirebase(username) {
+            firebase.database().ref('users/' + username + '/files').once('value').then((snapshot) => {
+                const files = snapshot.val();
+                if (files) {
+                    Object.keys(files).forEach(key => {
+                        const file = files[key];
+                        const listItem = document.createElement('li');
+                        listItem.textContent = 'File from ' + file.sourcePage;
 
-        // List all saved files for this user
-        Object.keys(localStorage).forEach(key => {
-            if (key.startsWith(`file_${username}_`)) {  // Filter by files associated with this user
-                const listItem = document.createElement('li');
-                listItem.textContent = key.substring(`file_${username}_`.length);  // Remove 'file_username_' prefix
-                listItem.dataset.key = key;
+                        const loadButton = document.createElement('button');
+                        loadButton.textContent = 'Load File';
+                        loadButton.onclick = function() {
+                            loadFile(file);
+                        };
 
-                // Create button to load the file
-                const loadButton = document.createElement('button');
-                loadButton.textContent = 'Load File';
-                loadButton.onclick = function() {
-                    loadFile(key);  // Load the selected file
-                };
+                        listItem.appendChild(loadButton);
+                        document.getElementById('fileList').appendChild(listItem);
+                    });
+                } else {
+                    alert('No files found for this user.');
+                }
+            }).catch((error) => {
+                console.error('Error loading files:', error);
+            });
+        }
 
-                listItem.appendChild(loadButton);
-                fileList.appendChild(listItem);  // Add the file to the list
+        function loadFile(fileData) {
+            sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData)); // Store file data in sessionStorage
+            const sourcePage = fileData.sourcePage;
+
+            if (sourcePage === 'Day 1') {
+                window.location.href = 'Day%201.html'; // Redirect to Day 1 page
+            } else if (sourcePage === 'Temperatures recorded in all five days') {
+                window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html'; // Redirect to Temperatures page
+            } else {
+                alert('Source page not recognized. Staying on the current page.');
+            }
+        }
+
+        // Function to retrieve user data from URL query parameters
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // On page load, retrieve user data from query params and fetch files
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = getQueryParam('user'); // Assuming the username is passed via query params
+            if (username) {
+                loadUserFilesFromFirebase(username); // Load the user's files from Firebase
+            } else {
+                alert('No user found.');
             }
         });
-    } else {
-        patientDataDiv.textContent = 'No user found.';
-    }
-
-    // Function to load and redirect to the appropriate file page
-    function loadFile(key) {
-        const fileData = JSON.parse(localStorage.getItem(key));  // Fetch file data from localStorage
-        sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Store the file data in sessionStorage
-        const sourcePage = fileData.sourcePage;  // Get the source page of the file
-
-        // Redirect based on the source page
-        if (sourcePage === 'Day 1') {
-            window.location.href = 'Day%201.html';  // Redirect to Day 1 page
-        } else if (sourcePage === 'Temperatures recorded in all five days') {
-            window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';  // Redirect to Temperatures page
-        } else {
-            alert('Source page not recognized. Staying on the current page.');
-        }
-    }
-
-    // On page load, check if there's any file data stored in sessionStorage
-    document.addEventListener('DOMContentLoaded', function() {
-        const fileData = JSON.parse(sessionStorage.getItem('fileData'));  // Retrieve file data from sessionStorage
-
-        if (fileData) {
-            // Display the file data (for example, as JSON text for now)
-            document.getElementById('patientData').textContent = JSON.stringify(fileData, null, 2);
-        } else {
-            alert('No file data found.');
-        }
-    });
-</script>
+    </script>
 
 </body>
 </html>
