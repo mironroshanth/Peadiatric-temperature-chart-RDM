@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (loggedInUser) {
         usernameElement.textContent = `Username: ${loggedInUser}`;
-        // Retrieve password securely or not display it
-        loadFileList(); // Load files associated with this user
+        loadUserData(loggedInUser); // Load user data to get password
     } else {
         usernameElement.textContent = 'No user logged in';
         passwordElement.textContent = '';
@@ -37,22 +36,21 @@ function loadUserData(username) {
     userRef.once('value').then(snapshot => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-            document.getElementById('password').textContent = `Password: ${data.password}`; // Securely handle passwords
-            loadFileList();
+            // Handle password securely
+            loadFileList(username); // Pass username to load files
         }
     });
 }
 
-function loadFileList() {
+function loadFileList(username) {
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = '';
 
-    const username = sessionStorage.getItem('loggedInUser');
     const patientRef = database.ref('patients/' + username);
     patientRef.once('value').then(snapshot => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-            if (data.files) {
+            if (data.files && Array.isArray(data.files)) {
                 data.files.forEach(file => {
                     const listItem = document.createElement('li');
                     listItem.textContent = file;
@@ -69,6 +67,8 @@ function loadFileList() {
             } else {
                 fileList.innerHTML = '<li>No saved files.</li>';
             }
+        } else {
+            fileList.innerHTML = '<li>No patient data found.</li>';
         }
     });
 }
