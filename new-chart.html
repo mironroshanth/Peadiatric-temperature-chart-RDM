@@ -36,69 +36,75 @@
         <div id="patientData"></div>
         <h2>Saved Files</h2>
         <ul id="fileList"></ul>
+        <button onclick="loadFile">Load selected file</button>
     </div>
 
-    <script>
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
+        <script>
+    // Helper function to get query parameters from URL
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
 
-        const username = getQueryParam('user');
-        const patientDataDiv = document.getElementById('patientData');
-        const fileList = document.getElementById('fileList');
+    // Retrieve the 'user' query parameter from the URL
+    const username = getQueryParam('user');
+    const patientDataDiv = document.getElementById('patientData');
+    const fileList = document.getElementById('fileList');
 
-        if (username) {
-            const password = localStorage.getItem(username);
-            patientDataDiv.innerHTML = `<p>Username: ${username}</p><p>Password: ${password}</p>`;
+    if (username) {
+        const password = localStorage.getItem(username);  // Get the user's password
+        patientDataDiv.innerHTML = `<p>Username: ${username}</p><p>Password: ${password}</p>`;  // Display user info
 
-            // List all saved files
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith(`file_${username}_`)) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = key.substring(`file_${username}_`.length); // Remove prefix
-                    listItem.dataset.key = key;
+        // List all saved files for this user
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith(`file_${username}_`)) {  // Filter by files associated with this user
+                const listItem = document.createElement('li');
+                listItem.textContent = key.substring(`file_${username}_`.length);  // Remove 'file_username_' prefix
+                listItem.dataset.key = key;
 
-                    // Create button to load file
-                    const loadButton = document.createElement('button');
-                    loadButton.textContent = 'Load File';
-                    loadButton.onclick = function() {
-                        loadFile(key);
-                    };
+                // Create button to load the file
+                const loadButton = document.createElement('button');
+                loadButton.textContent = 'Load File';
+                loadButton.onclick = function() {
+                    loadFile(key);  // Load the selected file
+                };
 
-                    listItem.appendChild(loadButton);
-                    fileList.appendChild(listItem);
-                }
-            });
+                listItem.appendChild(loadButton);
+                fileList.appendChild(listItem);  // Add the file to the list
+            }
+        });
+    } else {
+        patientDataDiv.textContent = 'No user found.';
+    }
+
+    // Function to load and redirect to the appropriate file page
+    function loadFile(key) {
+        const fileData = JSON.parse(localStorage.getItem(key));  // Fetch file data from localStorage
+        sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Store the file data in sessionStorage
+        const sourcePage = fileData.sourcePage;  // Get the source page of the file
+
+        // Redirect based on the source page
+        if (sourcePage === 'Day 1') {
+            window.location.href = 'Day%201.html';  // Redirect to Day 1 page
+        } else if (sourcePage === 'Temperatures recorded in all five days') {
+            window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';  // Redirect to Temperatures page
         } else {
-            patientDataDiv.textContent = 'No user found.';
+            alert('Source page not recognized. Staying on the current page.');
         }
-
-        function loadFile(key) {
-    const fileData = JSON.parse(localStorage.getItem(key));  // Fetch the file data from localStorage
-    sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Store file data in sessionStorage
-    const sourcePage = fileData.sourcePage;
-
-    // Redirect to the correct page
-    if (sourcePage === 'Day 1') {
-        window.location.href = 'Day%201.html';  // Go to the Day 1 page
-    } else if (sourcePage === 'Temperatures recorded in all five days') {
-        window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';  // Redirect to Temperatures page
-    } else {
-        alert('Source page not recognized. Staying on the current page.');
     }
-}
-document.addEventListener('DOMContentLoaded', function() {
-    const fileData = JSON.parse(sessionStorage.getItem('fileData'));  // Retrieve file data from sessionStorage
 
-    if (fileData) {
-        // Display the file data in some way, for example:
-        document.getElementById('patientData').textContent = JSON.stringify(fileData, null, 2);
-    } else {
-        alert('No file data found.');
-    }
-});
+    // On page load, check if there's any file data stored in sessionStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileData = JSON.parse(sessionStorage.getItem('fileData'));  // Retrieve file data from sessionStorage
 
-    </script>
+        if (fileData) {
+            // Display the file data (for example, as JSON text for now)
+            document.getElementById('patientData').textContent = JSON.stringify(fileData, null, 2);
+        } else {
+            alert('No file data found.');
+        }
+    });
+</script>
+
 </body>
 </html>
