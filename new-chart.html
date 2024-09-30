@@ -28,21 +28,27 @@
         button:hover {
             background-color: #2575fc;
         }
+        li.selected {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Patient Account Details</h1>
-        <div id="patientData"></div>
+        <div id="patientData">
+            <p id="username">Username: </p>
+            <p id="password">Password: </p>
+        </div>
         <h2>Saved Files</h2>
         <ul id="fileList"></ul>
-        <button onclick="loadSelectedFile()">Load selected file</button>
+        <button onclick="loadSelectedFile()">Load Selected File</button>
     </div>
 
     <script type="module">
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 
         // Firebase configuration
@@ -63,29 +69,28 @@
         const auth = getAuth(app);
 
         // Sign in function
-        function signIn(username, password) {
-            signInWithEmailAndPassword(auth, username, password)
+        function signIn(email, password) {
+            signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // Signed in
-                    console.log('User signed in:', userCredential.user);
-                    loadUserData(username);
+                    const user = userCredential.user;
+                    loadUserData(user.uid); // Use uid to load the user's data
                 })
                 .catch((error) => {
                     console.error('Sign-in error:', error.message);
                 });
         }
 
-        // Load user data
-        function loadUserData(username) {
-            const userRef = ref(database, 'users/' + username);
+        // Load user data (username and other data)
+        function loadUserData(uid) {
+            const userRef = ref(database, 'users/' + uid); // Using uid as key
             onValue(userRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     document.getElementById('patientData').innerHTML = `
-                        <p>Username: ${username}</p>
-                        <p>Password: ${data.password}</p> <!-- Secure handling is recommended -->
+                        <p>Username: ${data.username}</p>
+                        <p>Password: ********</p> <!-- Never display password in plaintext -->
                     `;
-                    loadFileList(username);
+                    loadFileList(uid);
                 } else {
                     console.log('No user data found.');
                 }
@@ -93,11 +98,11 @@
         }
 
         // Load file list for the user
-        function loadFileList(username) {
+        function loadFileList(uid) {
             const fileList = document.getElementById('fileList');
             fileList.innerHTML = '';
 
-            const patientRef = ref(database, 'patients/' + username);
+            const patientRef = ref(database, 'patients/' + uid);
             onValue(patientRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
@@ -105,22 +110,34 @@
                         data.files.forEach(file => {
                             const listItem = document.createElement('li');
                             listItem.textContent = file;
+                            listItem.onclick = () => selectFile(listItem);
                             fileList.appendChild(listItem);
                         });
                     } else {
                         fileList.innerHTML = '<li>No saved files.</li>';
                     }
+                } else {
+                    console.log('No file data found.');
                 }
             });
+        }
+
+        // Function to select a file
+        function selectFile(listItem) {
+            const selectedFile = document.querySelector('#fileList .selected');
+            if (selectedFile) {
+                selectedFile.classList.remove('selected');
+            }
+            listItem.classList.add('selected');
         }
 
         // Function to load the selected file
         function loadSelectedFile() {
             const selectedFile = document.querySelector('#fileList .selected');
             if (selectedFile) {
-                const key = selectedFile.textContent;
-                // Load and redirect based on the file's source page
-                // (This part would depend on your specific use case)
+                const fileName = selectedFile.textContent;
+                // Load and handle the file (your use case might vary)
+                alert(`Loading file: ${fileName}`);
             } else {
                 alert('Please select a file to load.');
             }
@@ -130,8 +147,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // User is signed in
-                const username = user.email;
-                loadUserData(username);
+                loadUserData(user.uid); // Use uid instead of username
             } else {
                 // No user is signed in
                 console.log('No user is signed in.');
@@ -139,4 +155,6 @@
         });
     </script>
 </body>
+</html>
+
 </html>
