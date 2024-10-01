@@ -28,133 +28,98 @@
         button:hover {
             background-color: #2575fc;
         }
-        li.selected {
-            background-color: #e0e0e0;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Patient Account Details</h1>
-        <div id="patientData">
-            <p id="username">Username: </p>
-            <p id="password">Password: </p>
-        </div>
+        <div id="patientData"></div>
         <h2>Saved Files</h2>
         <ul id="fileList"></ul>
-        <button onclick="loadSelectedFile()">Load Selected File</button>
+        <button onclick="loadFile">Load selected file</button>
     </div>
 
-    <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyB_iG1hCwRs82h_EoLmVERfHKxO2fh-M-Q",
-            authDomain: "temperature-chart-47839.firebaseapp.com",
-            databaseURL: "https://temperature-chart-47839-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "temperature-chart-47839",
-            storageBucket: "temperature-chart-47839.appspot.com",
-            messagingSenderId: "764348196897",
-            appId: "1:764348196897:web:10e513dc51e6e839665b60",
-            measurementId: "G-RC7FGZHG3M"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-        const auth = getAuth(app);
-
-        // Sign in function
-        function signIn(email, password) {
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    loadUserData(user.uid); // Use uid to load the user's data
-                })
-                .catch((error) => {
-                    console.error('Sign-in error:', error.message);
-                });
+    <script>
+        // Function to get query parameters from URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
         }
 
-        // Load user data (username and other data)
-        function loadUserData(uid) {
-            const userRef = ref(database, 'users/' + uid); // Using uid as key
-            onValue(userRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById('patientData').innerHTML = `
-                        <p>Username: ${data.username}</p>
-                        <p>Password: ********</p> <!-- Never display password in plaintext -->
-                    `;
-                    loadFileList(uid);
-                } else {
-                    console.log('No user data found.');
+        // Get the username from the URL
+        const username = getQueryParam('user');
+        const patientDataDiv = document.getElementById('patientData');
+        const fileList = document.getElementById('fileList');
+
+        if (username) {
+            const password = localStorage.getItem(username);  // Retrieve the password from localStorage
+            patientDataDiv.innerHTML = `<p>Username: ${username}</p><p>Password: ${password}</p>`;
+
+            // List all saved files for this user
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith(`file_${username}_`)) {  // Look for files associated with the specific username
+                    const listItem = document.createElement('li');
+                    listItem.textContent = key.substring(`file_${username}_`.length);  // Remove the 'file_' prefix for display
+                    listItem.dataset.key = key;
+
+                    // Create button to load the file
+                    const loadButton = document.createElement('button');
+                    loadButton.textContent = 'Load File';
+                    loadButton.onclick = function() {
+                        loadFile(key);
+                    };
+
+                    listItem.appendChild(loadButton);
+                    fileList.appendChild(listItem);
                 }
             });
+        } else {
+            patientDataDiv.textContent = 'No user found.';
         }
 
-        // Load file list for the user
-        function loadFileList(uid) {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = sessionStorage.getItem('loggedInUser');
+            const usernameElement = document.getElementById('username');
+            const passwordElement = document.getElementById('password');
 
-            const patientRef = ref(database, 'patients/' + uid);
-            onValue(patientRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    if (data.files) {
-                        data.files.forEach(file => {
-                            const listItem = document.createElement('li');
-                            listItem.textContent = file;
-                            listItem.onclick = () => selectFile(listItem);
-                            fileList.appendChild(listItem);
-                        });
-                    } else {
-                        fileList.innerHTML = '<li>No saved files.</li>';
-                    }
-                } else {
-                    console.log('No file data found.');
-                }
-            });
-        }
-
-        // Function to select a file
-        function selectFile(listItem) {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (selectedFile) {
-                selectedFile.classList.remove('selected');
-            }
-            listItem.classList.add('selected');
-        }
-
-        // Function to load the selected file
-        function loadSelectedFile() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (selectedFile) {
-                const fileName = selectedFile.textContent;
-                // Load and handle the file (your use case might vary)
-                alert(`Loading file: ${fileName}`);
+            if (loggedInUser) {
+                const userPassword = localStorage.getItem(loggedInUser);
+                usernameElement.textContent = `Username: ${loggedInUser}`;
+                passwordElement.textContent = `Password: ${userPassword}`;
+                loadFileList(); // Load files associated with this user
             } else {
-                alert('Please select a file to load.');
-            }
-        }
-
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in
-                loadUserData(user.uid); // Use uid instead of username
-            } else {
-                // No user is signed in
-                console.log('No user is signed in.');
+                usernameElement.textContent = 'No user logged in';
+                passwordElement.textContent = '';
             }
         });
+        // Load the selected file and redirect to the appropriate page
+        function loadFile(key) {
+            const fileData = JSON.parse(localStorage.getItem(key));
+            sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Store file data in sessionStorage
+            const sourcePage = fileData.sourcePage;
+
+            if (sourcePage === 'Day 1') {
+                window.location.href = 'Day%201.html';
+            } else if (sourcePage === 'Temperatures recorded in all five days') {
+                window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html';
+            } else if (sourcePage === 'Account') {
+                window.location.href = 'account.html';
+            } else {
+                alert('Source page not recognized. Staying on the current page.');
+            }
+        }
+        function loadFile(fileData) {
+            sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData)); // Store file data in sessionStorage
+            const sourcePage = fileData.sourcePage;
+
+            if (sourcePage === 'Day 1') {
+                window.location.href = 'Day%201.html'; // Redirect to Day 1 page
+            } else if (sourcePage === 'Temperatures recorded in all five days') {
+                window.location.href = 'Temperatures%20recorded%20in%20all%20five%20days.html'; // Redirect to Temperatures page
+            } else {
+                alert('Source page not recognized. Staying on the current page.');
+            }
+        }
     </script>
 </body>
-</html>
-
 </html>
