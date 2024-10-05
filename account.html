@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,27 +215,36 @@
         }
 
         function generateQRCode() {
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            if (!loggedInUser) {
-                alert('No user is logged in to generate a QR code.');
-                return;
-            }
+    const loggedInUser = sessionStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+        alert('No user is logged in to generate a QR code.');
+        return;
+    }
 
-            const qrcodeContainer = document.getElementById('qrcode');
-            qrcodeContainer.innerHTML = ''; // Clear previous QR code
-            const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html?user=${encodeURIComponent(loggedInUser)}`;
+    const userPassword = localStorage.getItem(loggedInUser);
+    if (!userPassword) {
+        alert('No password found for the logged-in user.');
+        return;
+    }
 
-            new QRCode(qrcodeContainer, {
-                text: qrCodeUrl,
-                width: 128,
-                height: 128,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
+    const qrcodeContainer = document.getElementById('qrcode');
+    qrcodeContainer.innerHTML = ''; // Clear previous QR code
 
-            document.getElementById('printQRCode').style.display = 'inline-block'; // Show print button
-        }
+    // Create URL with credentials and autoSignIn flag in the query parameters
+    const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20In.html?username=${encodeURIComponent(loggedInUser)}&password=${encodeURIComponent(userPassword)}&autoSignIn=true`;
+
+    new QRCode(qrcodeContainer, {
+        text: qrCodeUrl,
+        width: 128,
+        height: 128,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById('printQRCode').style.display = 'inline-block'; // Show print button
+}
+
 
         function printQRCode() {
             const qrcodeContainer = document.getElementById('qrcode');
