@@ -231,7 +231,7 @@
     qrcodeContainer.innerHTML = ''; // Clear previous QR code
 
     // Create URL with credentials and autoSignIn flag in the query parameters
-    const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20In.html?username=${encodeURIComponent(loggedInUser)}&password=${encodeURIComponent(userPassword)}&autoSignIn=true`;
+    const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?username=${encodeURIComponent(loggedInUser)}&password=${encodeURIComponent(userPassword)}&autoSignIn=true`;
 
     new QRCode(qrcodeContainer, {
         text: qrCodeUrl,
