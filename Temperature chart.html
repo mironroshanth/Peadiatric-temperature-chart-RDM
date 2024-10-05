@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,18 +12,21 @@
         margin: 0;
     }
     .topnav {
-        overflow: hidden;
-        background: linear-gradient(45deg, #6a11cb, #2575fc);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 3px 16px;
-    }
+    overflow: hidden;
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: absolute; /* Change to absolute */
+    top: 400px; /* Set to height of the image */
+    width: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 16px; /* Keep padding for aesthetics */
+}
+
+
+
     .topnav .menu-icon {
         font-size: 26px;
         cursor: pointer;
@@ -139,9 +143,10 @@
     }
     .desktop-nav a {
         color: white;
-        padding: 14px 16px;
+        padding: 14px 18px;
         text-decoration: none;
-        font-size: 17px;
+        font-size: 17.2px;
+        font-weight: bold;
         transition: background 0.3s ease;
     }
     .desktop-nav a:hover {
@@ -189,6 +194,7 @@
         @media screen and (max-width: 768px) {
     .desktop-header {
         display: none; /* Hide on mobile */
+        margin-top: 200px;
     }
 }
         @media screen and (min-width: 769px) {
@@ -207,13 +213,16 @@
 </style>
 </head>
 <body>
+    <div style="position: relative;">
+        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/as.jpg" width="1450"><br>
 <div class="topnav">
+    
     <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 class="mobile-header">Temperature chart</h1>                                                   
     
     <!-- Desktop navigation links -->
+
     <div class="desktop-nav">
-        <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="17" height="17" alt="Heart Icon">
+        
     </a>
         <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
         <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
@@ -240,8 +249,8 @@
     <div style="padding: 16px;">
         
         <div class="desktop-header">
-    <h1 style="display: none;">Temperature Chart</h1> <!-- This will be hidden on mobile -->
-</div>
+    <h1>Temperature Chart</h1> <!-- This will be hidden on mobile -->
+</div><br><br>
         <h3>This open-source website can be used to mark down body temperatures of a person. The temperature chart website is used for medical purposes.
         <p>For more details about the usage methods of this website, go through the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">getting started</a> interface. To know more about this website, read the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">about this website</a> page.</p>
             
