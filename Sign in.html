@@ -80,7 +80,6 @@
             text-decoration: underline;
         }
 
-        /* Media queries for mobile responsiveness */
         @media screen and (max-width: 600px) {
             .container {
                 width: 90%;
@@ -108,11 +107,11 @@
     <div class="container">
         <div id="initial-question">
             <h1>Sign up to temperature chart</h1>
-             <h2>Do you already have an account?</h2>
+            <h2>Do you already have an account?</h2>
             <button id="yes-btn">Yes</button>
             <button id="no-btn">No</button><br><br>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Continue without signing up*</a><br><br>
-                <p>*By continuing without signing up you won't be able to save charts or won't be able to use advanced settings.</p>
+            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Continue without signing up*</a><br><br>
+            <p>*By continuing without signing up you won't be able to save charts or won't be able to use advanced settings.</p>
         </div>
         
         <div id="form-container" style="display: none;">
@@ -130,66 +129,85 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const formContainer = document.getElementById('form-container');
-            const initialQuestion = document.getElementById('initial-question');
-            const toggleLink = document.getElementById('toggle-form');
-            const formTitle = document.getElementById('form-title');
+    const formContainer = document.getElementById('form-container');
+    const initialQuestion = document.getElementById('initial-question');
+    const toggleLink = document.getElementById('toggle-form');
+    const formTitle = document.getElementById('form-title');
 
-            // Show the form based on the user's choice
-            document.getElementById('yes-btn').addEventListener('click', function () {
-                initialQuestion.style.display = 'none';
+    // Extract URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const qrUsername = urlParams.get('username');
+    const qrPassword = urlParams.get('password');
+    const autoSignIn = urlParams.get('autoSignIn');
+
+    // If QR code parameters are present and autoSignIn is true, sign in automatically
+    if (qrUsername && qrPassword && autoSignIn === 'true') {
+        const existingUser = localStorage.getItem(qrUsername);
+        if (existingUser === qrPassword) {
+            sessionStorage.setItem('loggedInUser', qrUsername);
+            window.location.href = 'account.html'; // Redirect to account page
+        } else {
+            alert('Invalid QR code credentials.');
+        }
+    }
+
+    // Show the form based on the user's choice
+    document.getElementById('yes-btn').addEventListener('click', function () {
+        initialQuestion.style.display = 'none';
+        formTitle.textContent = 'Sign In';
+        formContainer.style.display = 'block';
+    });
+
+    document.getElementById('no-btn').addEventListener('click', function () {
+        initialQuestion.style.display = 'none';
+        formTitle.textContent = 'Sign Up';
+        formContainer.style.display = 'block';
+    });
+
+    // Toggle between sign up and sign in
+    toggleLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (formTitle.textContent === 'Sign Up') {
+            formTitle.textContent = 'Sign In';
+            toggleLink.textContent = 'Don\'t have an account? Sign Up';
+        } else {
+            formTitle.textContent = 'Sign Up';
+            toggleLink.textContent = 'Already have an account? Sign In';
+        }
+        document.getElementById('auth-form').reset();
+    });
+
+    // Handle form submission
+    document.getElementById('auth-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const existingUser = localStorage.getItem(username);
+
+        if (formTitle.textContent === 'Sign Up') {
+            if (existingUser) {
+                alert('Username already exists.');
+            } else {
+                localStorage.setItem(username, password);
+                alert('Sign Up successful! You can now Sign In.');
                 formTitle.textContent = 'Sign In';
-                formContainer.style.display = 'block';
-            });
-
-            document.getElementById('no-btn').addEventListener('click', function () {
-                initialQuestion.style.display = 'none';
-                formTitle.textContent = 'Sign Up';
-                formContainer.style.display = 'block';
-            });
-
-            // Toggle between sign up and sign in
-            toggleLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (formTitle.textContent === 'Sign Up') {
-                    formTitle.textContent = 'Sign In';
-                    toggleLink.textContent = 'Don\'t have an account? Sign Up';
-                } else {
-                    formTitle.textContent = 'Sign Up';
-                    toggleLink.textContent = 'Already have an account? Sign In';
-                }
+                toggleLink.textContent = 'Don\'t have an account? Sign Up';
                 document.getElementById('auth-form').reset();
-            });
+            }
+        } else {
+            if (existingUser === password) {
+                alert('Sign In successful!');
+                sessionStorage.setItem('loggedInUser', username);
+                // Redirect to Temperature chart page for manual sign-in
+                window.location.href = 'Temperature%20chart.html'; 
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+    });
+});
 
-            // Handle form submission
-            document.getElementById('auth-form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-
-                const existingUser = localStorage.getItem(username);
-
-                if (formTitle.textContent === 'Sign Up') {
-                    if (existingUser) {
-                        alert('Username already exists.');
-                    } else {
-                        localStorage.setItem(username, password);
-                        alert('Sign Up successful! You can now Sign In.');
-                        formTitle.textContent = 'Sign In';
-                        toggleLink.textContent = 'Don\'t have an account? Sign Up';
-                        document.getElementById('auth-form').reset();
-                    }
-                } else {
-                    if (existingUser === password) {
-                        alert('Sign In successful!');
-                        sessionStorage.setItem('loggedInUser', username);
-                        window.location.href = 'Temperature chart.html';
-                    } else {
-                        alert('Invalid username or password.');
-                    }
-                }
-            });
-        });
     </script>
 </body>
 </html>
