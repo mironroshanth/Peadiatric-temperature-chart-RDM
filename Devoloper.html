@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style>
     body {
         font-family: Arial, Helvetica, sans-serif;
@@ -9,18 +11,20 @@
         
     }
     .topnav {
-        overflow: hidden;
-        background: linear-gradient(45deg, #6a11cb, #2575fc);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 3px 16px;
-    }
+    		overflow: hidden;
+    		background: linear-gradient(45deg, #6a11cb, #2575fc);
+    		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    		width: 100%;
+    		z-index: 1;
+    		display: flex;
+    		justify-content: space-between;
+    		align-items: center;
+    		padding: 3px 16px;
+    		position: -webkit-sticky; /* For Safari */
+    		position: sticky; /* Sticky behavior */
+    		top: 0; /* Stick to the top when scrolling */
+    		margin: 0;
+		}
     .topnav .menu-icon {
         font-size: 26px;
         cursor: pointer;
@@ -137,9 +141,9 @@
     }
     .desktop-nav a {
         color: white;
-        padding: 8px 14.2px;
+        padding: 16px 14.7px;
         text-decoration: none;
-        font-size: 17.2px;
+        font-size: 15.2px;
         font-weight: bold;
         transition: background 0.3s ease;
     }
@@ -194,6 +198,12 @@
     .mobile-header {
         display: none; /* Hide mobile header on desktop */
     }
+            .topnav {    
+            top: 0;
+            }
+     h3 {
+           font-size: 16px; /* Further reduce heading sizes */
+        }
 }
  @media screen and (max-width: 768px) {
     .mobile-header {
@@ -219,16 +229,16 @@
     <!-- Desktop navigation links -->
     <div class="desktop-nav">
         <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="32" height="32" alt="Heart Icon">
+        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="20.1" height="20.2" alt="Heart Icon">
     </a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-        <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home&nbsp<i class="fa fa-home" ></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart&nbsp<i class="fa fa-thermometer"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history&nbsp<i class="fa fa-thermometer"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website&nbsp<i class="fa fa-globe"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started&nbsp<i class="fa fa-rocket"></i></a>
+    <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories&nbsp<i class="fa fa-wrench"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files&nbsp<i class="fa fa-user"></i></a>
     </div>
 </div>
 
@@ -248,9 +258,9 @@
   <br><br>
 
     <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Myself.jpg" width="100" height="125" alt="Miron">
-    <h3>
+    <h3 style="font-size: 17px;">
       <div>
-    Hi, I'm Miron. I'm from SriLanka. I was in grade eight when created this website. I obtained a little knowledge about programming when I was in grade seven through my school education. But I didn't have any practical knowledge of programming till my father showed me how to code using <a href="https://en.wikipedia.org/wiki/Windows_Notepad">Notepad</a>. After that I devoloped my knowledge on coding by creating simple html files through notepad and running them. Then in the same year I got to know about a software called <a href="https://scratch.mit.edu" >Scratch</a>.When my father saw me doing many projects through Scrath, he asked me whether I could create a project through which we can mark body temperatures of a sick person(because my father is a doctor he wanted a software to mark body</div> temperatures). After some days I finally created a temperature chart using Scratch. After my simple success I searched about Youtube to see how to code charts. I came across Google charts, Chart.js and many more websites till I found <a href="https://www.highcharts.com">Highcharts</a>. Using Highcharts GPT I obtained a good knowledge of coding charts. I also learnt from <a href="https://chatgpt.com">Chat GPT</a>. After many days of coding my software I searched on the internet how to publish our codefor free. With the help of <a href="https://github.com">Github</a> I finally accomplished it. My website is still being continually updatedby me.
+    Hi, I'm Miron. I'm from SriLanka. I was in grade eight when created this website. I obtained a little knowledge about programming when I was in grade seven through my school education. But I didn't have any practical knowledge of programming till my father showed me how to code using <a href="https://en.wikipedia.org/wiki/Windows_Notepad">Notepad</a>. After that I devoloped my knowledge on coding by creating simple html files through notepad and running them. Then in the same year I got to know about a software called <a href="https://scratch.mit.edu" >Scratch</a>.When my father saw me doing many projects through Scrath, he asked me whether I could create a project through which we can mark body temperatures of a sick person(because my father is a doctor he wanted a software to mark body temperatures). After some days I finally created a temperature chart using Scratch. After my simple success I searched about Youtube to see how to code charts. I came across Google charts, Chart.js and many more websites till I found <a href="https://www.highcharts.com">Highcharts</a>. Using Highcharts GPT I obtained a good knowledge of coding charts. I also </div>learnt from <a href="https://chatgpt.com">Chat GPT</a>. After many days of coding my software I searched on the internet how to publish our codefor free. With the help of <a href="https://github.com">Github</a> I finally accomplished it. My website is still being continually updatedby me.
   
   </h3>
 </div>
