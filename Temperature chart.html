@@ -1,26 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Temperature Chart</title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
+            padding: 0;
         }
+        
+
         .topnav {
-            overflow: hidden;
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: absolute; /* Adjust based on your image height */
-            width: 100%;
-            z-index: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 3px 16px;
-        }
+    		overflow: hidden;
+    		background: linear-gradient(45deg, #6a11cb, #2575fc);
+    		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    		width: 100%;
+    		z-index: 1;
+    		display: flex;
+    		justify-content: space-between;
+    		align-items: center;
+    		padding: 3px 16px;
+    		position: -webkit-sticky; /* For Safari */
+    		position: sticky; /* Sticky behavior */
+    		top: 0; /* Stick to the top when scrolling */
+    		margin: 0;
+		}
         .topnav .menu-icon {
             font-size: 26px;
             cursor: pointer;
@@ -28,14 +37,16 @@
             display: none;
         }
         .topnav .desktop-nav {
+            position: sticky;
+            top: 0;
             display: flex;
             margin: 0;
         }
         .desktop-nav a {
             color: white;
-            padding: 14px 18px;
+            padding: 14px 16px;
             text-decoration: none;
-            font-size: 17.2px;
+            font-size: 15.399999px;
             font-weight: bold;
             transition: background 0.3s ease;
         }
@@ -124,6 +135,15 @@
             background: linear-gradient(45deg, #ff4d4d, #be0d0d);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        .img-1 {
+    	display: block;
+    	width: 100%;
+    	height: auto;
+    	margin: 0;
+    	padding: 0;
+		}
+
+
         
         /* Media queries for mobile responsiveness */
          @media screen and (max-width: 768px) {
@@ -178,13 +198,16 @@
         top: 0;
         }
 }
-        @media screen and (min-width: 769px) {
+        @media screen and (min-width: 768px) {
     .mobile-header {
         display: none; /* Hide mobile header on desktop */
     }
     .topnav {    
-            top: 400px;
+            top: 0;
             }
+            h3,  h2 {
+            font-size: 16px; /* Further reduce heading sizes */
+        }
 }
  @media screen and (max-width: 768px) {
     .mobile-header {
@@ -198,19 +221,19 @@
 </head>
 <body>
     <div style="position: relative;">
-        <img class="img-1" src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/as.jpg" width="1450"><br>
+        <img class="img-1" src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/as.jpg" width="1450">
         <div class="topnav">
             <span class="menu-icon" onclick="openNav()">&#9776;</span>
             <h1 class="mobile-header">Temperature chart</h1>
             <div class="desktop-nav">
-                <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
-                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
+                <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home&nbsp<i class="fa fa-home" ></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart&nbsp<i class="fa fa-thermometer"></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history&nbsp<i class="fa fa-thermometer"></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website&nbsp<i class="fa fa-globe"></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started&nbsp<i class="fa fa-rocket"></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories&nbsp<i class="fa fa-wrench"></i></a>
+                <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files&nbsp<i class="fa fa-user"></i></a>
             </div>
         </div>
         <!-- Sidebar navigation -->
