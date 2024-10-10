@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <title>Create New Chart</title>
     <script src="https://code.highcharts.com/highcharts.js"></script>
 <style>
@@ -12,18 +14,20 @@
         background-color: rgba(255, 255, 255, 0.699);
     }
     .topnav {
-        overflow: hidden;
-        background: linear-gradient(45deg, #6a11cb, #2575fc);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 3px 16px;
-    }
+    		overflow: hidden;
+    		background: linear-gradient(45deg, #6a11cb, #2575fc);
+    		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    		width: 100%;
+    		z-index: 1;
+    		display: flex;
+    		justify-content: space-between;
+    		align-items: center;
+    		padding: 3px 16px;
+    		position: -webkit-sticky; /* For Safari */
+    		position: sticky; /* Sticky behavior */
+    		top: 0; /* Stick to the top when scrolling */
+    		margin: 0;
+		}
     .topnav .menu-icon {
         font-size: 26px;
         cursor: pointer;
@@ -135,20 +139,22 @@
     }
     /* Full navigation links for desktop view */
     .topnav .desktop-nav {
-        display: flex;
-        margin: 0;
-    }
+            position: sticky;
+            top: 0;
+            display: flex;
+            margin: 0;
+        }
     .desktop-nav a {
-        color: white;
-        padding: 8px 14.2px;
-        text-decoration: none;
-        font-size: 17.2px;
-        font-weight: bold;
-        transition: background 0.3s ease;
-    }
-    .desktop-nav a:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
+            color: white;
+            padding: 16px 18px;
+            text-decoration: none;
+            font-size: 14.2px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .desktop-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
     /* Media queries for mobile responsiveness */
     @media screen and (max-width: 768px) {
     .topnav .menu-icon {
@@ -197,6 +203,12 @@
     .mobile-header {
         display: none; /* Hide mobile header on desktop */
     }
+            .topnav {    
+            top: 0;
+            }
+     h3 {
+           font-size: 16px; /* Further reduce heading sizes */
+        }
 }
  @media screen and (max-width: 768px) {
     .mobile-header {
@@ -219,18 +231,19 @@
     <!-- Desktop navigation links -->
     <div class="desktop-nav">
         <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
-        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="32" height="32" alt="Heart Icon">
+        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="20.1" height="20.2" alt="Heart Icon">
     </a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
-        <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
-        <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home&nbsp<i class="fa fa-home" ></i></a>
+    <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart&nbsp<i class="fa fa-thermometer"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history&nbsp<i class="fa fa-thermometer"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website&nbsp<i class="fa fa-globe"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started&nbsp<i class="fa fa-rocket"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">From the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories&nbsp<i class="fa fa-wrench"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files&nbsp<i class="fa fa-user"></i></a>
     </div>
 </div>
+
 
 <!-- Sidebar navigation -->
 <div id="mySidebar" class="sidebar"><h1 style="padding-left: 16px;">Menu</h1>
@@ -276,11 +289,12 @@
     </div>
 </div>
 
-<h2>
+<div class="container">
+<h3>
     <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert your temperature):</label>
-    <input type="number" id="temperature" min="95" max="105" step="0.1" />
+</h3><input type="number" id="temperature" min="95" max="105" step="0.1" />
     <button class="save-button" id="addData">Add Data</button>
-</h2>
+</div>
 <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
 <button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
 <button class="save-button" onclick="printPrintableArea()">Print</button><br><br>
