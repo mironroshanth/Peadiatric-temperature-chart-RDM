@@ -74,7 +74,8 @@
         <p>By getting a QR code, you will be able to show your saved files to another person by scanning it.</p>
         <button id="getQRCode" onclick="generateQRCode()">Get QR Code</button>
         <div id="qrcode"></div>
-        <button id="printQRCode" onclick="printQRCode()" style="display: none;">Print QR Code</button>
+        <button id="printQRCode" onclick="printQRCode()" style="display: none;">Print QR Code</button><br><br>
+        <button onclick="newChart()">Feedback form</button><br>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -259,6 +260,9 @@
             printWindow.document.close();
             printWindow.print();
         }
+        function newChart() {
+        window.location.href = "https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html";
+    }
     </script>
 </body>
 </html>
