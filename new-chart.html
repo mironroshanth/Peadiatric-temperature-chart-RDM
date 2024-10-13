@@ -1,106 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Data</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            background-color: #6a11cb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #2575fc;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Basic Styling */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: url('https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/tc.jpeg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .container {
+      margin-top: 60px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      margin: 80px auto;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .rounded-input {
+      border-radius: 25px;
+      border: 2px solid #ccc;
+      padding: 10px;
+      width: 100%;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+    textarea {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+    textarea:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      font-size: 30px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .star {
+      color: gray;
+      transition: color 0.2s;
+    }
+    .star.selected, .star.hover {
+      color: gold;
+    }
+    button {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+      margin: 5px 0;
+    }
+    button:hover {
+      background: linear-gradient(45deg, #2575fc, #6a11cb);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Patient Account Details</h1>
-        <div id="patientData"></div>
-        <h2>Saved Files</h2>
-        <ul id="fileList"></ul>
-        <button onclick="loadFile()">Load selected file</button>
+
+  <div class="container">
+    <h1>Your feedback</h1>
+    <label>Your name:</label>
+    <input id="name" class="rounded-input" type="text" placeholder="Enter your name..."><br>
+    
+    <label>Your age:</label>
+    <input id="age" class="rounded-input" type="number" placeholder="Enter your age..."><br>
+    
+    <label>Date:</label>
+    <input id="date" class="rounded-input" type="date"><br>
+    
+    <label for="rating">Rate Us:</label>
+    <div class="star-rating">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
     </div>
+    
+    <label for="comment">Your comments:</label>
+    <textarea id="comment" placeholder="Type your feedback here..."></textarea>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <label>Code piece:</label>
+    <textarea id="codePiece" class="code-space" placeholder="Write your code here..."></textarea>
+    
+    <label for="devComments">Comments on your code:</label>
+    <textarea id="devComments" placeholder="Share your comments here..."></textarea>
 
-    <script>
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyB_iG1hCwRs82h_EoLmVERfHKxO2fh-M-Q",
-            authDomain: "temperature-chart-47839.firebaseapp.com",
-            databaseURL: "https://temperature-chart-47839-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "temperature-chart-47839",
-            storageBucket: "temperature-chart-47839.appspot.com",
-            messagingSenderId: "764348196897",
-            appId: "1:764348196897:web:10e513dc51e6e839665b60"
-        };
+    <button onclick="shareFeedback()">Send feedback</button>
+  </div>
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const auth = firebase.auth();
+  <script>
+    const stars = document.querySelectorAll('.star');
+    let selectedRating = 0;
 
-        // Function to retrieve and display user data
-        function loadUserData() {
-            const userId = auth.currentUser.uid;
-            const userRef = database.ref('users/' + userId);
-            userRef.once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById('patientData').innerHTML = `
-                        <p>Username: ${data.username}</p>
-                        <p>Password: ********</p> <!-- Never display password in plaintext -->
-                    `;
-                    loadFileList(userId);
-                }
-            }).catch(error => console.log(error));
+    stars.forEach((star, index) => {
+      star.addEventListener('click', () => {
+        selectedRating = index + 1; // Store the selected rating
+        stars.forEach(s => s.classList.remove('selected'));
+        for (let i = 0; i <= index; i++) {
+          stars[i].classList.add('selected');
         }
+      });
 
-        // Load the list of files for the user
-        function loadFileList(userId) {
-            const fileListRef = database.ref('files/' + userId);
-            const fileListElement = document.getElementById('fileList');
-            fileListRef.once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    const files = snapshot.val();
-                    for (const key in files) {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = files[key].filename;
-                        fileListElement.appendChild(listItem);
-                    }
-                }
-            }).catch(error => console.log(error));
-        }
-
-        // Authenticate and load user data
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                loadUserData();
-            } else {
-                alert('No user is logged in.');
-            }
+      star.addEventListener('mouseover', () => {
+        stars.forEach((s, i) => {
+          if (i <= index) {
+            s.classList.add('hover');
+          }
         });
-    </script>
+      });
+
+      star.addEventListener('mouseout', () => {
+        stars.forEach(s => s.classList.remove('hover'));
+      });
+    });
+
+    function shareFeedback() {
+      const name = document.getElementById('name').value;
+      const age = document.getElementById('age').value;
+      const date = document.getElementById('date').value;
+      const comment = document.getElementById('comment').value;
+      const codePiece = document.getElementById('codePiece').value;
+      const devComments = document.getElementById('devComments').value;
+      
+      const rating = selectedRating || 'No rating'; // Use the stored rating
+
+      const message = `Name: ${name}\nAge: ${age}\nDate: ${date}\nFeedback: ${comment}\nRating: ${rating} Stars\nCode: ${codePiece}\nComments: ${devComments}`;
+      const phoneNumber = '+94773039564'; // Include the country code
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=` + encodeURIComponent(message);
+      
+      window.open(whatsappUrl, '_blank');
+    }
+  </script>
+
 </body>
 </html>
