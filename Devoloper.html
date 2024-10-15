@@ -1,3 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        
+    }
+    .topnav {
+    		overflow: hidden;
+    		background: linear-gradient(45deg, #6a11cb, #2575fc);
+    		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    		width: 100%;
+    		z-index: 1;
+    		display: flex;
+    		justify-content: space-between;
+    		align-items: center;
+    		padding: 3px 16px;
+    		position: -webkit-sticky; /* For Safari */
+    		position: sticky; /* Sticky behavior */
+    		top: 0; /* Stick to the top when scrolling */
+    		margin: 0;
+		}
+    .topnav .menu-icon {
+        font-size: 26px;
+        cursor: pointer;
+        color: white;
+        display: none; /* Initially hidden */
+    }
+    .topnav .logo {
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+    }
+    .topnav a.active {
+        background: #000000;
+        color: white;
+    }
+    .sidebar {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        background-color: #302e2e;
+        overflow-x: hidden;
+        transition: 0.3s;
+        padding-top: 60px;
+    }
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: white;
+        display: block;
+        transition: 0.3s;
+    }
+    .sidebar a:hover {
+        color: #f1f1f1b7;
+    }
+    .sidebar .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 36px;
+        margin-left: 50px;
+        color: white;
+    }
+    .sidebar a.active {
+        background: #0f0f0f;
+        color: white;
+    }
+    .container {
+        margin-top: 60px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        margin: 80px auto;
+    }
+    input {
+        margin: 10px 0;
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+    button {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin: 5px 0;
+    }
+    button:hover {
+        background: linear-gradient(45deg, #2575fc, #6a11cb);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .save-button {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin: 5px 0;
+        text-decoration: none; /* Add this line to remove underline */
+    }
+    .ac-button {
+        background: linear-gradient(45deg, #be0d0d, #ff4d4d);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ac-button:hover {
+        background: linear-gradient(45deg, #ff4d4d, #be0d0d);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    /* Full navigation links for desktop view */
+    .topnav .desktop-nav {
+        display: flex;
+        margin: 0;
+    }
+    .desktop-nav a {
+        color: white;
+        padding: 16px 14.7px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    .desktop-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    /* Media queries for mobile responsiveness */
+    @media screen and (max-width: 768px) {
+    .topnav .menu-icon {
+        display: block; /* Show hamburger icon on mobile */
+    }
+    .topnav .desktop-nav {
+        display: none; /* Hide desktop nav on mobile */
+    }
+    .mobile-header {
+        display: block; /* Show mobile header on mobile */
+    }
+}
+    @media screen and (max-width: 600px) {
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            padding: 15px;
+        }
+        button, .ac-button {
+            font-size: 14px;
+            padding: 8px;
+        }
+    }
+    @media screen and (max-width: 400px) {
+        .container {
+            width: 95%;
+        }
+        button, .ac-button {
+            font-size: 12px;
+            padding: 6px;
+        }
+        h3, h1, h2 {
+            font-size: 16px; /* Further reduce heading sizes */
+        }
+
+            #container {
+            height: 300px; /* Reduce chart height */
+         }
+        }
+        @media screen and (max-width: 768px) {
+    .desktop-header {
+        display: none; /* Hide on mobile */
+    }
+}
+        @media screen and (min-width: 769px) {
+    .mobile-header {
+        display: none; /* Hide mobile header on desktop */
+    }
+            .topnav {    
+            top: 0;
+            }
+     h3 {
+           font-size: 16px; /* Further reduce heading sizes */
+        }
+}
+ @media screen and (max-width: 768px) {
+    .mobile-header {
+        display: allow; /* Hide on mobile */
+        color: white; 
+        text-align: center; 
+        flex-grow: 1;
+    }
+}
+        .content { 
+            padding-left: 16px; margin-top: 50px; 
+        } 
+        .content div {
+            margin-top: -130px; /* Adjust this value as needed */ 
+            margin-left: 105px; 
+        }
+</style>
+</head>
+<body>
+<div class="topnav">
+    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 class="mobile-header">Temperature chart</h1>                                                   
+    
+    <!-- Desktop navigation links -->
+    <div class="desktop-nav">
+        <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
+        <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg" width="20.1" height="20.2" alt="Heart Icon">
+    </a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home&nbsp<i class="fa fa-home" ></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart&nbsp<i class="fa fa-thermometer"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history&nbsp<i class="fa fa-thermometer"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website&nbsp<i class="fa fa-globe"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started&nbsp<i class="fa fa-rocket"></i></a>
+    <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories&nbsp<i class="fa fa-wrench"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files&nbsp<i class="fa fa-user"></i></a>
+    </div>
+</div>
+
+<!-- Sidebar navigation -->
+<div id="mySidebar" class="sidebar"><h1 style="padding-left: 16px;">Menu</h1>
+    <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
+</div>
+
+<div class="content">
+  <h1>About myself(devoloper of this website)</h1>
+  <br><br>
+
+    <img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Myself.jpg" width="100" height="125" alt="Miron">
+    <h3 style="font-size: 17px;">
+      <div>
+    Hi, I'm Miron. I'm from SriLanka. I was in grade eight when created this website. I obtained a little knowledge about programming when I was in grade seven through my school education. But I didn't have any practical knowledge of programming till my father showed me how to code using <a href="https://en.wikipedia.org/wiki/Windows_Notepad">Notepad</a>. After that I devoloped my knowledge on coding by creating simple html files through notepad and running them. Then in the same year I got to know about a software called <a href="https://scratch.mit.edu" >Scratch</a>.When my father saw me doing many projects through Scrath, he asked me whether I could create a project through which we can mark body temperatures of a sick person(because my father is a doctor he wanted a software to mark body temperatures). After some days I finally created a temperature chart using Scratch. After my simple success I searched about Youtube to see how to code charts. I came across Google charts, Chart.js and many more websites till I found <a href="https://www.highcharts.com">Highcharts</a>. Using Highcharts GPT I obtained a good knowledge of coding charts. I also </div>learnt from <a href="https://chatgpt.com">Chat GPT</a>. After many days of coding my software I searched on the internet how to publish our codefor free. With the help of <a href="https://github.com">Github</a> I finally accomplished it. My website is still being continually updatedby me.
+  
+  </h3>
+</div><br><br>
+<div style="padding-left: 16px;">
+    <h1>Contact me</h1><br>
+    <h3 style="font-size: 17px;">
+        I am a developer who hasn't much experience in coding. I kindly request your assistance in sharing your suggestions for improving this website. I look forward to improving my website with your help.
+    </h3><br>
+    <button onclick="newChart()">Feedback form</button><br>
+    <h3 style="font-size: 17px;">
+        You can contact us for further details on this website via <a href="https://Whatsapp.com">Whatsapp</a> by messaging to +94773039564 or via <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl">Gmail</a> through kavitharoshanth@gmail.com.
+    </h3>
+    <br>
+    <i class="fa fa-phone"></i> <a href="https://api.whatsapp.com/send?phone=94773039564">+94773039564</a><br><br>
+    <i class="fa fa-envelope"></i> <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=CllgCJZWPhKcnhwlzdQjnfGCJCXbdRzsXkbgSMNzmZcVHwpCbdvVsZpclDKhxWddhDsLbjXFcSB">kavitharoshanth@gmail.com</a>
+</div><br><br>
+</body>
+    <script>
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "250px"; // Set the width of the sidebar when opened
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0"; // Set the width of the sidebar to 0 when closed
+    }
+     function newChart() {
+        window.location.href = "https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html";
+    }
+</script>
+</html>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
