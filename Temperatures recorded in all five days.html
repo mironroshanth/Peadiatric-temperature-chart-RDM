@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -352,24 +353,39 @@
             gridLineWidth: isGridVisible ? 1 : 0,
             gridLineColor: isGridVisible ? '#53535381' : null
         },
-        yAxis: {
+        yAxis: [{
             title: {
-                text: 'Temperature (°F)'
+                text: 'Temperature (°F)' // Left side Fahrenheit
             },
+            min: 95, // Set appropriate range for Fahrenheit
+            max: 105,
             gridLineWidth: isGridVisible ? 1 : 0,
             gridLineColor: isGridVisible ? '#53535381' : null
-        },
+        }, {
+            title: {
+                text: 'Temperature (°C)' // Right side Celsius
+            },
+            opposite: true, // Place on the right
+            min: (95 - 32) * 5 / 9, // Convert 95°F to Celsius
+            max: (105 - 32) * 5 / 9, // Convert 105°F to Celsius
+            labels: {
+                formatter: function () {
+                    return (this.value).toFixed(1); // Display Celsius with one decimal point
+                }
+            }
+        }],
         tooltip: {
             formatter: function () {
                 // Display the date and the custom time entered by the user
                 const customTime = this.point.customTime;
                 return `<b>Date: </b>${Highcharts.dateFormat('%Y-%m-%d', this.x)}<br/>` +
                        `<b>Time: </b>${customTime}<br/>` +
-                       `<b>Temperature: </b>${this.y}°F`;
+                       `<b>Temperature: </b>${this.y}°F / ${(this.y - 32) * 5 / 9}°C`;
             }
         },
         series: [{
             name: 'Temperature',
+            yAxis: 0, // Bind to Fahrenheit axis (left)
             color: {
                 linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
                 stops: [
@@ -392,6 +408,7 @@
 
     console.log("Chart generated with data:", data);
 }
+
 
 
 
