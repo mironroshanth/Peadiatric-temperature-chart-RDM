@@ -311,9 +311,24 @@
         chart: { type: 'line' },
         title: { text: 'Temperature Over Time' },
         xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
-        yAxis: { title: { text: 'Temperature (°F)' }, min: 95, max: 105 },
+        yAxis: [{
+            title: { text: 'Temperature (°F)' },
+            min: 95,
+            max: 105
+        }, {
+            title: { text: 'Temperature (°C)' },
+            opposite: true, // Display Celsius on the opposite side (right side)
+            min: (95 - 32) * 5 / 9, // Convert 95°F to Celsius
+            max: (105 - 32) * 5 / 9, // Convert 105°F to Celsius
+            labels: {
+                formatter: function () {
+                    return (this.value).toFixed(1); // Display Celsius with one decimal point
+                }
+            }
+        }],
         series: [{
             name: 'Temperature',
+            yAxis: 0, // Bind to Fahrenheit axis (left side)
             color: {
                 linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
                 stops: [
@@ -321,32 +336,23 @@
                     [1, '#2575fc']
                 ]
             },
-            data: []
+            data: [] // Data will be added dynamically
         }]
     });
-
-    const fileData = JSON.parse(sessionStorage.getItem('fileData'));
-    if (fileData) {
-        document.getElementById('name').value = fileData.name;
-        document.getElementById('dob').value = fileData.dob;
-        fileData.temperatures.forEach(point => {
-            chart.series[0].addPoint([point.timestamp, point.value]);
-        });
-    }
 
     document.getElementById('addData').addEventListener('click', function() {
         const temperature = parseFloat(document.getElementById('temperature').value);
         if (temperature >= 95 && temperature <= 105) {
             const now = new Date();
-            // Convert to IST (UTC+5:30)
-            const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
-            const istTimestamp = now.getTime() + istOffset; // Add offset
+            const istOffset = 5.5 * 60 * 60 * 1000; // Offset for IST (UTC+5:30)
+            const istTimestamp = now.getTime() + istOffset;
             chart.series[0].addPoint([istTimestamp, temperature]);
         } else {
             alert('Please enter a valid temperature value between 95 and 105.');
         }
     });
 });
+
 
 
     function calculateAge() {
