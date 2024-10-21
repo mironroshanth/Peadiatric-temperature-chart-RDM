@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -313,7 +314,21 @@
         yAxis: [{
             title: { text: 'Temperature (°F)' },
             min: 95,
-            max: 105
+            max: 105,
+            plotLines: [{
+                color: 'rgba(255, 0, 0, 0.5)', // Faded red color
+                width: 1, // Thin line
+                value: 98.4, // The y-axis value for 98.4°F
+                dashStyle: 'solid', // Line style
+                label: {
+                    text: '98.4°F', // Label for the line
+                    align: 'right',
+                    style: {
+                        color: 'red'
+                    }
+                },
+                zIndex: 5 // Ensure it appears above other chart elements
+            }]
         }, {
             title: { text: 'Temperature (°C)' },
             opposite: true, // Display Celsius on the opposite side (right side)
@@ -338,6 +353,9 @@
             data: [] // Data will be added dynamically
         }]
     });
+});
+
+
 
     document.getElementById('addData').addEventListener('click', function() {
         const temperature = parseFloat(document.getElementById('temperature').value);
@@ -350,7 +368,7 @@
             alert('Please enter a valid temperature value between 95 and 105.');
         }
     });
-});
+
 
 
 
