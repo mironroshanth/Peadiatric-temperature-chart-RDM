@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +104,6 @@
         font-weight: bold;
         cursor: pointer;
         transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 100%;
         margin: 5px 0;
     }
     button:hover {
@@ -219,8 +219,7 @@
     }
 }
     .content { 
-        padding-left: 16px; 
-        margin-top: 80px; 
+        padding-left: 16px;
     }
 </style>
 </head>
@@ -235,7 +234,6 @@
     </a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home&nbsp<i class="fa fa-home" ></i></a>
     <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart&nbsp<i class="fa fa-thermometer"></i></a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html">Record fever history&nbsp<i class="fa fa-thermometer"></i></a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website&nbsp<i class="fa fa-globe"></i></a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started&nbsp<i class="fa fa-rocket"></i></a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
@@ -256,251 +254,70 @@
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
 </div>
 <div class="content">
-    <h1 >New Chart</h1>
-    
+    <h1 >1.Record live temperatures</h1>
+    <br>
         <ul>
             <li>
             <h2 >
-                What is a 'New Chart'?
+                What is a 'Record live temperatures' chart?
             </h2>
                 <h3 >
                     <ul>
                         <li>
-                            <b>New chart</b> is the name defined for the chart on this page. You can use a new chart to record the body temperatures of a person, then and there. The speciality of this chart is that it can mark temperatures at your present time when you input the data (temperatures).
-                        </li>
+                            A <b>Record live temperatures chart</b> is an online fever chart created by me to record the body temperatures of a person, then and there. The speciality of this chart is that it can mark temperatures at your present time when you input the data (temperatures).
+                        </li><br>
+                        <button onclick="newChart()">Record live temperatures&nbsp<i class="fa fa-line-chart"></i></button><br><br>
+                        <li>
+                            There won't be any date or time inputs in the above page. The page will mark the temperatures automatically according to the time the temperatures are input.
+                        </li><br>
+                        <b><i>Note:</i></b>
+                        <ul>
+                            Note that the chart in this version uses the <a href="https://www.google.com/search?q=indian+standard+time&rlz=1C1CHZO_enLK1086LK1086&oq=Indian+Standere&gs_lcrp=EgZjaHJvbWUqCQgBEAAYChiABDIGCAAQRRg5MgkIARAAGAoYgAQyCQgCEAAYChiABDIJCAMQABgKGIAEMgkIBBAAGAoYgAQyCQgFEAAYChiABDIJCAYQABgKGIAEMgkIBxAAGAoYgAQyCQgIEAAYChiABDIJCAkQABgKGIAE0gEJMTExODVqMGo3qAIIsAIB&sourceid=chrome&ie=UTF-8&safe=active"><i>Indian Standered Time(IST)</i></a>. Which is GMT+05:30.
+                        </ul>
                     </ul>
                 </h3>
             </li>
-        </ul>
-
-
+        </ul><br>
+        <h1>2.Record fever history</h1><br>
+        <ul>
+            <h2>
+            <li>
+                Why use a 'Record fever history' chart?
+            </h2>
+                <h3>
+                    <ul>
+                        <li>We can use it to record a series of body temperatures of a person. You can record it at any date and input any temperatures recorded at any day. </li>
+                        <br>
+                        <button onclick="recFvr()">Record fever history&nbsp<i class="fa fa-line-chart"></i></button><br><br>
+                        <li>This chart has advanced options such as,
+                            <ul><br>
+                            
+                                <li>You shall be able to input the date the temperatures were measured from.</li>
+                                <li>You would be able to mark the,
+                                    <i>
+                                        <ul>-Date</ul>
+                                        <ul>-Time</ul>   
+                                    </i> 
+                                precisely and manually, along with the temperature you input.</li>
+                                <li>The data spacing wll be based on date an time inputs.</li>
+                            </ul>
+                        </li><br>
+                        <li>Wih many options it wil be more user friendly.</li>
+                    </ul>
+                </h3>
+            </li>
+                
+        </ul><br><br>
     
-    <div id="printableArea">
-        <div class="container">
-            <h2>Details</h2>
-            <label for="name">Name:</label>
-            <input type="text" id="name" placeholder="Enter name">
-            <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob">
-            <button class="save-button"onclick="calculateAge()">Calculate Age</button>
-            <p id="result"></p>
-        </div>
-        <div id="container" style="width: 100%; height: 500px; border-radius: 8px;"></div>
-    </div>
-</div>
-
-<div class="container">
-<h3>
-    <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert your temperature):</label>
-</h3><input type="number" id="temperature" min="95" max="105" step="0.1" />
-    <button class="save-button" id="addData">Add Data</button>
-</div>
-<button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
-<button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
-<button class="save-button" onclick="printPrintableArea()">Print</button><br><br>
-<button id="shareGmail" class="save-button" onclick="shareGmail()">Share via Email</button><br><br>
-<button id="shareWhatsApp" class="save-button" onclick="shareWhatsApp()">Share via WhatsApp</button><br><br>
-<button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
-
+</div>   
 <script>
-    let chart;
-    let isGridVisible = false; // Define globally to track grid visibility
 
-    document.addEventListener('DOMContentLoaded', function() {
-    chart = Highcharts.chart('container', {
-        chart: { type: 'line' },
-        title: { text: 'Temperature Over Time' },
-        xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
-        yAxis: [{
-            title: { text: 'Temperature (°F)' },
-            min: 95,
-            max: 105
-        }, {
-            title: { text: 'Temperature (°C)' },
-            opposite: true, // Display Celsius on the opposite side (right side)
-            min: (95 - 32) * 5 / 9, // Convert 95°F to Celsius
-            max: (105 - 32) * 5 / 9, // Convert 105°F to Celsius
-            labels: {
-                formatter: function () {
-                    return (this.value).toFixed(1); // Display Celsius with one decimal point
-                }
-            }
-        }],
-        series: [{
-            name: 'Temperature',
-            yAxis: 0, // Bind to Fahrenheit axis (left side)
-            color: {
-                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-                stops: [
-                    [0, '#6a11cb'],
-                    [1, '#2575fc']
-                ]
-            },
-            data: [] // Data will be added dynamically
-        }]
-    });
-
-    document.getElementById('addData').addEventListener('click', function() {
-        const temperature = parseFloat(document.getElementById('temperature').value);
-        if (temperature >= 95 && temperature <= 105) {
-            const now = new Date();
-            const istOffset = 5.5 * 60 * 60 * 1000; // Offset for IST (UTC+5:30)
-            const istTimestamp = now.getTime() + istOffset;
-            chart.series[0].addPoint([istTimestamp, temperature]);
-        } else {
-            alert('Please enter a valid temperature value between 95 and 105.');
-        }
-    });
-});
-
-
-
-    function calculateAge() {
-        const name = document.getElementById('name').value;
-        const dobInput = document.getElementById('dob').value;
-        if (!dobInput || !name) {
-            document.getElementById('result').innerText = 'Please enter both name and date of birth.';
-            return;
-        }
-
-        const dob = new Date(dobInput);
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const monthDiff = today.getMonth() - dob.getMonth();
-        const dayDiff = today.getDate() - dob.getDate();
-
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
-        const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-        const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
-
-        document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
+function newChart() {
+        window.location.href = "https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day 2.html";
     }
-
-    function saveChartData() {
-        const name = document.getElementById('name').value;
-        const dob = document.getElementById('dob').value;
-
-        if (!name || !dob) {
-            alert('Please enter both name and date of birth.');
-            return;
-        }
-
-        const temperatures = chart.series[0].data.map(point => ({
-            timestamp: point.x,
-            value: point.y
-        }));
-
-        const fileData = { name, dob, temperatures };
-        const fileName = prompt('Enter a name for the file:', 'chart-data');
-        const sourcePage = 'Day 1'; // This page identifier
-
-        if (fileName) {
-            const key = 'file_' + fileName;
-            if (localStorage.getItem(key)) {
-                const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-                if (!overwrite) return;
-            }
-
-            localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-            alert('Data saved successfully as ' + fileName + ' in your account!');
-            window.location.href = 'account.html'; // Redirecting to the account page
-        } else {
-            alert('File name cannot be empty.');
-        }
+function recFvr() {
+        window.location.href = "https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures recorded in all five days.html";
     }
-
-    function newChartSheet() {
-        document.getElementById('name').value = '';
-        document.getElementById('dob').value = '';
-        chart.series[0].setData([]);
-        alert('Chart and inputs cleared for new entry!');
-    }
-
-    function toggleGrid() {
-        isGridVisible = !isGridVisible;
-        chart.update({
-            xAxis: {
-                gridLineColor: isGridVisible ? '#53535381' : null,
-                gridLineWidth: isGridVisible ? 1 : 0
-            },
-            yAxis: {
-                gridLineColor: isGridVisible ? '#53535381' : null,
-                gridLineWidth: isGridVisible ? 1 : 0
-            }
-        });
-        document.getElementById('toggleGridButton').innerText = isGridVisible ? 'Hide Grid' : 'Show Grid';
-    }
-    function openNav() {
-        document.getElementById("mySidebar").style.width = "250px"; // Set the width of the sidebar when opened
-    }
-
-    function closeNav() {
-        document.getElementById("mySidebar").style.width = "0"; // Set the width of the sidebar to 0 when closed
-    }
-    function shareGmail() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
-
-    if (!name || !dob) {
-        alert('Please enter both name and date of birth before sharing.');
-        return;
-    }
-
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
-
-    const emailBody = `Name: ${name}\nDate of Birth: ${dob}\nTemperatures: ${JSON.stringify(temperatures, null, 2)}`;
-    const mailtoLink = `mailto:?subject=Shared Temperature Data&body=${encodeURIComponent(emailBody)}`;
-
-    window.location.href = mailtoLink;
-}
-
-function shareWhatsApp() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
-
-    if (!name || !dob) {
-        alert('Please enter both name and date of birth before sharing.');
-        return;
-    }
-
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
-
-    const message = `Name: ${name}\nDate of Birth: ${dob}\nTemperatures: ${JSON.stringify(temperatures, null, 2)}`;
-    const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-
-    window.open(whatsappLink, '_blank');
-}
-function printPrintableArea() {
-    const printableArea = document.getElementById('printableArea');
-    const newWindow = window.open('', '_blank');
-    newWindow.document.write(`
-        <html>
-        <head>
-            <title>Print</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 20px;
-                }
-                h1, h2, h3 {
-                    color: #333;
-                }
-            </style>
-        </head>
-        <body onload="window.print(); window.close();">
-            ${printableArea.innerHTML}
-        </body>
-        </html>
-    `);
-    newWindow.document.close();
-}
-
 
 
 </script>
