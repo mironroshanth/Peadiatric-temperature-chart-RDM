@@ -142,9 +142,8 @@
     const key = selectedFile.dataset.key;
     const fileData = JSON.parse(localStorage.getItem(key));
 
-    console.log("Loaded file data:", fileData); // Check if correct data is loaded
-
-    sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
+    // Store name, dob, and temperatures in sessionStorage
+    sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Stores name, dob, and temperatures
     const sourcePage = fileData.sourcePage;
 
     const pages = {
@@ -159,6 +158,7 @@
         alert('Source page not recognized. Staying on the current page.');
     }
 }
+
 
 
         function downloadFile() {
