@@ -385,39 +385,38 @@
     }
 
     function saveChartData() {
-        const name = document.getElementById('name').value;
-        const dob = document.getElementById('dob').value;
+    const name = document.getElementById('name').value;
+    const dob = document.getElementById('dob').value;
 
-        if (!name || !dob) {
-            alert('Please enter both name and date of birth.');
-            return;
-        }
-
-        const temperatures = chart.series[0].data.map(point => ({
-            timestamp: point.x,
-            value: point.y
-        }));
-
-        const fileData = { name, dob, temperatures };
-        const fileName = prompt('Enter a name for the file:', 'chart-data');
-        const sourcePage = 'Day 2'; // This page identifier
-
-        if (fileName) {
-            const key = 'file_' + fileName;
-            if (localStorage.getItem(key)) {
-                const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-                if (!overwrite) return;
-            }
-
-            localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-            alert('Data saved successfully as ' + fileName + ' in your account!');
-            window.location.href = 'account.html'; // Redirecting to the account page
-        } else {
-            alert('File name cannot be empty.');
-        }
+    if (!name || !dob) {
+        alert('Please enter both name and date of birth.');
+        return;
     }
 
-	    console.log(fileData); // Before navigating to Day 2
+    const temperatures = chart.series[0].data.map(point => ({
+        timestamp: point.x,
+        value: point.y
+    }));
+
+    const fileData = { name, dob, temperatures };
+    const fileName = prompt('Enter a name for the file:', 'chart-data');
+    const sourcePage = 'Day 2'; // This page identifier
+
+    if (fileName) {
+        const key = 'file_' + fileName;
+        if (localStorage.getItem(key)) {
+            const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
+            if (!overwrite) return;
+        }
+
+        localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
+        console.log(JSON.stringify({ fileData, sourcePage })); // Log the saved data
+        alert('Data saved successfully as ' + fileName + ' in your account!');
+        window.location.href = 'account.html'; // Redirecting to the account page
+    } else {
+        alert('File name cannot be empty.');
+    }
+}
 
     function newChartSheet() {
         document.getElementById('name').value = '';
