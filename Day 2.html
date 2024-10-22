@@ -398,7 +398,7 @@
         value: point.y
     }));
 
-    const fileData = { name, dob, temperatures };
+    const fileData = { name, dob, temperatures };  // Including name and dob in the data
     const fileName = prompt('Enter a name for the file:', 'chart-data');
     const sourcePage = 'Day 2'; // This page identifier
 
@@ -410,13 +410,13 @@
         }
 
         localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-        console.log(JSON.stringify({ fileData, sourcePage })); // Log the saved data
         alert('Data saved successfully as ' + fileName + ' in your account!');
         window.location.href = 'account.html'; // Redirecting to the account page
     } else {
         alert('File name cannot be empty.');
     }
 }
+
 
     function newChartSheet() {
         document.getElementById('name').value = '';
@@ -513,11 +513,17 @@ function printPrintableArea() {
 document.addEventListener('DOMContentLoaded', function() {
     const storedData = JSON.parse(sessionStorage.getItem('fileData'));
     if (storedData) {
+        // Load name and dob into the input fields
+        document.getElementById('name').value = storedData.name;
+        document.getElementById('dob').value = storedData.dob;
+
+        // Load temperature data into the chart
         chart.series[0].setData(storedData.temperatures.map(point => [point.timestamp, point.value]));
     } else {
         console.log("No stored data found.");
     }
 });
+
 
 
 </script>
