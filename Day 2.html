@@ -510,6 +510,14 @@ function printPrintableArea() {
     newWindow.document.close();
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const storedData = JSON.parse(sessionStorage.getItem('fileData'));
+    if (storedData) {
+        chart.series[0].setData(storedData.temperatures.map(point => [point.timestamp, point.value]));
+    } else {
+        console.log("No stored data found.");
+    }
+});
 
 
 </script>
