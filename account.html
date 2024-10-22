@@ -133,30 +133,33 @@
         }
 
         function loadFile() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (!selectedFile) {
-                alert('Please select a file from the list.');
-                return;
-            }
+    const selectedFile = document.querySelector('#fileList .selected');
+    if (!selectedFile) {
+        alert('Please select a file from the list.');
+        return;
+    }
 
-            const key = selectedFile.dataset.key;
-            const fileData = JSON.parse(localStorage.getItem(key));
+    const key = selectedFile.dataset.key;
+    const fileData = JSON.parse(localStorage.getItem(key));
 
-            sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
-            const sourcePage = fileData.sourcePage;
+    console.log("Loaded file data:", fileData); // Check if correct data is loaded
 
-            const pages = {
-                'Day 2': 'Day%202.html',
-                'Temperatures recorded in all five days': 'Temperatures%20recorded%20in%20all%20five%20days.html',
-                'Account': 'account.html'
-            };
+    sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));
+    const sourcePage = fileData.sourcePage;
 
-            if (pages[sourcePage] && window.location.pathname !== `/${pages[sourcePage]}`) {
-                window.location.href = pages[sourcePage];
-            } else {
-                alert('Source page not recognized. Staying on the current page.');
-            }
-        }
+    const pages = {
+        'Day 2': 'Day%202.html',
+        'Temperatures recorded in all five days': 'Temperatures%20recorded%20in%20all%20five%20days.html',
+        'Account': 'account.html'
+    };
+
+    if (pages[sourcePage] && window.location.pathname !== `/${pages[sourcePage]}`) {
+        window.location.href = pages[sourcePage];
+    } else {
+        alert('Source page not recognized. Staying on the current page.');
+    }
+}
+
 
         function downloadFile() {
             const selectedFile = document.querySelector('#fileList .selected');
