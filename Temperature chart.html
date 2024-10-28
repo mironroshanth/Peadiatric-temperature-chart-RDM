@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,6 +81,10 @@
         .sidebar a:hover {
             color: #f1f1f1b7;
         }
+        .sidebar a.active {
+        background: #0f0f0f;
+        color: white;
+    }
         .container {
             margin-top: 60px;
             background-color: #fff;
@@ -220,6 +225,10 @@
         text-align: center; 
         flex-grow: 1;
     }
+    img {
+    width: 270px;
+    height:200px;
+    }
 }
     </style>
 </head>
@@ -242,9 +251,10 @@
         <!-- Sidebar navigation -->
         <div id="mySidebar" class="sidebar">
         <a style="padding-left: 200px; margin-top: -50;" href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
-            <h1 style="padding-left: 16px; color: rgb(255,0,0); top: 100;">Menu</h1>
+            <h1 style="padding-left: 16px; color: rgb(255,0,0); top: 100;"></h1>
             
             <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+            <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer</a>
