@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -205,6 +206,10 @@
      h3 {
            font-size: 16px; /* Further reduce heading sizes */
         }
+        .content div {
+            margin-top: -130px; /* Adjust this value as needed */ 
+            margin-left: 105px; 
+        }
 }
  @media screen and (max-width: 768px) {
     .mobile-header {
@@ -213,14 +218,15 @@
         text-align: center; 
         flex-grow: 1;
     }
+    img{
+    display: none;
+    }
+    
 }
         .content { 
             padding-left: 16px; margin-top: 50px; 
         } 
-        .content div {
-            margin-top: -130px; /* Adjust this value as needed */ 
-            margin-left: 105px; 
-        }
+        
 </style>
 </head>
 <body>
@@ -243,12 +249,14 @@
 </div>
 
 <!-- Sidebar navigation -->
-<div id="mySidebar" class="sidebar"><h1 style="padding-left: 16px;">Menu</h1>
+<div id="mySidebar" class="sidebar"><h1 style="padding-left: 16px;">
+</h1>
     <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">&times;</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Home</a>
+    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started</a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer</a>
+    <a  class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
 </div>
@@ -291,4 +299,5 @@
     }
 </script>
 </html>
+
 
