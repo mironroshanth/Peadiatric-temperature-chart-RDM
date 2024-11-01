@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -186,13 +184,24 @@
             font-size: 12px;
             padding: 6px;
         }
-        h3, h1, h2 {
-            font-size: 16px; /* Further reduce heading sizes */
-        }
+        h3 {
+    font-size: 16px; /* Further reduce heading sizes */
+}
+h2{
+    font-size: 19px;
+}
+h1{
+    font-size: 20px;
+    font-weight: bold;
+}
+.m{
+display: none;
+}
 
             #container {
             height: 300px; /* Reduce chart height */
          }
+         
         }
         @media screen and (max-width: 768px) {
     .desktop-header {
@@ -216,6 +225,9 @@
             }
             h3,  h2 {
             font-size: 16px; /* Further reduce heading sizes */
+        }
+        .f{
+        display: none;
         }
 }
  @media screen and (max-width: 768px) {
@@ -261,11 +273,13 @@
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories</a>
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files</a>
         </div>
-        <br><br><br><br>
+        <br class="m"><br class="m"><br class="m"><br class="m">
         <div style="padding: 16px;">
             <div class="desktop-header">
-                <h1>Temperature Chart</h1> <!-- This will be hidden on mobile -->
-            </div><br><br>
+                <h1>Temperature Chart</h1></div>
+                <div class="f"><h1>Introduction</h1></div>
+                <!-- This will be hidden on mobile -->
+            <br><br class="m">
             <h3>This open-source website can be used to mark down body temperatures of a person. The temperature chart website is used for medical purposes.
             <p>For more details about the usage methods of this website, go through the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">getting started</a> interface. To know more about this website, read the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">about this website</a> page.</p>
             </h3><br><br>
