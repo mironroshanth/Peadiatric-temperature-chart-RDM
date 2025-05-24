@@ -590,29 +590,52 @@
             // This updated logic generates a QR code that links to your Sign In page.
             // Users will need to sign in with their OWN credentials after scanning.
 <!-- Replace the existing getQRCodeButton event listener with this: -->
-getQRCodeButton.addEventListener('click', function() {
+// Replace the getQRCodeButton event listener with this:
+getQRCodeButton.addEventListener('click', async function() {
     if (!currentUserId) {
         alert('No user is logged in to generate a QR code link.');
         return;
     }
 
-    // Get the current user (we know they're signed in from the check above)
-    const user = auth.currentUser;
-    
-    // Construct the URL with email and password parameters
-    // NOTE: This is a security risk - see important note below
-    const signInUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?username=${encodeURIComponent(user.email)}&password=${encodeURIComponent(user.password)}&autoSignIn=true`;
-    
-    // Generate the QR code
-    qrcodeContainer.innerHTML = '';
-    new QRCode(qrcodeContainer, {
-        text: signInUrl,
-        width: 128,
-        height: 128,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-    });
+    try {
+        // Generate a unique token (you might want to make this more robust)
+        const token = generateToken();
+        
+        // Store the token in Firebase with a 5-minute expiration
+        const tokenRef = database.ref('tokens/' + token);
+        await tokenRef.set({
+            userId: currentUserId,
+            createdAt: firebase.database.ServerValue.TIMESTAMP,
+            expiresAt: Date.now() + 300000 // 5 minutes from now
+        });
+        
+        // Create URL with just the token
+        const signInUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?token=${token}`;
+        
+        // Generate QR code
+        qrcodeContainer.innerHTML = '';
+        new QRCode(qrcodeContainer, {
+            text: signInUrl,
+            width: 128,
+            height: 128,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        printQRCodeButton.style.display = 'inline-block';
+        alert("QR Code generated. It will automatically sign in when scanned (valid for 5 minutes).");
+    } catch (error) {
+        console.error("Error generating QR code:", error);
+        alert("Failed to generate QR code: " + error.message);
+    }
+});
+
+function generateToken() {
+    // Simple token generation - consider using a more robust method
+    return 'temp-' + Math.random().toString(36).substring(2, 15) + 
+           Math.random().toString(36).substring(2, 15);
+}
 
     // Show the print button
     printQRCodeButton.style.display = 'inline-block';
