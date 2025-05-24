@@ -523,6 +523,7 @@ h1{
 
     // --- Save Chart Data to Firebase Realtime Database ---
     // This function replaces the localStorage saving logic
+        // --- Save Chart Data to Firebase Realtime Database (with name prompt) ---
     function saveChartData() {
         const user = auth.currentUser; // Get the currently logged-in user
 
@@ -534,33 +535,43 @@ h1{
             return;
         }
 
-        const name = document.getElementById('name').value.trim(); // Trim whitespace
-        const dob = document.getElementById('dob').value;
+        const name = document.getElementById('name').value.trim(); // Patient name
+        const dob = document.getElementById('dob').value;         // Patient DOB
+        const temperatures = chart.series[0].data.map(point => ({ // Chart data
+            timestamp: point.x,
+            value: point.y
+        }));
 
         if (!name || !dob) {
             alert('Please enter both patient name and date of birth before saving.');
             return;
         }
 
-        const temperatures = chart.series[0].data.map(point => ({
-            // Use the original timestamp from Highcharts data
-            timestamp: point.x,
-            value: point.y
-        }));
-
         if (temperatures.length === 0) {
             alert('Please add some temperature data to the chart before saving.');
             return;
         }
 
+        // *** Add the prompt for the file name here ***
+        const fileNamePrompt = prompt('Enter a name to save this chart file:', `${name} - ${dob}`);
+
+        // Check if the user cancelled the prompt or entered an empty name
+        if (!fileNamePrompt || fileNamePrompt.trim() === '') {
+            alert('Saving cancelled. File name cannot be empty.');
+            return; // Stop the save process
+        }
+
+        const uniqueFileName = fileNamePrompt.trim(); // Use the name provided by the user
+
+
         // Structure the data to be saved under the user's node in RTDB
         // We'll put it under `/patients/[userId]/files/[unique_file_key]`
         const fileDataToSave = {
-            fileName: name + ' - ' + dob, // A default name based on patient details
-            sourcePage: 'Day 2', // Identifier for this page
+            fileName: uniqueFileName, // *** Use the user-provided name here ***
+            sourcePage: 'Temperature Chart', // Identifier for this page (adjust if this is truly 'Day 2')
             timestamp: firebase.database.ServerValue.TIMESTAMP, // Server timestamp for when it was saved
             fileData: { // Nested object containing the actual chart data
-                name: name,
+                name: name, // Still include patient name and DOB within the data
                 dob: dob,
                 temperatures: temperatures
             }
@@ -573,19 +584,18 @@ h1{
         // This creates a new entry for each saved chart.
         userFilesRef.push().set(fileDataToSave)
             .then(() => {
-                console.log("Chart data saved successfully to Firebase RTDB!");
-                alert('Chart data saved successfully to your account!');
+                console.log("Chart data saved successfully to Firebase RTDB!", { fileName: uniqueFileName });
+                alert(`Chart data saved successfully as "${uniqueFileName}" in your account!`);
                 // Optionally, redirect to the account page after saving
                  window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html';
             })
             .catch((error) => {
-                                console.error("Error saving chart data to Firebase RTDB:", error);
+                console.error("Error saving chart data to Firebase RTDB:", error);
                 alert('Error saving chart data: ' + error.message);
             });
     }
     // Attach the saveChartData function to the save button click event
-     document.getElementById('saveButton').addEventListener('click', saveChartData);
-
+    document.getElementById('saveButton').addEventListener('click', saveChartData);
 
     // Function to clear the chart and inputs for a new sheet
     function newChartSheet() {
