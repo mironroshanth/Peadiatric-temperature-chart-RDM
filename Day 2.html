@@ -308,7 +308,7 @@ h1{
     <button class="save-button" id="addData">Add Data</button>
 </div>
 <button id="toggleGridButton" class="save-button" onclick="toggleGrid()">Show Grid</button><br><br>
-<button id="saveButton" class="save-button" onclick="saveChartData()">Save</button><br><br>
+<button id="saveButton" class="save-button">Save</button><br><br>
 <button class="save-button" onclick="printPrintableArea()">Print</button><br><br>
 <button id="shareGmail" class="save-button" onclick="shareGmail()">Share via Email</button><br><br>
 <button id="shareWhatsApp" class="save-button" onclick="shareWhatsApp()">Share via WhatsApp</button><br><br>
@@ -568,7 +568,7 @@ h1{
         // We'll put it under `/patients/[userId]/files/[unique_file_key]`
         const fileDataToSave = {
             fileName: uniqueFileName, // *** Use the user-provided name here ***
-            sourcePage: 'Temperature Chart', // Identifier for this page (adjust if this is truly 'Day 2')
+            sourcePage: 'Day 2', // Identifier for this page (adjust if this is truly 'Day 2')
             timestamp: firebase.database.ServerValue.TIMESTAMP, // Server timestamp for when it was saved
             fileData: { // Nested object containing the actual chart data
                 name: name, // Still include patient name and DOB within the data
