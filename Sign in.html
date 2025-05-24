@@ -175,7 +175,9 @@
       // Get a reference to the Auth service
       const auth = app.auth(); // Using compat SDK syntax
       console.log("Firebase SDK and Auth initialized!");
-
+        
+        const auth = app.auth();
+        const database = app.database(); // Add this line
       // Function to display Firebase Auth errors
       function displayAuthError(message) {
         const errorElement = document.getElementById('auth-error-message');
@@ -295,42 +297,46 @@
              // for security reasons, especially for passwords.
              // A more secure approach would involve a one-time use token or a link
              // to a page that prompts for password verification or uses a different authentication flow.
-            const urlParams = new URLSearchParams(window.location.search);
-            const qrEmail = urlParams.get('username'); // Assuming 'username' parameter now holds email
-            const qrPassword = urlParams.get('password');
-            const autoSignIn = urlParams.get('autoSignIn');
+
 
              // If QR code parameters are present and autoSignIn === 'true', attempt sign-in
-             if (qrEmail && qrPassword && autoSignIn === 'true') {
-                 console.log("Attempting auto-sign-in with Firebase Auth...");
-                 // Check if user is already signed in before attempting auto sign-in
-                 if (!auth.currentUser) {
-                     auth.signInWithEmailAndPassword(qrEmail, qrPassword)
-                         .then((userCredential) => {
-                             // Signed in successfully via QR code
-                             console.log("Auto-sign-in successful!", userCredential.user);
-                             // Redirect to the account/main page after successful QR sign-in
-                             window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html'; // Redirect
-                         })
-                         .catch((error) => {
-                             console.error("Auto-sign-in failed:", error.code, error.message);
-                             displayAuthError('Auto Sign In failed: ' + error.message); // Display error message
-                             // If auto-sign-in fails, show the manual login form
-                             initialQuestion.style.display = 'none';
-                             formTitle.textContent = 'Sign In';
-                             toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
-                             toggleLinkTextElement.style.display = 'block';
-                             signedInContent.style.display = 'none';
-                             authForm.style.display = 'block';
-                             formContainer.style.display = 'block';
-                             authForm.reset();
-                             emailInput.focus();
-                         });
-                 } else {
-                     console.log("User already signed in, skipping QR auto-sign-in.");
-                      // If user is already signed in, just let the onAuthStateChanged handle the view
-                 }
-             }
+// Add this to the sign-in page's DOMContentLoaded event listener:
+
+// Check for token parameter on page load
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
+if (token) {
+    // Verify the token exists in database
+    database.ref('tokens/' + token).once('value').then((snapshot) => {
+        const tokenData = snapshot.val();
+        
+        if (!tokenData) {
+            console.log("Invalid token");
+            return;
+        }
+        
+        // Check if token is expired
+        if (tokenData.expiresAt < Date.now()) {
+            console.log("Token expired");
+            database.ref('tokens/' + token).remove(); // Clean up
+            return;
+        }
+        
+        // Sign in with the stored custom token
+        auth.signInWithCustomToken(tokenData.customAuthToken)
+            .then(() => {
+                console.log("Auto-sign-in successful");
+                database.ref('tokens/' + token).remove(); // Remove used token
+                window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Account.html';
+            })
+            .catch((error) => {
+                console.error("Auto-sign-in failed:", error);
+            });
+    }).catch((error) => {
+        console.error("Token verification failed:", error);
+    });
+}
 
 
             // --- Handle Form Submission (Sign Up or Sign In) ---
