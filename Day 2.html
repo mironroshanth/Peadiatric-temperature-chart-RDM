@@ -557,7 +557,7 @@ h1{
         // We'll put it under `/patients/[userId]/files/[unique_file_key]`
         const fileDataToSave = {
             fileName: name + ' - ' + dob, // A default name based on patient details
-            sourcePage: 'Temperature Chart', // Identifier for this page
+            sourcePage: 'Day 2', // Identifier for this page
             timestamp: firebase.database.ServerValue.TIMESTAMP, // Server timestamp for when it was saved
             fileData: { // Nested object containing the actual chart data
                 name: name,
