@@ -589,34 +589,36 @@
             // NOTE: Putting Firebase credentials directly in a URL via QR code is NOT secure.
             // This updated logic generates a QR code that links to your Sign In page.
             // Users will need to sign in with their OWN credentials after scanning.
-            getQRCodeButton.addEventListener('click', function() {
-                 if (!currentUserId) {
-                     alert('No user is logged in to generate a QR code link.');
-                     return;
-                 }
+<!-- Replace the existing getQRCodeButton event listener with this: -->
+getQRCodeButton.addEventListener('click', function() {
+    if (!currentUserId) {
+        alert('No user is logged in to generate a QR code link.');
+        return;
+    }
 
-                const qrcodeContainer = document.getElementById('qrcode');
-                qrcodeContainer.innerHTML = ''; // Clear previous QR code
+    // Get the current user (we know they're signed in from the check above)
+    const user = auth.currentUser;
+    
+    // Construct the URL with email and password parameters
+    // NOTE: This is a security risk - see important note below
+    const signInUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?username=${encodeURIComponent(user.email)}&password=${encodeURIComponent(user.password)}&autoSignIn=true`;
+    
+    // Generate the QR code
+    qrcodeContainer.innerHTML = '';
+    new QRCode(qrcodeContainer, {
+        text: signInUrl,
+        width: 128,
+        height: 128,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
 
-                // Construct the URL to your sign-in page.
-                // A user scanning this will be prompted to sign in there.
-                const signInPageUrl = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html'; // Ensure this is the correct URL
-
-                // Generate the QR code image
-                new QRCode(qrcodeContainer, {
-                    text: signInPageUrl, // Use the sign-in page URL
-                    width: 128,
-                    height: 128,
-                    colorDark: '#000000',
-                    colorLight: '#ffffff',
-                    correctLevel: QRCode.CorrectLevel.H // High correction level for robustness
-                });
-
-                // Show the print button after generating the QR code
-                document.getElementById('printQRCode').style.display = 'inline-block';
-                 console.log("QR Code generated for Sign In page URL:", signInPageUrl);
-                 alert("QR Code generated. It links to your Sign In page.");
-            });
+    // Show the print button
+    printQRCodeButton.style.display = 'inline-block';
+    console.log("QR Code generated for auto sign-in URL:", signInUrl);
+    alert("QR Code generated. Scanning this will automatically sign in the user.");
+});
 
 
             // --- Print QR Code ---
