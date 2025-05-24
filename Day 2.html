@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,6 +123,11 @@
         margin: 5px 0;
         text-decoration: none; /* Add this line to remove underline */
     }
+    .save-button:disabled { /* Style for disabled save button */
+         background-color: #ccc;
+         cursor: not-allowed;
+         box-shadow: none;
+    }
     .ac-button {
         background: linear-gradient(45deg, #be0d0d, #ff4d4d);
         color: white;
@@ -214,7 +215,7 @@ h1{
     .mobile-header {
         display: none; /* Hide mobile header on desktop */
     }
-            .topnav {    
+            .topnav {
             top: 0;
             }
      h3 {
@@ -224,21 +225,21 @@ h1{
  @media screen and (max-width: 768px) {
     .mobile-header {
         display: allow; /* Hide on mobile */
-        color: white; 
-        text-align: center; 
+        color: white;
+        text-align: center;
         flex-grow: 1;
     }
 }
-    .content { 
-        padding-left: 16px; 
-        margin-top: 80px; 
+    .content {
+        padding-left: 16px;
+        margin-top: 80px;
     }
 </style>
 </head>
 <body>
 <div class="topnav">
-    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 class="mobile-header">Temperature chart</h1>                                                   
-    
+    <span class="menu-icon" onclick="openNav()">&#9776;</span><h1 class="mobile-header">Temperature chart</h1>
+
     <!-- Desktop navigation links -->
     <div class="desktop-nav">
         <a type="image" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/heart.jpg">
@@ -248,9 +249,9 @@ h1{
     <a class="active" href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%201.html">New chart&nbsp<i class="fa fa-thermometer"></i></a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/about.html">About this website&nbsp<i class="fa fa-globe"></i></a>
     <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Getting%20started.html">Getting started&nbsp<i class="fa fa-rocket"></i></a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Devoloper.html">Meet the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories&nbsp<i class="fa fa-wrench"></i></a>
-    <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files&nbsp<i class="fa fa-user"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiac-temperature-chart-RDM/Devoloper.html">Meet the developer&nbsp<i class="glyphicon glyphicon-user"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiac-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Other accessories&nbsp<i class="fa fa-wrench"></i></a>
+    <a href="https://mironroshanth.github.io/Peadiac-temperature-chart-RDM/account.html" class="ac-button">Your account and saved files&nbsp<i class="fa fa-user"></i></a>
     </div>
 </div>
 
@@ -268,7 +269,7 @@ h1{
 </div>
 <div class="content">
     <h1 >New Chart</h1>
-    
+
         <ul>
             <li>
             <h2 >
@@ -285,7 +286,7 @@ h1{
         </ul>
 
 
-    
+    </div>
     <div id="printableArea">
         <div class="container">
             <h2>Details</h2>
@@ -302,7 +303,7 @@ h1{
 
 <div class="container">
 <h3>
-    <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">Click here</a> to convert your temperature):</label>
+    <label for="temperature">Enter Temperature (°F/<a href="https://mironroshanth.github.io/Peadiac-temperature-chart-RDM/Convert%20to%20fahrenheit.html">Click here</a> to convert your temperature):</label>
 </h3><input type="number" id="temperature" min="95" max="105" step="0.1" />
     <button class="save-button" id="addData">Add Data</button>
 </div>
@@ -313,227 +314,444 @@ h1{
 <button id="shareWhatsApp" class="save-button" onclick="shareWhatsApp()">Share via WhatsApp</button><br><br>
 <button id="newChartSheet" class="save-button" onclick="newChartSheet()">New Chart Sheet</button><br><br>
 
+<!-- Firebase SDKs -->
+<!-- Using a recent version (10.11.0 as of this example), check Firebase docs for the latest recommended -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+
 <script>
+    // Your Firebase project configuration
+    // *** REPLACE WITH YOUR ACTUAL CONFIG FROM THE FIREBASE CONSOLE! ***
+    // Go to Project settings -> General -> Your apps -> Select your web app
+    const firebaseConfig = {
+      apiKey: "AIzaSyB_iG1hCwRs82h_EoLmVERfHKxO2fh-M-Q", // <-- Replace this!
+      authDomain: "temperature-chart-47839.firebaseapp.com",
+      projectId: "temperature-chart-47839",
+      storageBucket: "temperature-chart-47839.firebasestorage.app",
+      messagingSenderId: "764348196897",
+      appId: "1:764348196897:web:10e513dc51e6e839665b60",
+      // Add the databaseURL for Realtime Database
+      databaseURL: "https://temperature-chart-47839-default-rtdb.asia-southeast1.firebasedatabase.app" // <-- Make sure this is correct
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+
+    // Get references to the Auth and Database services
+    const auth = app.auth();
+    const database = app.database();
+
+    console.log("Firebase SDKs initialized on Chart page!");
+
+    // --- Firebase Authentication State Observer ---
+    // Check auth state on page load and update UI elements like the Save button
+    auth.onAuthStateChanged(function(user) {
+        const saveButton = document.getElementById('saveButton');
+        if (user) {
+            // User is signed in. Enable saving.
+            console.log("User signed in on Chart page:", user.email, "UID:", user.uid);
+            saveButton.disabled = false; // Enable the save button
+        } else {
+            // User is signed out. Disable saving.
+            console.log("No user signed in on Chart page.");
+            saveButton.disabled = true; // Disable the save button
+             // You could also show a message explaining why saving is disabled
+        }
+    });
+
+
     let chart;
     let isGridVisible = false; // Define globally to track grid visibility
 
     document.addEventListener('DOMContentLoaded', function() {
-    chart = Highcharts.chart('container', {
-        chart: { type: 'line' },
-        title: { text: 'Temperature Over Time' },
-        xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
-        yAxis: [{
-            title: { text: 'Temperature (°F)' },
-            min: 95,
-            max: 105,
-            plotLines: [{ // Adding the horizontal reference line at 98.4°F
-                value: 98.4,
-                color: 'rgba(255, 0, 0, 0.4)', // Faded red
-                width: 2, // Thin line
-                zIndex: 5, // Ensures the line is on top
-                label: { text: '98.4°F', align: 'right', style: { color: 'red' } }
-            }]
-        }, {
-            title: { text: 'Temperature (°C)' },
-            opposite: true,
-            min: (95 - 32) * 5/9, // Convert 95°F to Celsius
-            max: (105 - 32) * 5/9, // Convert 105°F to Celsius
-            labels: {
-                formatter: function() {
-                    return (this.value).toFixed(1); // Display Celsius to one decimal place
+        chart = Highcharts.chart('container', {
+            chart: { type: 'line' },
+            title: { text: 'Temperature Over Time' },
+            xAxis: { type: 'datetime', title: { text: 'Time of Input' } },
+            yAxis: [{
+                title: { text: 'Temperature (°F)' },
+                min: 95,
+                max: 105,
+                plotLines: [{ // Adding the horizontal reference line at 98.4°F
+                    value: 98.4,
+                    color: 'rgba(255, 0, 0, 0.4)', // Faded red
+                    width: 2, // Thin line
+                    zIndex: 5, // Ensures the line is on top
+                    label: { text: '98.4°F', align: 'right', style: { color: 'red' } }
+                }]
+            }, {
+                title: { text: 'Temperature (°C)' },
+                opposite: true,
+                min: (95 - 32) * 5/9, // Convert 95°F to Celsius
+                max: (105 - 32) * 5/9, // Convert 105°F to Celsius
+                labels: {
+                    formatter: function() {
+                        return (this.value).toFixed(1); // Display Celsius to one decimal place
+                    }
                 }
+            }],
+            series: [{
+                name: 'Temperature',
+                color: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+                    stops: [
+                        [0, '#6a11cb'],
+                        [1, '#2575fc']
+                    ]
+                },
+                data: []
+            }]
+        });
+
+        document.getElementById('addData').addEventListener('click', function() {
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            if (!isNaN(temperature) && temperature >= 95 && temperature <= 105) { // Check if it's a number AND within range
+                const now = new Date();
+                // NOTE: Client-side time is not reliable. Consider using server timestamp
+                // if strict time accuracy is needed relative to saving.
+                // For plotting, client time is generally fine.
+                 const istOffset = 5.5 * 60 * 60 * 1000; // Offset for IST (UTC+5:30)
+                 const istTimestamp = now.getTime() + istOffset; // Using client time + offset
+
+                chart.series[0].addPoint([istTimestamp, temperature]);
+                 document.getElementById('temperature').value = ''; // Clear input after adding
+            } else {
+                alert('Please enter a valid temperature value between 95 and 105.');
             }
-        }],
-        series: [{
-            name: 'Temperature',
-            color: {
-                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
-                stops: [
-                    [0, '#6a11cb'],
-                    [1, '#2575fc']
-                ]
-            },
-            data: []
-        }]
-    });
+        });
 
-    document.getElementById('addData').addEventListener('click', function() {
-        const temperature = parseFloat(document.getElementById('temperature').value);
-        if (temperature >= 95 && temperature <= 105) {
-            const now = new Date();
-            const istOffset = 5.5 * 60 * 60 * 1000; // Offset for IST (UTC+5:30)
-            const istTimestamp = now.getTime() + istOffset;
-            chart.series[0].addPoint([istTimestamp, temperature]);
+        // --- Load Chart Data from sessionStorage (from Account page) ---
+        const storedDataJSON = sessionStorage.getItem('chartDataForLoad');
+        const loadedChartSourcePage = sessionStorage.getItem('loadedChartSourcePage'); // Get source page if needed
+
+        if (storedDataJSON) {
+            try {
+                const storedData = JSON.parse(storedDataJSON);
+                // Load name and dob into the input fields
+                document.getElementById('name').value = storedData.name || ''; // Use || '' to handle potential missing data
+                document.getElementById('dob').value = storedData.dob || '';
+
+                // Load temperature data into the chart
+                if (storedData.temperatures && Array.isArray(storedData.temperatures)) {
+                     // Map points back to [timestamp, value] format for Highcharts
+                     const chartData = storedData.temperatures.map(point => [point.timestamp, point.value]);
+                    chart.series[0].setData(chartData);
+                    console.log("Chart data loaded from sessionStorage.");
+                } else {
+                    console.warn("No temperature data found in stored data.");
+                     chart.series[0].setData([]); // Ensure chart is empty if no temps
+                }
+
+                // Clear the sessionStorage data after loading
+                sessionStorage.removeItem('chartDataForLoad');
+                sessionStorage.removeItem('loadedChartSourcePage');
+                console.log("Cleared chart data from sessionStorage.");
+
+            } catch (e) {
+                console.error("Error parsing stored chart data from sessionStorage:", e);
+                alert("Error loading saved chart data.");
+                // Clear potentially corrupt data
+                sessionStorage.removeItem('chartDataForLoad');
+                sessionStorage.removeItem('loadedChartSourcePage');
+            }
         } else {
-            alert('Please enter a valid temperature value between 95 and 105.');
+            console.log("No chart data found in sessionStorage for loading.");
+            // Chart will remain empty, ready for new data entry
         }
-    });
-});
-
-
+    }); // End of DOMContentLoaded listener
 
 
     function calculateAge() {
-        const name = document.getElementById('name').value;
+        const name = document.getElementById('name').value.trim(); // Use trim() to remove whitespace
         const dobInput = document.getElementById('dob').value;
+        const resultElement = document.getElementById('result'); // Get result paragraph
+
         if (!dobInput || !name) {
-            document.getElementById('result').innerText = 'Please enter both name and date of birth.';
+            resultElement.innerText = 'Please enter both name and date of birth.';
             return;
         }
 
         const dob = new Date(dobInput);
         const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const monthDiff = today.getMonth() - dob.getMonth();
-        const dayDiff = today.getDate() - dob.getDate();
 
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
-        const months = monthDiff < 0 ? (12 + monthDiff) : monthDiff;
-        const days = dayDiff < 0 ? (new Date(today.getFullYear(), today.getMonth(), 0).getDate() + dayDiff) : dayDiff;
-
-        document.getElementById('result').innerText = `${name} is ${age} years, ${months} months, and ${days} days old.`;
-    }
-
-    function saveChartData() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
-
-    if (!name || !dob) {
-        alert('Please enter both name and date of birth.');
-        return;
-    }
-
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
-
-    const fileData = { name, dob, temperatures };  // Including name and dob in the data
-    const fileName = prompt('Enter a name for the file:', 'chart-data');
-    const sourcePage = 'Day 2'; // This page identifier
-
-    if (fileName) {
-        const key = 'file_' + fileName;
-        if (localStorage.getItem(key)) {
-            const overwrite = confirm('A file with this name already exists. Do you want to overwrite it?');
-            if (!overwrite) return;
+        // Check for valid date
+        if (isNaN(dob.getTime())) {
+             resultElement.innerText = 'Invalid date entered.';
+             return;
         }
 
-        localStorage.setItem(key, JSON.stringify({ fileData, sourcePage }));
-        alert('Data saved successfully as ' + fileName + ' in your account!');
-        window.location.href = 'account.html'; // Redirecting to the account page
-    } else {
-        alert('File name cannot be empty.');
+        let ageYears = today.getFullYear() - dob.getFullYear();
+        let ageMonths = today.getMonth() - dob.getMonth();
+        let ageDays = today.getDate() - dob.getDate();
+
+        // Adjust age if birthday hasn't occurred this year/month
+        if (ageDays < 0) {
+            ageMonths--;
+            // Calculate days in the previous month
+            const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+            ageDays += lastMonth.getDate();
+        }
+
+        if (ageMonths < 0) {
+            ageYears--;
+            ageMonths += 12;
+        }
+
+         // Handle cases for exactly birthday month/day
+         if (today.getMonth() === dob.getMonth() && today.getDate() === dob.getDate()) {
+            resultElement.innerText = `${name} is ${ageYears} years old today! Happy Birthday!`;
+         } else if (ageYears < 0) {
+              resultElement.innerText = 'Date of birth is in the future.';
+         }
+         else if (ageYears === 0 && ageMonths === 0 && ageDays === 0) {
+             resultElement.innerText = `${name} is less than a day old.`;
+         }
+         else {
+             // Format the output string
+             let ageString = `${name} is `;
+             if (ageYears > 0) ageString += `${ageYears} year${ageYears > 1 ? 's' : ''}`;
+             if (ageYears > 0 && ageMonths > 0) ageString += ', ';
+             if (ageMonths > 0) ageString += `${ageMonths} month${ageMonths > 1 ? 's' : ''}`;
+             if ((ageYears > 0 || ageMonths > 0) && ageDays > 0) ageString += ', and ';
+             if (ageDays > 0 || (ageYears === 0 && ageMonths === 0)) ageString += `${ageDays} day${ageDays > 1 ? 's' : ''}`;
+
+             resultElement.innerText = ageString + '.';
+         }
+
     }
-}
+
+    // --- Save Chart Data to Firebase Realtime Database ---
+    // This function replaces the localStorage saving logic
+    function saveChartData() {
+        const user = auth.currentUser; // Get the currently logged-in user
+
+        if (!user) {
+            // If no user is logged in, inform them and stop.
+            alert('Please sign in to your account to save charts.');
+            // Optionally redirect to the sign-in page
+            // window.location.href = 'https://mironroshanth.github.io/Peadiac-temperature-chart-RDM/Sign%20in.html';
+            return;
+        }
+
+        const name = document.getElementById('name').value.trim(); // Trim whitespace
+        const dob = document.getElementById('dob').value;
+
+        if (!name || !dob) {
+            alert('Please enter both patient name and date of birth before saving.');
+            return;
+        }
+
+        const temperatures = chart.series[0].data.map(point => ({
+            // Use the original timestamp from Highcharts data
+            timestamp: point.x,
+            value: point.y
+        }));
+
+        if (temperatures.length === 0) {
+            alert('Please add some temperature data to the chart before saving.');
+            return;
+        }
+
+        // Structure the data to be saved under the user's node in RTDB
+        // We'll put it under `/patients/[userId]/files/[unique_file_key]`
+        const fileDataToSave = {
+            fileName: name + ' - ' + dob, // A default name based on patient details
+            sourcePage: 'Temperature Chart', // Identifier for this page
+            timestamp: firebase.database.ServerValue.TIMESTAMP, // Server timestamp for when it was saved
+            fileData: { // Nested object containing the actual chart data
+                name: name,
+                dob: dob,
+                temperatures: temperatures
+            }
+        };
+
+         // Get a reference to the user's files location in RTDB
+         const userFilesRef = database.ref('patients/' + user.uid + '/files');
+
+        // Use push() to generate a unique key and set() to save the data.
+        // This creates a new entry for each saved chart.
+        userFilesRef.push().set(fileDataToSave)
+            .then(() => {
+                console.log("Chart data saved successfully to Firebase RTDB!");
+                alert('Chart data saved successfully to your account!');
+                // Optionally, redirect to the account page after saving
+                 window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html';
+            })
+            .catch((error) => {
+                                console.error("Error saving chart data to Firebase RTDB:", error);
+                alert('Error saving chart data: ' + error.message);
+            });
+    }
+    // Attach the saveChartData function to the save button click event
+     document.getElementById('saveButton').addEventListener('click', saveChartData);
 
 
+    // Function to clear the chart and inputs for a new sheet
     function newChartSheet() {
         document.getElementById('name').value = '';
         document.getElementById('dob').value = '';
-        chart.series[0].setData([]);
+        document.getElementById('result').innerText = ''; // Clear age result
+        chart.series[0].setData([]); // Clear chart data
+         document.getElementById('temperature').value = ''; // Clear temperature input
         alert('Chart and inputs cleared for new entry!');
+         console.log("Chart sheet cleared.");
     }
 
+    // Function to toggle the grid lines on the chart
     function toggleGrid() {
         isGridVisible = !isGridVisible;
         chart.update({
             xAxis: {
-                gridLineColor: isGridVisible ? '#53535381' : null,
-                gridLineWidth: isGridVisible ? 1 : 0
+                gridLineColor: isGridVisible ? '#53535381' : null, // Use semi-transparent grey when visible
+                gridLineWidth: isGridVisible ? 1 : 0 // Set width to 1 when visible, 0 when hidden
             },
-            yAxis: {
+            yAxis: [{ // Apply to the primary Y-axis (Fahrenheit)
                 gridLineColor: isGridVisible ? '#53535381' : null,
                 gridLineWidth: isGridVisible ? 1 : 0
-            }
+            }, { // Apply to the secondary Y-axis (Celsius)
+                 gridLineColor: isGridVisible ? '#53535381' : null,
+                 gridLineWidth: isGridVisible ? 1 : 0
+            }]
         });
+        // Update the button text
         document.getElementById('toggleGridButton').innerText = isGridVisible ? 'Hide Grid' : 'Show Grid';
+        console.log("Grid visibility toggled:", isGridVisible);
     }
+
+     // Function to open the sidebar navigation
     function openNav() {
         document.getElementById("mySidebar").style.width = "250px"; // Set the width of the sidebar when opened
+        console.log("Sidebar opened.");
     }
 
+    // Function to close the sidebar navigation
     function closeNav() {
         document.getElementById("mySidebar").style.width = "0"; // Set the width of the sidebar to 0 when closed
+         console.log("Sidebar closed.");
     }
+
+     // Function to share chart data via Gmail
     function shareGmail() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
+        const name = document.getElementById('name').value.trim();
+        const dob = document.getElementById('dob').value;
+        const temperatures = chart.series[0].data.map(point => ({
+            timestamp: point.x,
+            value: point.y
+        }));
 
-    if (!name || !dob) {
-        alert('Please enter both name and date of birth before sharing.');
-        return;
+        if (!name || !dob || temperatures.length === 0) {
+            alert('Please enter patient details and add temperature data before sharing.');
+            return;
+        }
+
+        // Format temperature data for email body (basic)
+        const temperatureList = temperatures.map(p => {
+             const date = new Date(p.timestamp);
+             // Format timestamp to a readable date/time string
+             const formattedTime = date.toLocaleString(); // Adjust format as needed
+             return `${formattedTime}: ${p.value}°F`;
+        }).join('\n'); // Join points with newline
+
+        const emailBody = `Patient Name: ${name}\nDate of Birth: ${dob}\n\nTemperature Records:\n${temperatureList}`;
+        const mailtoLink = `mailto:?subject=${encodeURIComponent('Temperature Chart Data for ' + name)}&body=${encodeURIComponent(emailBody)}`;
+
+        window.location.href = mailtoLink; // Open default email client
+         console.log("Attempting to share via Gmail.");
     }
 
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
+    // Function to share chart data via WhatsApp
+    function shareWhatsApp() {
+        const name = document.getElementById('name').value.trim();
+        const dob = document.getElementById('dob').value;
+        const temperatures = chart.series[0].data.map(point => ({
+            timestamp: point.x,
+            value: point.y
+        }));
 
-    const emailBody = `Name: ${name}\nDate of Birth: ${dob}\nTemperatures: ${JSON.stringify(temperatures, null, 2)}`;
-    const mailtoLink = `mailto:?subject=Shared Temperature Data&body=${encodeURIComponent(emailBody)}`;
+         if (!name || !dob || temperatures.length === 0) {
+             alert('Please enter patient details and add temperature data before sharing.');
+             return;
+         }
 
-    window.location.href = mailtoLink;
-}
+        // Format temperature data for WhatsApp message (more compact)
+         const temperatureList = temperatures.map(p => {
+            const date = new Date(p.timestamp);
+            // Format timestamp to a more compact date/time string for message
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+            return `${day}/${month} ${hours}:${minutes}: ${p.value}°F`;
+         }).join(' | '); // Join points with a separator
 
-function shareWhatsApp() {
-    const name = document.getElementById('name').value;
-    const dob = document.getElementById('dob').value;
+        const message = `Temperature Chart Data:\nPatient: ${name}\nDOB: ${dob}\nTemps: ${temperatureList}`;
+        const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
 
-    if (!name || !dob) {
-        alert('Please enter both name and date of birth before sharing.');
-        return;
+        window.open(whatsappLink, '_blank'); // Open WhatsApp share link in new tab
+         console.log("Attempting to share via WhatsApp.");
     }
 
-    const temperatures = chart.series[0].data.map(point => ({
-        timestamp: point.x,
-        value: point.y
-    }));
+     // Function to print the designated printable area
+    function printPrintableArea() {
+        const printableArea = document.getElementById('printableArea');
+         if (!printableArea) {
+             console.error("Printable area element not found.");
+             alert("Could not find the area to print.");
+             return;
+         }
 
-    const message = `Name: ${name}\nDate of Birth: ${dob}\nTemperatures: ${JSON.stringify(temperatures, null, 2)}`;
-    const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+        const newWindow = window.open('', '_blank'); // Open a new blank window
+        newWindow.document.write(`
+            <html>
+            <head>
+                <title>Temperature Chart Print</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                    }
+                    h1, h2, h3 {
+                        color: #333;
+                    }
+                    /* Include any specific print styles here if needed */
+                    /* For Highcharts printing, you might need specific CSS or Highcharts export module */
+                     #container {
+                         width: 100% !important; /* Ensure chart uses full width in print */
+                         height: auto !important; /* Allow height to adjust */
+                     }
+                </style>
+            </head>
+            <body onload="window.print(); window.close();">
+                <h1>Temperature Chart</h1>
+                ${printableArea.innerHTML}
+            </body>
+            </html>
+        `);
+        newWindow.document.close(); // Close the document to finish writing
 
-    window.open(whatsappLink, '_blank');
-}
-function printPrintableArea() {
-    const printableArea = document.getElementById('printableArea');
-    const newWindow = window.open('', '_blank');
-    newWindow.document.write(`
-        <html>
-        <head>
-            <title>Print</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 20px;
-                }
-                h1, h2, h3 {
-                    color: #333;
-                }
-            </style>
-        </head>
-        <body onload="window.print(); window.close();">
-            ${printableArea.innerHTML}
-        </body>
-        </html>
-    `);
-    newWindow.document.close();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const storedData = JSON.parse(sessionStorage.getItem('fileData'));
-    if (storedData) {
-        // Load name and dob into the input fields
-        document.getElementById('name').value = storedData.name;
-        document.getElementById('dob').value = storedData.dob;
-
-        // Load temperature data into the chart
-        chart.series[0].setData(storedData.temperatures.map(point => [point.timestamp, point.value]));
-    } else {
-        console.log("No stored data found.");
+        // A small delay before printing to ensure content renders
+        setTimeout(() => {
+            // Highcharts typically handles printing well when it's in the DOM
+            // before print is called. The onload in body tag helps.
+        }, 500); // 500ms delay
+         console.log("Initiated printing of printable area.");
     }
-});
 
+    // --- Make functions globally available for inline onclick attributes ---
+    // If you move these functions or use modules, you would change how events are handled.
+    window.calculateAge = calculateAge;
+    // window.saveChartData is handled by addEventListener above, but can be added if needed for onclick fallback
+    window.newChartSheet = newChartSheet;
+    window.toggleGrid = toggleGrid;
+    window.openNav = openNav;
+    window.closeNav = closeNav;
+    window.shareGmail = shareGmail;
+    window.shareWhatsApp = shareWhatsApp;
+    window.printPrintableArea = printPrintableArea;
+    // assuming newChart and goBack are defined elsewhere or are simple redirects
+    // window.newChart = function() { window.location.href = "feedback-form-url.html"; }; // Example if not defined elsewhere
+    // window.goBack = function() { window.history.back(); }; // Example if not defined elsewhere
 
 
 </script>
