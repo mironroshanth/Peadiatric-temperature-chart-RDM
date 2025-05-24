@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +21,8 @@
             width: 300px;
             margin: 20px auto;
         }
-        label, button {
+        /* Styles for buttons and labels */
+        button, label {
             background: linear-gradient(45deg, #6a11cb, #2575fc);
             color: white;
             border: none;
@@ -30,249 +30,672 @@
             padding: 12px 20px;
             cursor: pointer;
             transition: background 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
+            width: 100%; /* Make them full width in the container */
             margin: 5px 0;
             font-size: 14px;
+            text-align: center; /* Center the text/icon */
+            display: inline-block; /* Allow padding/margin */
+            box-sizing: border-box; /* Include padding and border in width */
         }
         button:hover, label:hover {
             background: linear-gradient(45deg, #2575fc, #6a11cb);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        /* Style specifically for the upload label to look like a button */
+        label[for="uploadFile"] {
+             display: block; /* Make it behave like a block button */
+             margin-bottom: 15px; /* Add space below the upload label */
+        }
+
         #qrcode {
             text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .selected {
-            background-color: #e0e0e0;
+            background-color: #e0e0e0; /* Highlight selected file */
+            color: #333; /* Darker text for contrast */
+            font-weight: bold;
         }
-        .abc {
-            color: blue;
+        #fileList {
+             list-style: none; /* Remove bullets */
+             padding: 0; /* Remove default padding */
+             margin: 10px 0;
+             border: 1px solid #ddd;
+             border-radius: 4px;
+             max-height: 200px; /* Limit height and add scroll if many files */
+             overflow-y: auto;
+             background-color: #fff; /* Ensure list background is white */
         }
+        #fileList li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            word-break: break-word; /* Break long filenames */
+        }
+         #fileList li:last-child {
+            border-bottom: none; /* No border on the last item */
+        }
+         #fileList li:hover {
+            background-color: #f0f0f0; /* Light hover effect */
+         }
         #searchBar {
             margin-bottom: 10px;
-            width: 100%;
+            width: calc(100% - 22px); /* Adjust width considering padding and border */
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #ccc;
+            box-sizing: border-box; /* Include padding and border in element's total width */
         }
+        /* Style for user info text */
+        #user-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        #user-info p {
+             margin: 5px 0;
+             text-align: left;
+             font-size: 14px;
+        }
+         #sign-out-btn {
+             background: #dc3545; /* Red color for sign out */
+         }
+         #sign-out-btn:hover {
+             background: #c82333;
+         }
+         button:disabled, label:disabled {
+             background-color: #ccc !important; /* Grey out disabled buttons/labels */
+             cursor: not-allowed !important;
+             box-shadow: none !important;
+         }
+          label[for="uploadFile"][disabled] {
+              opacity: 0.5;
+          }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Your Account</h1>
-        <p id="username">Username: </p>
-        <p id="password">Password: </p>
+        <div id="user-info">
+            <!-- User info will be displayed here by JavaScript -->
+             <p>Loading user info...</p>
+        </div>
+
         <h2>Your Charts</h2>
 
         <!-- Add search bar input -->
-        <input style="width: 94%;" type="text" id="searchBar" placeholder="Search files..." oninput="filterFiles()">
+        <input type="text" id="searchBar" placeholder="Search files..." disabled>
 
-        <ul class="abc" id="fileList"></ul>
-        <button id="loadFile" onclick="loadFile()">Load Selected File</button>
-        <button id="downloadFile" onclick="downloadFile()">Download Selected File</button>
-        <button id="deleteFile" onclick="deleteFile()">Delete Selected File</button><br><br>
-        <input type="file" id="uploadFile" onchange="uploadFile(event)" style="display: none;" />
-        <p>You can upload and view JSON files by clicking 'Upload chart'.</p>
-        <label for="uploadFile">Upload chart</label>
+        <ul id="fileList">
+            <!-- File list will be populated by JavaScript -->
+             <li>Loading files...</li>
+        </ul>
 
-        <p>By getting a QR code, you will be able to show your saved files to another person by scanning it.</p>
-        <button id="getQRCode" onclick="generateQRCode()">Get QR Code</button>
+        <button id="loadFile" disabled>Load Selected File</button>
+        <button id="downloadFile" disabled>Download Selected File</button>
+        <button id="deleteFile" disabled>Delete Selected File</button>
+
+        <input type="file" id="uploadFile" accept=".json" style="display: none;" disabled />
+        <p style="font-size: 12px; text-align: center; margin-top: 15px;">You can upload and view JSON files by clicking 'Upload chart'.</p>
+        <label for="uploadFile" disabled>Upload chart</label>
+
+        <p style="font-size: 12px; text-align: center; margin-top: 15px;">By getting a QR code, you can share a link to your chart account.</p>
+        <button id="getQRCode" disabled>Get QR Code Link</button>
         <div id="qrcode"></div>
-        <button id="printQRCode" onclick="printQRCode()" style="display: none;">Print QR Code</button><br><br>
-        <button onclick="newChart()">Feedback form</button><br>
-        <button onclick="goBack()"><i class="fas fa-arrow-left"></i>  Back</button>
+        <button id="printQRCode" style="display: none;">Print QR Code</button>
+
+        <button onclick="newChart()">Feedback form</button>
+        <button onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+
+        <button id="sign-out-btn" disabled>Sign Out</button> <!-- Added Sign Out Button -->
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Firebase SDKs -->
+    <!-- Using a recent version (10.11.0 as of this example), check Firebase docs for the latest recommended -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            const usernameElement = document.getElementById('username');
-            const passwordElement = document.getElementById('password');
+      // Your Firebase project configuration
+      // *** REPLACE WITH YOUR ACTUAL CONFIG FROM THE FIREBASE CONSOLE! ***
+      // Go to Project settings -> General -> Your apps -> Select your web app
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY", // <-- Replace this!
+        authDomain: "temperature-chart-47839.firebaseapp.com",
+        projectId: "temperature-chart-47839",
+        storageBucket: "YOUR_STORAGE_BUCKET.appspot.com", // <-- Replace this!
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <-- Replace this!
+        appId: "YOUR_APP_ID", // <-- Replace this!
+        // Add the databaseURL for Realtime Database
+        databaseURL: "https://temperature-chart-47839-default-rtdb.asia-southeast1.firebasedatabase.app" // <-- Make sure this is correct
+      };
 
-            if (loggedInUser) {
-                const userPassword = localStorage.getItem(loggedInUser);
-                usernameElement.textContent = `Username: ${loggedInUser}`;
-                passwordElement.textContent = `Password: ${userPassword}`;
-                loadFileList(); // Load files associated with this user
-            } else {
-                usernameElement.textContent = 'No user logged in';
-                passwordElement.textContent = '';
-            }
-        });
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
 
-        function loadFileList() {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
+      // Get references to the Auth and Database services
+      const auth = app.auth();
+      const database = app.database();
 
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('file_')) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = key.substring(5); // Remove 'file_' prefix
-                    listItem.dataset.key = key;
-                    listItem.addEventListener('click', function() {
-                        const selectedFile = document.querySelector('#fileList .selected');
-                        if (selectedFile) {
-                            selectedFile.classList.remove('selected');
-                        }
-                        this.classList.add('selected');
-                    });
-                    fileList.appendChild(listItem);
-                }
-            });
-        }
+      console.log("Firebase SDKs initialized on Account page!");
 
-        // Function to filter files based on search input
-        function filterFiles() {
-            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-            const files = document.querySelectorAll('#fileList li');
+      // Function to display Firebase Auth errors (utility, can be reused)
+      function displayAuthError(message) {
+        // On this page, we don't have a dedicated error display area in the container.
+        // We'll just use alerts for simplicity. You could add a paragraph for errors if desired.
+        console.error("Auth Error:", message);
+        alert("Authentication Error: " + message);
+      }
 
-            files.forEach(file => {
-                const fileName = file.textContent.toLowerCase();
-                if (fileName.includes(searchTerm)) {
-                    file.style.display = '';
-                } else {
-                    file.style.display = 'none';
-                }
-            });
-        }
+      // Function to clear Firebase Auth errors (utility)
+      function clearAuthError() {
+        // Not needed with alert-based errors on this page.
+      }
 
-        function loadFile() {
-    const selectedFile = document.querySelector('#fileList .selected');
-    if (!selectedFile) {
-        alert('Please select a file from the list.');
-        return;
-    }
-
-    const key = selectedFile.dataset.key;
-    const fileData = JSON.parse(localStorage.getItem(key));
-
-    // Store name, dob, and temperatures in sessionStorage
-    sessionStorage.setItem('fileData', JSON.stringify(fileData.fileData));  // Stores name, dob, and temperatures
-    const sourcePage = fileData.sourcePage;
-
-    const pages = {
-        'Day 2': 'Day%202.html',
-        'Temperatures recorded in all five days': 'Temperatures%20recorded%20in%20all%20five%20days.html',
-        'Account': 'account.html'
-    };
-
-    if (pages[sourcePage] && window.location.pathname !== `/${pages[sourcePage]}`) {
-        window.location.href = pages[sourcePage];
-    } else {
-        alert('Source page not recognized. Staying on the current page.');
-    }
-}
-
-
-
-        function downloadFile() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (!selectedFile) {
-                alert('Please select a file from the list.');
-                return;
-            }
-
-            const key = selectedFile.dataset.key;
-            const fileData = JSON.parse(localStorage.getItem(key));
-
-            const blob = new Blob([JSON.stringify(fileData)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${selectedFile.textContent}.json`;
-            a.click();
-
-            URL.revokeObjectURL(url);
-        }
-
-        function uploadFile(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                try {
-                    const fileData = JSON.parse(event.target.result);
-                    if (fileData.fileData) {
-                        const fileName = `file_${file.name.replace('.json', '')}`;
-                        localStorage.setItem(fileName, JSON.stringify(fileData));
-                        loadFileList();
-                        alert('File uploaded successfully!');
-                    } else {
-                        alert('Invalid file format.');
-                    }
-                } catch (e) {
-                    alert('Error reading file. Make sure it is a valid JSON.');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function deleteFile() {
-            const selectedFile = document.querySelector('#fileList .selected');
-            if (!selectedFile) {
-                alert('Please select a file from the list.');
-                return;
-            }
-
-            const key = selectedFile.dataset.key;
-
-            const confirmDelete = confirm(`Are you sure you want to delete the file: ${selectedFile.textContent}?`);
-            if (confirmDelete) {
-                localStorage.removeItem(key);
-                selectedFile.remove();
-                alert(`File "${selectedFile.textContent}" has been deleted.`);
-            }
-        }
-
-        function generateQRCode() {
-            const loggedInUser = sessionStorage.getItem('loggedInUser');
-            if (!loggedInUser) {
-                alert('No user is logged in to generate a QR code.');
-                return;
-            }
-
-            const userPassword = localStorage.getItem(loggedInUser);
-            if (!userPassword) {
-                alert('No password found for the logged-in user.');
-                return;
-            }
-
-            const qrcodeContainer = document.getElementById('qrcode');
-            qrcodeContainer.innerHTML = ''; // Clear previous QR code
-
-            const qrCodeUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?username=${encodeURIComponent(loggedInUser)}&password=${encodeURIComponent(userPassword)}&autoSignIn=true`;
-
-            new QRCode(qrcodeContainer, {
-                text: qrCodeUrl,
-                width: 128,
-                height: 128,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-
-            document.getElementById('printQRCode').style.display = 'inline-block'; // Show print button
-        }
-
-        function printQRCode() {
-            const qrcodeContainer = document.getElementById('qrcode');
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
-            printWindow.document.write(qrcodeContainer.innerHTML);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        }
-        function newChart() {
-        window.location.href = "https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html";
-    }
-    function goBack() {
-        window.history.back();
-    }
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        // Variable to hold the currently logged-in user's UID
+        let currentUserId = null;
+        // Variable to hold a reference to the user's files in RTDB
+        let userFilesRef = null;
+        // Variable to store file data locally for easy access (e.g., for download/load)
+        let userFilesData = {}; // Object to store file data keyed by Firebase push key
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfoDiv = document.getElementById('user-info');
+            const fileListElement = document.getElementById('fileList');
+            const searchBar = document.getElementById('searchBar');
+            const loadFileButton = document.getElementById('loadFile');
+            const downloadFileButton = document.getElementById('downloadFile');
+            const deleteFileButton = document.getElementById('deleteFile');
+            const uploadFileInput = document.getElementById('uploadFile'); // Get the actual file input
+            const uploadFileLabel = document.querySelector('label[for="uploadFile"]'); // Get the label button
+            const getQRCodeButton = document.getElementById('getQRCode');
+            const printQRCodeButton = document.getElementById('printQRCode');
+            const qrcodeContainer = document.getElementById('qrcode');
+            const signOutButton = document.getElementById('sign-out-btn'); // Get the sign out button
+
+            // --- Firebase Authentication State Observer ---
+            // This runs when the page loads and whenever the user's sign-in state changes.
+            // It determines if the user is logged in and updates the UI accordingly.
+            auth.onAuthStateChanged(function(user) {
+                // clearAuthError(); // Not needed with alert errors
+
+                if (user) {
+                    // User is signed in.
+                    currentUserId = user.uid;
+                    console.log("User signed in:", user.email, "UID:", currentUserId);
+
+                    // Display user information
+                    userInfoDiv.innerHTML = `
+                        <p>Email: ${user.email}</p>
+                        <p>User ID: ${currentUserId}</p>
+                        <!-- Note: Password is NOT stored or displayed for security -->
+                    `;
+
+                    // Get the RTDB reference for this user's files
+                    // Data path: patients -> [user_id] -> files ->
+                     // Data path: patients -> [user_id] -> files -> [file_key] -> {file_data}
+                    userFilesRef = database.ref('patients/' + currentUserId + '/files');
+
+                    // Load the user's files from Realtime Database
+                    // This sets up a real-time listener.
+                    loadFileList(); // Calls the function to load and display files
+
+                     // Enable interactive elements now that a user is signed in
+                    searchBar.disabled = false;
+                    loadFileButton.disabled = false;
+                    downloadFileButton.disabled = false; // Enabled download
+                    deleteFileButton.disabled = false;   // Enabled delete
+                    uploadFileInput.disabled = false; // Enable file input
+                    uploadFileLabel.style.opacity = 1; // Make label look enabled
+                    uploadFileLabel.style.cursor = 'pointer'; // Ensure cursor is pointer
+                    getQRCodeButton.disabled = false;
+                    signOutButton.disabled = false;
+
+
+                } else {
+                    // User is signed out.
+                    currentUserId = null;
+                    // Crucially, if userFilesRef existed for a previous user, detach its listener
+                    if (userFilesRef) {
+                        userFilesRef.off('value'); // Stop listening to the database
+                    }
+                    userFilesRef = null; // Clear the database reference
+                    userFilesData = {}; // Clear cached file data
+                    console.log("No user signed in on Account page.");
+
+                    // Display signed-out message
+                    userInfoDiv.innerHTML = '<p>No user signed in. Please sign in to view your account.</p>';
+
+                    // Clear the file list
+                    fileListElement.innerHTML = '<li>Please sign in to view your files.</li>';
+
+                    // Disable interactive elements
+                    searchBar.value = ''; // Clear search bar
+                    filterFiles(); // Update display based on empty search/list
+                    searchBar.disabled = true;
+
+                    loadFileButton.disabled = true;
+                    downloadFileButton.disabled = true;
+                    deleteFileButton.disabled = true;
+
+                    uploadFileInput.disabled = true;
+                    uploadFileLabel.style.opacity = 0.5;
+                    uploadFileLabel.style.cursor = 'not-allowed';
+
+                    getQRCodeButton.disabled = true;
+                    signOutButton.disabled = true;
+
+                    // Clear QR Code display if any
+                    qrcodeContainer.innerHTML = '';
+                    printQRCodeButton.style.display = 'none';
+
+                     // Redirect to the sign-in page if not logged in
+                     // This ensures the user is prompted to sign in if they land directly on the account page
+                     window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html'; // Redirect
+                }
+            });
+
+            // --- Load Files from Firebase Realtime Database ---
+            // This function is called by onAuthStateChanged when a user logs in.
+            // It sets up a real-time listener using onValue.
+            function loadFileList() {
+                if (!userFilesRef) {
+                    console.error("Database reference not available. User might not be signed in.");
+                    fileListElement.innerHTML = '<li>Could not load files. Please sign in.</li>';
+                    return;
+                }
+
+                // Use onValue to listen for changes in the user's files node.
+                // This callback fires immediately with the initial data, and then again
+                // whenever the data at this location changes (add, remove, change).
+                userFilesRef.on('value', (snapshot) => {
+                    userFilesData = snapshot.val(); // Store the entire files object locally
+                    fileListElement.innerHTML = ''; // Clear the current displayed list
+
+                    if (userFilesData) {
+                        console.log("Raw file data loaded from RTDB:", userFilesData);
+                        // Iterate through the files object { fileKey: fileData, ...}
+                        Object.keys(userFilesData).forEach(fileKey => {
+                            const file = userFilesData[fileKey]; // Get the data for this file key
+                            const listItem = document.createElement('li');
+                            // Display the file name stored in the data, fallback to key if not present
+                            listItem.textContent = file.fileName || `File_${fileKey}`;
+                            listItem.dataset.key = fileKey; // Store the Firebase push key as a data attribute
+
+                            // Add click listener to select the list item
+                            listItem.addEventListener('click', function() {
+                                // Deselect any previously selected item
+                                const selectedFile = document.querySelector('#fileList .selected');
+                                if (selectedFile) {
+                                    selectedFile.classList.remove('selected');
+                                }
+                                // Select the clicked item
+                                this.classList.add('selected');
+                                console.log("Selected file:", this.textContent, "Key:", this.dataset.key);
+                            });
+                            fileListElement.appendChild(listItem); // Add the item to the list
+                        });
+                         // Apply filter after loading the full list
+                         filterFiles(); // Make sure the initial list respects the search bar if text is already there
+
+                    } else {
+                        // No files found for this user
+                        fileListElement.innerHTML = '<li>No saved charts found.</li>';
+                         userFilesData = {}; // Ensure local data is empty if no snapshot value
+                    }
+                    console.log("File list displayed.");
+
+                }, (errorObject) => {
+                    // Handle errors during the read operation
+                    console.error("The file list read failed:", errorObject.code, errorObject.message);
+                    fileListElement.innerHTML = '<li>Error loading files.</li>';
+                    userFilesData = {}; // Clear local data on error
+                    alert("Error loading files: " + errorObject.message); // Inform the user
+                });
+
+                 // Note: The onAuthStateChanged listener handles detaching the listener
+                 // when the user signs out by setting userFilesRef to null before
+                 // the next onAuthStateChanged triggers.
+            }
+
+            // --- Filter Files based on search input (Updated to use the displayed list) ---
+            // This function filters the *currently displayed* list items based on the search bar value.
+            function filterFiles() {
+                const searchTerm = searchBar.value.toLowerCase();
+                const files = document.querySelectorAll('#fileList li'); // Get currently displayed list items
+
+                files.forEach(listItem => {
+                    const fileName = listItem.textContent.toLowerCase();
+                    // Check if the list item's text content includes the search term
+                    if (fileName.includes(searchTerm)) {
+                        listItem.style.display = ''; // Show the list item
+                    } else {
+                        listItem.style.display = 'none'; // Hide the list item
+                    }
+                });
+            }
+            // Add event listener for the search bar input to trigger filtering as the user types
+            searchBar.addEventListener('input', filterFiles);
+
+
+            // --- Load Selected File (Fetch from userFilesData and store in sessionStorage) ---
+            // This replaces the localStorage.getItem logic for loading
+            loadFileButton.addEventListener('click', function() {
+                const selectedFileItem = document.querySelector('#fileList .selected');
+                if (!selectedFileItem) {
+                    alert('Please select a file from the list.');
+                    return;
+                }
+
+                const fileKey = selectedFileItem.dataset.key; // Get the Firebase key from the list item's data attribute
+                // Access the file data from our locally stored object using the key
+                const fileData = userFilesData && userFilesData[fileKey];
+
+                if (fileData && fileData.fileData) { // Check if data exists and has the expected structure (contains fileData)
+                    // Store the actual chart data (assuming it's nested under a 'fileData' key in RTDB) in sessionStorage
+                    // This matches your original structure for loading into the chart page
+                    sessionStorage.setItem('chartDataForLoad', JSON.stringify(fileData.fileData));
+                    sessionStorage.setItem('loadedChartSourcePage', fileData.sourcePage || 'Temperature Chart'); // Save original source page if exists
+
+                    console.log(`Loading file with key: ${fileKey}`);
+                    console.log("Data loaded into sessionStorage:", fileData.fileData);
+
+                    // Determine the target page URL based on the saved source page property
+                    const targetPage = determineTargetPage(fileData.sourcePage);
+
+                    if (targetPage) {
+                         // Redirect to the determined chart page
+                         window.location.href = targetPage;
+                    } else {
+                         alert('Could not determine source page for this file. Please load manually or check file format.');
+                         console.error(`Could not determine target page for file key ${fileKey}. Source page was: ${fileData.sourcePage}`);
+                         // Optionally, redirect to a default chart page
+                         // window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html';
+                    }
+
+                } else {
+                    alert('Could not load file data. File may be missing or have an invalid format.');
+                     console.error(`File data for key ${fileKey} is missing or malformed in userFilesData.`);
+                }
+                 // Remove selection after attempting to load
+                 if(selectedFileItem) selectedFileItem.classList.remove('selected');
+            });
+
+            // Helper function to determine redirect page URL (based on your original logic)
+             function determineTargetPage(sourcePage) {
+                const pages = {
+                    'Day 2': 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Day%202.html',
+                    'Temperatures recorded in all five days': 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperatures%20recorded%20in%20all%20five%20days.html',
+                    // Add other chart pages here as needed that handle the sessionStorage 'chartDataForLoad'
+                    'Temperature Chart': 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html' // Default or another chart page
+                };
+                // Return the corresponding URL, or null if the sourcePage is not recognized
+                return pages[sourcePage] || null;
+             }
+
+
+            // --- Download Selected File (Fetch from userFilesData) ---
+            // This replaces the localStorage.getItem logic for downloading
+            downloadFileButton.addEventListener('click', function() {
+                const selectedFileItem = document.querySelector('#fileList .selected');
+                if (!selectedFileItem) {
+                    alert('Please select a file from the list.');
+                    return;
+                }
+
+                const fileKey = selectedFileItem.dataset.key; // Get the Firebase key
+                // Access the file data from our locally stored object
+                const fileData = userFilesData && userFilesData[fileKey];
+
+                if (fileData) {
+                    // Create a Blob from the file data, formatted as pretty JSON
+                    const blob = new Blob([JSON.stringify(fileData, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob); // Create a temporary URL for the Blob
+
+                    const a = document.createElement('a'); // Create a temporary anchor element
+                    a.href = url;
+                    // Use the stored file name for the download filename, fallback to key if needed
+                    const downloadFileName = fileData.fileName ? `${fileData.fileName}.json` : `${fileKey}.json`;
+                    a.download = downloadFileName; // Set the download filename
+                    a.click(); // Programmatically click the link to start download
+
+                    URL.revokeObjectURL(url); // Clean up the temporary object URL
+                    console.log(`File downloaded with key: ${fileKey}`);
+                } else {
+                    alert('Could not find file data for download.');
+                     console.error(`File data for key ${fileKey} is missing for download.`);
+                }
+                 // Remove selection after attempting to download
+                 if(selectedFileItem) selectedFileItem.classList.remove('selected');
+            });
+
+
+            // --- Upload File to Firebase Realtime Database ---
+            // This replaces the localStorage.setItem logic for uploading
+            // The event listener is added below for clarity.
+            function uploadFile(event) {
+                if (!userFilesRef) {
+                    alert("Please sign in to upload files.");
+                    uploadFileInput.value = ''; // Clear the selected file
+                    return;
+                }
+
+                const file = event.target.files[0];
+                if (!file) {
+                    return; // No file selected
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const fileContent = JSON.parse(e.target.result);
+
+                        // Basic validation: Check if the JSON structure looks like a chart file
+                        // based on your original code's check for fileData
+                        if (fileContent && fileContent.fileData) {
+                            // Prepare data to save in RTDB.
+                            // Include the original filename and add a server timestamp.
+                            const dataToSave = {
+                                fileName: file.name.replace('.json', ''), // Save the original file name without extension
+                                timestamp: firebase.database.ServerValue.TIMESTAMP, // Add a server timestamp for ordering/tracking
+                                ...fileContent // Spread the rest of the uploaded content (including fileData, sourcePage, etc.)
+                            };
+
+                             // Use push() on the user's files reference to generate a unique key
+                             // and then set() to save the data object at that location.
+                             // Saves to patients/[userId]/files/[unique_push_key]
+                             userFilesRef.push().set(dataToSave)
+                                .then(() => {
+                                    console.log("File uploaded successfully to RTDB!");
+                                    alert('File uploaded successfully!');
+                                    // The loadFileList() function's onValue listener will automatically
+                                    // detect this change and update the displayed list. No manual reload needed.
+                                })
+                                .catch((error) => {
+                                    console.error("Error uploading file to RTDB:", error);
+                                    alert('Error uploading file: ' + error.message);
+                                });
+
+                        } else {
+                            alert('Invalid file format. Please upload a valid chart JSON file.');
+                        }
+                    } catch (e) {
+                        console.error("Error reading or parsing file:", e);
+                        alert('Error reading file. Make sure it is a valid JSON.');
+                    } finally {
+                         uploadFileInput.value = ''; // Clear the file input regardless of success/failure
+                    }
+                };
+                reader.readAsText(file); // Read the file content as text
+            }
+             // Add event listener for the file input element
+             uploadFileInput.addEventListener('change', uploadFile);
+
+
+            // --- Delete Selected File from Firebase Realtime Database ---
+            // This replaces the localStorage.removeItem logic for deleting
+            deleteFileButton.addEventListener('click', function() {
+                 if (!userFilesRef) {
+                    alert("Please sign in to delete files.");
+                    return;
+                }
+
+                const selectedFileItem = document.querySelector('#fileList .selected');
+                if (!selectedFileItem) {
+                    alert('Please select a file from the list.');
+                    return;
+                }
+
+                const fileKey = selectedFileItem.dataset.key; // Get the Firebase key from the list item
+                const fileName = selectedFileItem.textContent; // Get the display name
+
+                const confirmDelete = confirm(`Are you sure you want to delete the file: "${fileName}"?`);
+                if (confirmDelete) {
+                     // Get a reference to the specific file node using its key and remove it.
+                     // This targets patients/[userId]/files/[file
+                     // Get a reference to the specific file node using its key and remove it.
+                     // This targets patients/[userId]/files/[file_key]
+                     userFilesRef.child(fileKey).remove()
+                        .then(() => {
+                            // Success
+                            console.log(`File deleted successfully from RTDB: ${fileKey}`);
+                            alert(`File "${fileName}" has been deleted.`);
+                            // The onValue listener in loadFileList will automatically
+                            // remove the corresponding list item from the display.
+                        })
+                        .catch((error) => {
+                            // Handle errors during deletion
+                            console.error(`Error deleting file ${fileKey}:`, error);
+                            alert(`Error deleting file "${fileName}": ` + error.message);
+                        });
+                }
+                 // Remove selection after attempting to delete (whether confirmed or not)
+                 if(selectedFileItem) selectedFileItem.classList.remove('selected');
+            });
+
+
+            // --- Generate QR Code Link (using the Sign In page URL for security) ---
+            // NOTE: Putting Firebase credentials directly in a URL via QR code is NOT secure.
+            // This updated logic generates a QR code that links to your Sign In page.
+            // Users will need to sign in with their OWN credentials after scanning.
+            getQRCodeButton.addEventListener('click', function() {
+                 if (!currentUserId) {
+                     alert('No user is logged in to generate a QR code link.');
+                     return;
+                 }
+
+                const qrcodeContainer = document.getElementById('qrcode');
+                qrcodeContainer.innerHTML = ''; // Clear previous QR code
+
+                // Construct the URL to your sign-in page.
+                // A user scanning this will be prompted to sign in there.
+                const signInPageUrl = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html'; // Ensure this is the correct URL
+
+                // Generate the QR code image
+                new QRCode(qrcodeContainer, {
+                    text: signInPageUrl, // Use the sign-in page URL
+                    width: 128,
+                    height: 128,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H // High correction level for robustness
+                });
+
+                // Show the print button after generating the QR code
+                document.getElementById('printQRCode').style.display = 'inline-block';
+                 console.log("QR Code generated for Sign In page URL:", signInPageUrl);
+                 alert("QR Code generated. It links to your Sign In page.");
+            });
+
+
+            // --- Print QR Code ---
+            printQRCodeButton.addEventListener('click', function() {
+                const qrcodeContainer = document.getElementById('qrcode');
+                // Check if a QR code is currently displayed
+                if (qrcodeContainer.innerHTML === '') {
+                    alert('Please generate a QR code first.');
+                    return;
+                }
+
+                const printWindow = window.open('', '_blank'); // Open a new blank window
+                // Write basic HTML structure to the new window
+                printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+                // Write the content of the QR code div (which should contain the image)
+                printWindow.document.write('<h2>Scan to go to Sign In Page</h2>'); // Add a title for printing
+                printWindow.document.write(qrcodeContainer.innerHTML);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close(); // Close the document to finish writing
+
+                // Wait briefly for content to render, then print
+                setTimeout(() => {
+                    printWindow.print(); // Open the browser's print dialog
+                    // printWindow.close(); // Close the window after printing (optional)
+                }, 250); // Small delay might help ensure image loads
+
+                 console.log("Print QR Code initiated.");
+            });
+
+
+            // --- Navigation Functions ---
+            // (Keeping these as they were in your original code)
+
+            // Function for the Feedback form button
+            function newChart() {
+                // You might want to check if the user is signed in here
+                // before allowing them to go to a form that could save data
+                 if (currentUserId) {
+                    window.location.href = "https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/new-chart.html";
+                 } else {
+                     alert("Please sign in to access the feedback form related to your account.");
+                 }
+            }
+             // Make the function globally available if it's called from an inline `onclick` attribute
+             window.newChart = newChart;
+
+            // Function for the Back button
+            function goBack() {
+                window.history.back(); // Navigates to the previous page in history
+            }
+            // Make the function globally available if it's called from an inline `onclick` attribute
+            window.goBack = goBack;
+
+
+            // --- Handle Sign Out ---
+            signOutButton.addEventListener('click', function() {
+                 if (!currentUserId) {
+                     alert("No user is currently signed in.");
+                     return;
+                 }
+
+                 // Use Firebase Auth signOut method
+                 auth.signOut().then(() => {
+                     // Sign-out successful.
+                     console.log("User signed out successfully.");
+                     alert("You have been signed out.");
+                     // The onAuthStateChanged listener at the top will automatically
+                     // detect this state change (user becomes null) and update the UI,
+                     // including redirecting to the sign-in page.
+                 }).catch((error) => {
+                     // An error happened during sign out.
+                     console.error("Sign-out failed:", error);
+                     alert("Sign Out failed: " + error.message); // Inform the user
+                 });
+             });
+
+        }); // End of DOMContentLoaded listener
+
+    </script>
+
 </body>
 </html>
