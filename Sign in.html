@@ -101,10 +101,18 @@
                 padding: 6px;
             }
         }
+
+        /* Style for error messages */
+        #auth-error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Initial question displayed when no user is signed in -->
         <div id="initial-question">
             <h1>Sign up to temperature chart</h1>
             <h2>Do you already have an account?</h2>
@@ -113,100 +121,297 @@
             <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Continue without signing up*</a><br><br>
             <p>*By continuing without signing up you won't be able to save charts or won't be able to use advanced settings.</p>
         </div>
-        
+
+        <!-- Form container (hidden initially, shown based on user choice or if signed in) -->
         <div id="form-container" style="display: none;">
             <form id="auth-form">
                 <h2 id="form-title">Sign Up</h2>
-                <label for="username">Username:</label>
-                <input type="text" id="username" required>
+                <label for="email">Email:</label> <!-- Changed from username to email for Firebase Auth -->
+                <input type="email" id="email" required> <!-- Input type email is better -->
                 <label for="password">Password:</label>
                 <input type="password" id="password" required>
                 <button type="submit">Submit</button>
-                <p id="toggle-link">Don't have an account? <a href="#" id="toggle-form">Sign Up</a></p>
+                <p id="auth-error-message" style="display:none;"></p> <!-- Added for displaying Firebase Auth errors -->
+                <p id="toggle-link">Already have an account? <a href="#" id="toggle-form">Sign In</a></p>
             </form>
+            <!-- Content to show when user is signed in -->
+            <div id="signed-in-content" style="display: none;">
+                 <h2 id="welcome-message"></h2>
+                 <p>You are signed in.</p>
+                 <p><a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Go to Temperature Chart</a></p>
+                 <button id="sign-out-btn">Sign Out</button>
+            </div>
         </div>
     </div>
-    
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <!-- Using a recent version (10.11.0 as of this example), check Firebase docs for the latest recommended -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <!-- We need Authentication here -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <!-- If you plan to use Realtime Database on your chart page, you might need it there. -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script> -->
+
+    <script>
+      // Your Firebase project configuration
+      // *** REPLACE WITH YOUR ACTUAL CONFIG FROM THE FIREBASE CONSOLE! ***
+      // Go to Project settings -> General -> Your apps -> Select your web app
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY", // <-- Replace this!
+        authDomain: "temperature-chart-47839.firebaseapp.com", // This seems correct based on your project ID
+        projectId: "temperature-chart-47839", // Your Project ID
+        storageBucket: "YOUR_STORAGE_BUCKET.appspot.com", // <-- Replace this!
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <-- Replace this!
+        appId: "YOUR_APP_ID", // <-- Replace this!
+        // If you use Realtime Database on this page, include its URL:
+        // databaseURL: "https://temperature-chart-47839-default-rtdb.asia-southeast1.firebasedatabase.app" // <-- Uncomment and replace if needed
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+
+      // Get a reference to the Auth service
+      const auth = app.auth(); // Using compat SDK syntax
+      console.log("Firebase SDK and Auth initialized!");
+
+      // Function to display Firebase Auth errors
+      function displayAuthError(message) {
+        const errorElement = document.getElementById('auth-error-message');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+
+      // Function to clear Firebase Auth errors
+      function clearAuthError() {
+        const errorElement = document.getElementById('auth-error-message');
+        errorElement.textContent = '';
+        errorElement.style.display = 'none';
+      }
+
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    const formContainer = document.getElementById('form-container');
-    const initialQuestion = document.getElementById('initial-question');
-    const toggleLink = document.getElementById('toggle-form');
-    const formTitle = document.getElementById('form-title');
+            const formContainer = document.getElementById('form-container');
+            const initialQuestion = document.getElementById('initial-question');
+            const toggleLinkElement = document.getElementById('toggle-form'); // Changed variable name
+            const toggleLinkTextElement = document.getElementById('toggle-link'); // Added for the whole p tag
+            const formTitle = document.getElementById('form-title');
+            const emailInput = document.getElementById('email'); // Changed variable name to reflect Firebase Auth uses email
+            const passwordInput = document.getElementById('password');
+            const authForm = document.getElementById('auth-form');
+            const signedInContent = document.getElementById('signed-in-content'); // Added
+            const welcomeMessageElement = document.getElementById('welcome-message'); // Added
+            const signOutButton = document.getElementById('sign-out-btn'); // Added
 
-    // Extract URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const qrUsername = urlParams.get('username');
-    const qrPassword = urlParams.get('password');
-    const autoSignIn = urlParams.get('autoSignIn');
+            // --- Firebase Authentication State Observer ---
+            // This is the most important part for managing sign-in state across page loads.
+            // It runs when the page loads and whenever the auth state changes (sign in, sign out).
+            auth.onAuthStateChanged(function(user) {
+                clearAuthError(); // Clear any old error messages
 
-    // If QR code parameters are present and autoSignIn is true, sign in automatically
-    if (qrUsername && qrPassword && autoSignIn === 'true') {
-        const existingUser = localStorage.getItem(qrUsername);
-        if (existingUser === qrPassword) {
-            sessionStorage.setItem('loggedInUser', qrUsername);
-            window.location.href = 'account.html'; // Redirect to account page
-        } else {
-            alert('Invalid QR code credentials.');
-        }
-    }
+                if (user) {
+                    // User is signed in.
+                    console.log("User is signed in:", user.email, "UID:", user.uid);
+                    // Hide the initial question and auth form elements
+                    initialQuestion.style.display = 'none';
+                    authForm.style.display = 'none';
+                    toggleLinkTextElement.style.display = 'none'; // Hide the toggle link when signed in
 
-    // Show the form based on the user's choice
-    document.getElementById('yes-btn').addEventListener('click', function () {
-        initialQuestion.style.display = 'none';
-        formTitle.textContent = 'Sign In';
-        formContainer.style.display = 'block';
-    });
+                    // Show signed-in content
+                    formContainer.style.display = 'block'; // Ensure container is visible
+                    signedInContent.style.display = 'block';
+                    welcomeMessageElement.textContent = `Welcome, ${user.email}!`; // Display welcome message
 
-    document.getElementById('no-btn').addEventListener('click', function () {
-        initialQuestion.style.display = 'none';
-        formTitle.textContent = 'Sign Up';
-        formContainer.style.display = 'block';
-    });
+                    // IMPORTANT: If this page (Sign Up/In page) is NOT your main page,
+                    // you would typically redirect the user to the main page here
+                    // after they are successfully signed in.
+                    // Example: window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html';
+                    // Make sure this doesn't cause an infinite redirect loop if this IS the login page!
+                    // The current setup shows a message and a link to the chart page.
 
-    // Toggle between sign up and sign in
-    toggleLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (formTitle.textContent === 'Sign Up') {
-            formTitle.textContent = 'Sign In';
-            toggleLink.textContent = 'Don\'t have an account? Sign Up';
-        } else {
-            formTitle.textContent = 'Sign Up';
-            toggleLink.textContent = 'Already have an account? Sign In';
-        }
-        document.getElementById('auth-form').reset();
-    });
+                } else {
+                    // User is signed out.
+                    console.log("No user signed in.");
+                     // Hide the form container and signed-in content
+                    formContainer.style.display = 'none';
+                    signedInContent.style.display = 'none';
 
-    // Handle form submission
-    document.getElementById('auth-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+                    // Show the initial question
+                    initialQuestion.style.display = 'block';
 
-        const existingUser = localStorage.getItem(username);
+                    // Ensure the form is also hidden if showing initial question
+                     authForm.style.display = 'none'; // Make sure form is hidden when initial question is shown
+                     toggleLinkTextElement.style.display = 'none'; // Hide toggle link initially
+                }
+            });
 
-        if (formTitle.textContent === 'Sign Up') {
-            if (existingUser) {
-                alert('Username already exists.');
-            } else {
-                localStorage.setItem(username, password);
-                alert('Sign Up successful! You can now Sign In.');
+            // --- Initial Question Button Handlers ---
+            document.getElementById('yes-btn').addEventListener('click', function () {
+                clearAuthError();
+                initialQuestion.style.display = 'none';
                 formTitle.textContent = 'Sign In';
-                toggleLink.textContent = 'Don\'t have an account? Sign Up';
-                document.getElementById('auth-form').reset();
-            }
-        } else {
-            if (existingUser === password) {
-                alert('Sign In successful!');
-                sessionStorage.setItem('loggedInUser', username);
-                // Redirect to Temperature chart page for manual sign-in
-                window.location.href = 'Temperature%20chart.html'; 
-            } else {
-                alert('Invalid username or password.');
-            }
-        }
-    });
-});
+                toggleLinkElement.textContent = 'Don\'t have an account? Sign Up'; // Update toggle link text
+                toggleLinkTextElement.style.display = 'block'; // Show the toggle link
+                signedInContent.style.display = 'none'; // Hide signed-in content
+                authForm.style.display = 'block'; // Show the form
+                formContainer.style.display = 'block'; // Show the form container
+                authForm.reset(); // Clear form fields
+                emailInput.focus(); // Set focus to email field
+            });
+
+            document.getElementById('no-btn').addEventListener('click', function () {
+                clearAuthError();
+                initialQuestion.style.display = 'none';
+                formTitle.textContent = 'Sign Up';
+                 toggleLinkElement.textContent = 'Already have an account? Sign In'; // Update toggle link text
+                 toggleLinkTextElement.style.display = 'block'; // Show the toggle link
+                signedInContent.style.display = 'none'; // Hide signed-in content
+                 authForm.style.display = 'block'; // Show the form
+                formContainer.style.display = 'block'; // Show the form container
+                authForm.reset(); // Clear form fields
+                 emailInput.focus(); // Set focus to email field
+            });
+
+            // --- Toggle Between Sign Up and Sign In ---
+            toggleLinkElement.addEventListener('click', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                clearAuthError(); // Clear error message on toggle
+                if (formTitle.textContent === 'Sign Up') {
+                    formTitle.textContent = 'Sign In';
+                    toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
+                } else {
+                    formTitle.textContent = 'Sign Up';
+                    toggleLinkElement.textContent = 'Already have an account? Sign In';
+                }
+                authForm.reset(); // Reset form fields
+                 emailInput.focus(); // Set focus back to email field
+            });
+
+             // --- Handle QR Code Auto Sign-In ---
+             // NOTE: Using email/password directly in a QR code like this is NOT recommended
+             // for security reasons, especially for passwords.
+             // A more secure approach would involve a one-time use token or a link
+             // to a page that prompts for password verification or uses a different authentication flow.
+            const urlParams = new URLSearchParams(window.location.search);
+            const qrEmail = urlParams.get('username'); // Assuming 'username' parameter now holds email
+            const qrPassword = urlParams.get('password');
+            const autoSignIn = urlParams.get('autoSignIn');
+
+             // If QR code parameters are present and autoSignIn === 'true', attempt sign-in
+             if (qrEmail && qrPassword && autoSignIn === 'true') {
+                 console.log("Attempting auto-sign-in with Firebase Auth...");
+                 // Check if user is already signed in before attempting auto sign-in
+                 if (!auth.currentUser) {
+                     auth.signInWithEmailAndPassword(qrEmail, qrPassword)
+                         .then((userCredential) => {
+                             // Signed in successfully via QR code
+                             console.log("Auto-sign-in successful!", userCredential.user);
+                             // Redirect to the account/main page after successful QR sign-in
+                             window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html'; // Redirect
+                         })
+                         .catch((error) => {
+                             console.error("Auto-sign-in failed:", error.code, error.message);
+                             displayAuthError('Auto Sign In failed: ' + error.message); // Display error message
+                             // If auto-sign-in fails, show the manual login form
+                             initialQuestion.style.display = 'none';
+                             formTitle.textContent = 'Sign In';
+                             toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
+                             toggleLinkTextElement.style.display = 'block';
+                             signedInContent.style.display = 'none';
+                             authForm.style.display = 'block';
+                             formContainer.style.display = 'block';
+                             authForm.reset();
+                             emailInput.focus();
+                         });
+                 } else {
+                     console.log("User already signed in, skipping QR auto-sign-in.");
+                      // If user is already signed in, just let the onAuthStateChanged handle the view
+                 }
+             }
+
+
+            // --- Handle Form Submission (Sign Up or Sign In) ---
+            authForm.addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent default form submission
+                clearAuthError(); // Clear previous errors on submit
+
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                if (formTitle.textContent === 'Sign Up') {
+                    // *** Firebase Authentication Sign Up ***
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            // Signed up successfully
+                            console.log("Sign-up successful!", userCredential.user);
+                            // Show success message or redirect
+                            alert('Sign Up successful! You can now Sign In.');
+
+                            // Optionally, sign the user in immediately after signup
+                            // Or, switch to the Sign In view for them to log in:
+                            formTitle.textContent = 'Sign In';
+                            toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
+                            authForm.reset(); // Clear form fields after successful signup
+                            emailInput.focus(); // Set focus to email field
+
+                        })
+                        .catch((error) => {
+                            // Handle signup errors
+                            console.error("Sign-up failed:", error.code, error.message);
+                            displayAuthError('Sign Up failed: ' + error.message); // Display error message to the user
+                        });
+
+                } else { // Sign In
+                    // *** Firebase Authentication Sign In ***
+                    auth.signInWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            // Signed in successfully
+                            console.log("Sign-in successful!", userCredential.user);
+                            alert('Sign In successful!');
+                            // Redirect to the main page or account page AFTER successful sign-in
+                            // The onAuthStateChanged observer above will also catch this state change.
+                            window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html'; // Redirect
+
+                        })
+                        .catch((error) => {
+                            // Handle sign-in errors
+                            console.error("Sign-in failed:", error.code, error.message);
+                            displayAuthError('Sign In failed: ' + error.message); // Display error message
+                            passwordInput.value = ''; // Clear password on failure
+                            passwordInput.focus(); // Set focus back to password
+                        });
+                }
+            });
+
+             // --- Handle Sign Out ---
+             signOutButton.addEventListener('click', function() {
+                 auth.signOut().then(() => {
+                     // Sign-out successful.
+                     console.log("User signed out.");
+                     // The onAuthStateChanged observer will handle updating the UI to show the initial state.
+                     alert("You have been signed out."); // Optional confirmation
+                 }).catch((error) => {
+                     // An error happened.
+                     console.error("Sign-out failed:", error);
+                     alert("Sign Out failed: " + error.message); // Display error
+                 });
+             });
+
+
+            // Initially check auth state when the page loads
+            // The onAuthStateChanged listener above will handle this.
+
+            // NOTE on QR Code: The QR code auto-sign-in logic is placed
+            // before the main form submission handler. It attempts to sign
+            // the user in immediately on page load if the parameters are present.
+            // The onAuthStateChanged listener then takes over to update the UI
+            // or redirect if successful. If the QR sign-in fails or the
+            // parameters are not present, the initialQuestion state should
+            // remain visible (or be set to visible by onAuthStateChanged if no user).
+        });
 
     </script>
 </body>
