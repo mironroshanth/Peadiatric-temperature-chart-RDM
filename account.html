@@ -254,17 +254,18 @@
 
                 fileListElement.innerHTML = '<li class="loading">Loading files...</li>';
 
-                userFilesRef.orderByChild('timestamp').on('value', (snapshot) => {
-                    // Build userFilesMetadata from snapshot
+                userFilesRef.orderByChild('timestamp').once('value', (snapshot) => {
                     userFilesMetadata = {};
                     fileListElement.innerHTML = '';
 
                     let hasFiles = false;
                     snapshot.forEach(childSnap => {
+                        const fileMeta = childSnap.val();
+                        // Defensive: skip if missing fileName or timestamp (rules may block incomplete entries)
+                        if (!fileMeta || !fileMeta.fileName || !fileMeta.timestamp) return;
                         hasFiles = true;
                         const fileKey = childSnap.key;
-                        const fileMeta = childSnap.val();
-                        userFilesMetadata[fileKey] = fileMeta; // Store metadata for later use
+                        userFilesMetadata[fileKey] = fileMeta;
 
                         const li = document.createElement('li');
                         li.textContent = fileMeta.fileName || `File_${fileKey}`;
