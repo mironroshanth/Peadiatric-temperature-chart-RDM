@@ -254,14 +254,19 @@
 
                 fileListElement.innerHTML = '<li class="loading">Loading files...</li>';
 
-                userFilesRef.orderByChild('timestamp').once('value', (snapshot) => {
+                // IMPORTANT: Your database node is "files", not "file_metadata"
+                // So you need to reference 'patients/{uid}/files' instead of 'file_metadata'
+                // Fix the reference:
+                userFilesRef = database.ref('patients/' + currentUserId + '/files');
+
+                userFilesRef.once('value', (snapshot) => {
                     userFilesMetadata = {};
                     fileListElement.innerHTML = '';
 
                     let hasFiles = false;
                     snapshot.forEach(childSnap => {
                         const fileMeta = childSnap.val();
-                        // Defensive: skip if missing fileName or timestamp (rules may block incomplete entries)
+                        // Defensive: skip if missing fileName or timestamp
                         if (!fileMeta || !fileMeta.fileName || !fileMeta.timestamp) return;
                         hasFiles = true;
                         const fileKey = childSnap.key;
@@ -291,7 +296,7 @@
             // Get full file data when needed
             async function getFullFileData(fileKey) {
                 try {
-                    const snapshot = await database.ref(`patients/${currentUserId}/file_data/${fileKey}`).once('value');
+                    const snapshot = await database.ref(`patients/${currentUserId}/files/${fileKey}`).once('value');
                     return snapshot.val();
                 } catch (error) {
                     console.error("Error loading file data:", error);
@@ -373,24 +378,22 @@
                 reader.onload = async function(e) {
                     try {
                         const fileContent = JSON.parse(e.target.result);
-                        
+
                         if (!fileContent.fileData) {
                             throw new Error('Invalid file format - missing fileData');
                         }
 
-                        const newKey = database.ref().child('patients/' + currentUserId + '/file_metadata').push().key;
+                        const newKey = database.ref().child('patients/' + currentUserId + '/files').push().key;
                         const timestamp = firebase.database.ServerValue.TIMESTAMP;
                         const fileName = file.name.replace('.json', '');
-                        
+
                         const updates = {
-                          [`patients/${currentUserId}/file_metadata/${newKey}`]: {
-                            fileName: fileName,
-                            timestamp: timestamp,
-                            sourcePage: fileContent.sourcePage || 'Temperature Chart'
-                          },
-                          [`patients/${currentUserId}/file_data/${newKey}`]: {
-                            fileData: fileContent.fileData // wrap in fileData
-                          }
+                            [`patients/${currentUserId}/files/${newKey}`]: {
+                                fileName: fileName,
+                                timestamp: timestamp,
+                                sourcePage: fileContent.sourcePage || 'Temperature Chart',
+                                fileData: fileContent.fileData // store fileData directly under files
+                            }
                         };
 
                         await database.ref().update(updates);
@@ -415,13 +418,12 @@
 
                 const fileKey = selectedFileItem.dataset.key;
                 const fileName = selectedFileItem.textContent;
-                
+
                 if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
                     try {
                         const updates = {};
-                        updates[`patients/${currentUserId}/file_metadata/${fileKey}`] = null;
-                        updates[`patients/${currentUserId}/file_data/${fileKey}`] = null;
-                        
+                        updates[`patients/${currentUserId}/files/${fileKey}`] = null;
+
                         await database.ref().update(updates);
                         alert('File deleted successfully');
                     } catch (error) {
@@ -430,6 +432,9 @@
                     }
                 }
             });
+
+            // Firebase Database Rules (for your current structure with "files" node)
+           
 
             // [Keep all your existing QR code, navigation, and sign-out functions]
             function determineTargetPage(sourcePage) {
