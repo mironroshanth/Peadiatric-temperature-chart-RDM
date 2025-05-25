@@ -382,12 +382,14 @@
                         const fileName = file.name.replace('.json', '');
                         
                         const updates = {
-                            [`patients/${currentUserId}/file_metadata/${newKey}`]: {
-                                fileName: fileName,
-                                timestamp: timestamp,
-                                sourcePage: fileContent.sourcePage || 'Temperature Chart'
-                            },
-                            [`patients/${currentUserId}/file_data/${newKey}`]: fileContent.fileData
+                          [`patients/${currentUserId}/file_metadata/${newKey}`]: {
+                            fileName: fileName,
+                            timestamp: timestamp,
+                            sourcePage: fileContent.sourcePage || 'Temperature Chart'
+                          },
+                          [`patients/${currentUserId}/file_data/${newKey}`]: {
+                            fileData: fileContent.fileData // wrap in fileData
+                          }
                         };
 
                         await database.ref().update(updates);
