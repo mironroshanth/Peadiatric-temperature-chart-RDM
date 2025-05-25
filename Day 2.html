@@ -524,76 +524,58 @@ h1{
     // --- Save Chart Data to Firebase Realtime Database ---
     // This function replaces the localStorage saving logic
         // --- Save Chart Data to Firebase Realtime Database (with name prompt) ---
-    function saveChartData() {
-        const user = auth.currentUser; // Get the currently logged-in user
-
-        if (!user) {
-            // If no user is logged in, inform them and stop.
-            alert('Please sign in to your account to save charts.');
-            // Optionally redirect to the sign-in page
-            // window.location.href = 'https://mironroshanth.github.io/Peadiac-temperature-chart-RDM/Sign%20in.html';
-            return;
-        }
-
-        const name = document.getElementById('name').value.trim(); // Patient name
-        const dob = document.getElementById('dob').value;         // Patient DOB
-        const temperatures = chart.series[0].data.map(point => ({ // Chart data
-            timestamp: point.x,
-            value: point.y
-        }));
-
-        if (!name || !dob) {
-            alert('Please enter both patient name and date of birth before saving.');
-            return;
-        }
-
-        if (temperatures.length === 0) {
-            alert('Please add some temperature data to the chart before saving.');
-            return;
-        }
-
-        // *** Add the prompt for the file name here ***
-        const fileNamePrompt = prompt('Enter a name to save this chart file:', `${name} - ${dob}`);
-
-        // Check if the user cancelled the prompt or entered an empty name
-        if (!fileNamePrompt || fileNamePrompt.trim() === '') {
-            alert('Saving cancelled. File name cannot be empty.');
-            return; // Stop the save process
-        }
-
-        const uniqueFileName = fileNamePrompt.trim(); // Use the name provided by the user
-
-
-        // Structure the data to be saved under the user's node in RTDB
-        // We'll put it under `/patients/[userId]/files/[unique_file_key]`
-        const fileDataToSave = {
-            fileName: uniqueFileName, // *** Use the user-provided name here ***
-            sourcePage: 'Day 2', // Identifier for this page (adjust if this is truly 'Day 2')
-            timestamp: firebase.database.ServerValue.TIMESTAMP, // Server timestamp for when it was saved
-            fileData: { // Nested object containing the actual chart data
-                name: name, // Still include patient name and DOB within the data
-                dob: dob,
-                temperatures: temperatures
-            }
-        };
-
-         // Get a reference to the user's files location in RTDB
-         const userFilesRef = database.ref('patients/' + user.uid + '/files');
-
-        // Use push() to generate a unique key and set() to save the data.
-        // This creates a new entry for each saved chart.
-        userFilesRef.push().set(fileDataToSave)
-            .then(() => {
-                console.log("Chart data saved successfully to Firebase RTDB!", { fileName: uniqueFileName });
-                alert(`Chart data saved successfully as "${uniqueFileName}" in your account!`);
-                // Optionally, redirect to the account page after saving
-                 window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html';
-            })
-            .catch((error) => {
-                console.error("Error saving chart data to Firebase RTDB:", error);
-                alert('Error saving chart data: ' + error.message);
-            });
+function saveChartData() {
+    const user = auth.currentUser;
+    if (!user) {
+        alert('Please sign in to your account to save charts.');
+        return;
     }
+
+    const name = document.getElementById('name').value.trim();
+    const dob = document.getElementById('dob').value;
+    const temperatures = chart.series[0].data.map(point => ({
+        timestamp: point.x,
+        value: point.y
+    }));
+
+    if (!name || !dob) {
+        alert('Please enter both patient name and date of birth before saving.');
+        return;
+    }
+
+    if (temperatures.length === 0) {
+        alert('Please add some temperature data to the chart before saving.');
+        return;
+    }
+
+    const fileNamePrompt = prompt('Enter a name to save this chart file:', `${name} - ${dob}`);
+    if (!fileNamePrompt || fileNamePrompt.trim() === '') {
+        alert('Saving cancelled. File name cannot be empty.');
+        return;
+    }
+
+    // Structure data to match validation rules
+    const fileDataToSave = {
+        fileName: fileNamePrompt.trim(),
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        sourcePage: 'Day 2',
+        name: name,  // Include directly in the file object
+        dob: dob,    // Include directly in the file object
+        temperatures: temperatures
+    };
+
+    const userFilesRef = database.ref('patients/' + user.uid + '/files');
+    
+    userFilesRef.push(fileDataToSave)
+        .then(() => {
+            alert(`Chart saved successfully as "${fileNamePrompt.trim()}"!`);
+            window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/account.html';
+        })
+        .catch((error) => {
+            console.error("Save error:", error);
+            alert('Error saving chart: ' + error.message);
+        });
+}
     // Attach the saveChartData function to the save button click event
     document.getElementById('saveButton').addEventListener('click', saveChartData);
 
