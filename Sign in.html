@@ -172,12 +172,11 @@
       // Initialize Firebase
       const app = firebase.initializeApp(firebaseConfig);
 
-      // Get a reference to the Auth service
-      const auth = app.auth(); // Using compat SDK syntax
-      console.log("Firebase SDK and Auth initialized!");
         
         const auth = app.auth();
-        const database = app.database(); // Add this line
+        const database = app.database(); 
+        console.log("Firebase SDK and Auth initialized!");
+// Add this line
       // Function to display Firebase Auth errors
       function displayAuthError(message) {
         const errorElement = document.getElementById('auth-error-message');
