@@ -255,15 +255,17 @@
                 fileListElement.innerHTML = '<li class="loading">Loading files...</li>';
 
                 userFilesRef.orderByChild('timestamp').on('value', (snapshot) => {
-                    userFilesMetadata = snapshot.val() || {};
+                    // Build userFilesMetadata from snapshot
+                    userFilesMetadata = {};
                     fileListElement.innerHTML = '';
 
-                    // Fix: Use snapshot.forEach to handle both array/object and preserve order
                     let hasFiles = false;
                     snapshot.forEach(childSnap => {
                         hasFiles = true;
                         const fileKey = childSnap.key;
                         const fileMeta = childSnap.val();
+                        userFilesMetadata[fileKey] = fileMeta; // Store metadata for later use
+
                         const li = document.createElement('li');
                         li.textContent = fileMeta.fileName || `File_${fileKey}`;
                         li.dataset.key = fileKey;
