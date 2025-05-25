@@ -280,12 +280,19 @@
                                 item.classList.remove('selected');
                             });
                             this.classList.add('selected');
+                            // Enable buttons when a file is selected
+                            loadFileButton.disabled = false;
+                            downloadFileButton.disabled = false;
+                            deleteFileButton.disabled = false;
                         });
                         fileListElement.appendChild(li);
                     });
 
                     if (!hasFiles) {
                         fileListElement.innerHTML = '<li>No saved charts found.</li>';
+                        loadFileButton.disabled = true;
+                        downloadFileButton.disabled = true;
+                        deleteFileButton.disabled = true;
                     }
                 }, (error) => {
                     console.error("File list error:", error);
