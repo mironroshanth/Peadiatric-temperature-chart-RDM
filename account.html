@@ -258,22 +258,25 @@
                     userFilesMetadata = snapshot.val() || {};
                     fileListElement.innerHTML = '';
 
-                    if (Object.keys(userFilesMetadata).length > 0) {
-                        Object.entries(userFilesMetadata).forEach(([fileKey, fileMeta]) => {
-                            const li = document.createElement('li');
-                            li.textContent = fileMeta.fileName || `File_${fileKey}`;
-                            li.dataset.key = fileKey;
-                            
-                            li.addEventListener('click', function() {
-                                document.querySelectorAll('#fileList li').forEach(item => {
-                                    item.classList.remove('selected');
-                                });
-                                this.classList.add('selected');
+                    // Fix: Use snapshot.forEach to handle both array/object and preserve order
+                    let hasFiles = false;
+                    snapshot.forEach(childSnap => {
+                        hasFiles = true;
+                        const fileKey = childSnap.key;
+                        const fileMeta = childSnap.val();
+                        const li = document.createElement('li');
+                        li.textContent = fileMeta.fileName || `File_${fileKey}`;
+                        li.dataset.key = fileKey;
+                        li.addEventListener('click', function() {
+                            document.querySelectorAll('#fileList li').forEach(item => {
+                                item.classList.remove('selected');
                             });
-                            
-                            fileListElement.appendChild(li);
+                            this.classList.add('selected');
                         });
-                    } else {
+                        fileListElement.appendChild(li);
+                    });
+
+                    if (!hasFiles) {
                         fileListElement.innerHTML = '<li>No saved charts found.</li>';
                     }
                 }, (error) => {
