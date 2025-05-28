@@ -87,13 +87,13 @@
     <h1>Your feedback</h1>
     <label>Your name:</label>
     <input id="name" class="rounded-input" type="text" placeholder="Enter your name..."><br>
-    
+
     <label>Your age:</label>
     <input id="age" class="rounded-input" type="number" placeholder="Enter your age..."><br>
-    
+
     <label>Date:</label>
     <input id="date" class="rounded-input" type="date"><br>
-    
+
     <label for="rating">Rate Us:</label>
     <div class="star-rating">
       <span class="star" data-value="1">★</span>
@@ -102,20 +102,40 @@
       <span class="star" data-value="4">★</span>
       <span class="star" data-value="5">★</span>
     </div>
-    
+
     <label for="comment">Your comments:</label>
     <textarea id="comment" placeholder="Type your feedback here..."></textarea>
 
     <label>Code piece:</label>
     <textarea id="codePiece" class="code-space" placeholder="Write your code here..."></textarea>
-    
+
     <label for="devComments">Comments on your code:</label>
     <textarea id="devComments" placeholder="Share your comments here..."></textarea>
 
     <button onclick="shareFeedback()">Send feedback</button>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore-compat.js"></script>
   <script>
+    // Replace with your actual project config
+    var firebaseConfig = {
+      apiKey: "AIzaSyB_iG1hCwRs82h_EoLmVERfHKxO2fh-M-Q",
+      authDomain: "temperature-chart-47839.firebaseapp.com",
+      projectId: "temperature-chart-47839", // Your project ID
+      storageBucket: "temperature-chart-47839.firebasestorage.app",
+      messagingSenderId: "764348196897",
+      appId: "1:764348196897:web:10e513dc51e6e839665b60",
+      measurementId: "G-RC7FGZHG3M"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Get a reference to the Firestore database
+    const db = firebase.firestore();
+
     const stars = document.querySelectorAll('.star');
     let selectedRating = 0;
 
@@ -141,21 +161,46 @@
       });
     });
 
-    function shareFeedback() {
+    // Function to send feedback to Firestore
+    async function shareFeedback() {
       const name = document.getElementById('name').value;
       const age = document.getElementById('age').value;
       const date = document.getElementById('date').value;
       const comment = document.getElementById('comment').value;
       const codePiece = document.getElementById('codePiece').value;
       const devComments = document.getElementById('devComments').value;
-      
-      const rating = selectedRating || 'No rating'; // Use the stored rating
 
-      const message = `Name: ${name}\nAge: ${age}\nDate: ${date}\nFeedback: ${comment}\nRating: ${rating} Stars\nCode: ${codePiece}\nComments: ${devComments}`;
-      const phoneNumber = '+94773039564'; // Include the country code
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=` + encodeURIComponent(message);
-      
-      window.open(whatsappUrl, '_blank');
+      const rating = selectedRating || 0; // Use 0 if no rating selected
+
+      try {
+        // Add a new document with a generated ID to the "feedback" collection
+        await db.collection("feedback").add({
+          name: name,
+          age: parseInt(age) || null, // Convert age to number, handle empty input
+          date: date, // Store as string, or convert to Firebase Timestamp if needed
+          rating: rating,
+          comment: comment,
+          codePiece: codePiece,
+          devComments: devComments,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp() // Add a server timestamp
+        });
+
+        alert("Feedback sent successfully!"); // Give user feedback
+
+        // Optionally clear the form after submission
+        document.getElementById('name').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('date').value = '';
+        document.getElementById('comment').value = '';
+        document.getElementById('codePiece').value = '';
+        document.getElementById('devComments').value = '';
+        selectedRating = 0;
+        stars.forEach(s => s.classList.remove('selected'));
+
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        alert("Error sending feedback. Please try again."); // Handle errors
+      }
     }
   </script>
 
