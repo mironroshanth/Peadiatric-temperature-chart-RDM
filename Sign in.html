@@ -193,306 +193,221 @@
 
     </script>
 
-        <script>
-        // Assuming firebaseConfig, app, auth, and database are already initialized in the script tag above this one.
-        // Example:
-        // const app = firebase.initializeApp(firebaseConfig);
-        // const auth = app.auth();
-        // const database = app.database(); // Ensure database is initialized if you need RTDB here
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formContainer = document.getElementById('form-container');
+        const initialQuestion = document.getElementById('initial-question');
+        const toggleLinkElement = document.getElementById('toggle-form'); // Changed variable name
+        const toggleLinkTextElement = document.getElementById('toggle-link'); // Added for the whole p tag
+        const formTitle = document.getElementById('form-title');
+        const emailInput = document.getElementById('email'); // Changed variable name to reflect Firebase Auth uses email
+        const passwordInput = document.getElementById('password');
+        const authForm = document.getElementById('auth-form');
+        const signedInContent = document.getElementById('signed-in-content'); // Added
+        const welcomeMessageElement = document.getElementById('welcome-message'); // Added
+        const signOutButton = document.getElementById('sign-out-btn'); // Added
 
-        // Function to display Firebase Auth errors (assuming it's defined above)
-        // function displayAuthError(message) { ... }
-        // Function to clear Firebase Auth errors (assuming it's defined above)
-        // function clearAuthError() { ... }
+        // --- Firebase Authentication State Observer ---
+        // This is the most important part for managing sign-in state across page loads.
+        // It runs when the page loads and whenever the auth state changes (sign in, sign out).
+        auth.onAuthStateChanged(function(user) {
+            clearAuthError(); // Clear any old error messages
 
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const formContainer = document.getElementById('form-container');
-            const initialQuestion = document.getElementById('initial-question');
-            const toggleLinkElement = document.getElementById('toggle-form');
-            const toggleLinkTextElement = document.getElementById('toggle-link');
-            const formTitle = document.getElementById('form-title');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const authForm = document.getElementById('auth-form');
-            const signedInContent = document.getElementById('signed-in-content');
-            const welcomeMessageElement = document.getElementById('welcome-message');
-            const signOutButton = document.getElementById('sign-out-btn');
-
-            // --- Handle QR Code / Token Auto-Fill ---
-            // Check for 'token' parameter in the URL on page load
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
-
-            // Variable to track if we are in the token pre-fill flow
-            let inTokenFlow = false;
-
-            if (token) {
-                console.log("Token found in URL:", token);
-                inTokenFlow = true; // We are in the token flow
-
-                // Hide the initial question immediately if a token is present
+            if (user) {
+                // User is signed in.
+                console.log("User is signed in:", user.email, "UID:", user.uid);
+                // Hide the initial question and auth form elements
                 initialQuestion.style.display = 'none';
-                formContainer.style.display = 'block'; // Show the form container
-                authForm.style.display = 'block'; // Show the sign-in form
-                formTitle.textContent = 'Sign In'; // Ensure the title is 'Sign In'
-                toggleLinkTextElement.style.display = 'none'; // Hide the toggle link in token flow
+                authForm.style.display = 'none';
+                toggleLinkTextElement.style.display = 'none'; // Hide the toggle link when signed in
 
-                // Fetch the token data from Realtime Database
-                database.ref('tokens/' + token).once('value').then((snapshot) => {
-                    const tokenData = snapshot.val();
-                    console.log("Token data from RTDB:", tokenData);
+                // Show signed-in content
+                formContainer.style.display = 'block'; // Ensure container is visible
+                signedInContent.style.display = 'block';
+                welcomeMessageElement.textContent = `Welcome, ${user.email}!`; // Display welcome message
 
-                    // --- Token Validation ---
-                    if (!tokenData) {
-                        console.warn("Invalid token found or already used.");
-                        displayAuthError("Invalid sign-in link or link expired. Please try signing in manually."); // User feedback
-                        database.ref('tokens/' + token).remove(); // Clean up invalid/used token (safe to call even if it didn't exist)
-                        inTokenFlow = false; // Exit token flow on error
-                        // Allow the regular sign-in flow UI to be set by onAuthStateChanged
-                        return; // Stop processing this token
-                    }
+                // IMPORTANT: If this page (Sign Up/In page) is NOT your main page,
+                // you would typically redirect the user to the main page here
+                // after they are successfully signed in.
+                // Example: window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html';
+                // Make sure this doesn't cause an infinite redirect loop if this IS the login page!
+                // The current setup shows a message and a link to the chart page.
 
-                    // Check if token is expired
-                    if (tokenData.expiresAt < Date.now()) {
-                        console.warn("Token expired.");
-                        displayAuthError("Sign-in link expired. Please generate a new QR code from your account."); // User feedback
-                        database.ref('tokens/' + token).remove(); // Clean up expired token
-                         inTokenFlow = false; // Exit token flow on error
-                        // Allow the regular sign-in flow UI to be set by onAuthStateChanged
-                        return; // Stop processing this token
-                    }
+            } else {
+                // User is signed out.
+                console.log("No user signed in.");
+                 // Hide the form container and signed-in content
+                formContainer.style.display = 'none';
+                signedInContent.style.display = 'none';
 
-                    // Check if necessary data (email) exists in token data (should be saved on Account page)
-                    if (!tokenData.email) {
-                         console.warn("Token data is missing email.");
-                         displayAuthError("Sign-in link incomplete. Please try signing in manually."); // User feedback
-                         database.ref('tokens/' + token).remove(); // Clean up incomplete token
-                         inTokenFlow = false; // Exit token flow on error
-                         // Allow the regular sign-in flow UI to be set by onAuthStateChanged
-                         return; // Stop processing this token
-                    }
-                    // --- End Token Validation ---
+                // Show the initial question
+                initialQuestion.style.display = 'block';
+
+                // Ensure the form is also hidden if showing initial question
+                 authForm.style.display = 'none'; // Make sure form is hidden when initial question is shown
+                 toggleLinkTextElement.style.display = 'none'; // Hide toggle link initially
+            }
+        });
+
+        // --- Initial Question Button Handlers ---
+        document.getElementById('yes-btn').addEventListener('click', function () {
+            clearAuthError();
+            initialQuestion.style.display = 'none';
+            formTitle.textContent = 'Sign In';
+            toggleLinkElement.textContent = 'Don\'t have an account? Sign Up'; // Update toggle link text
+            toggleLinkTextElement.style.display = 'block'; // Show the toggle link
+            signedInContent.style.display = 'none'; // Hide signed-in content
+            authForm.style.display = 'block'; // Show the form
+            formContainer.style.display = 'block'; // Show the form container
+            authForm.reset(); // Clear form fields
+            emailInput.focus(); // Set focus to email field
+        });
+
+        document.getElementById('no-btn').addEventListener('click', function () {
+            clearAuthError();
+            initialQuestion.style.display = 'none';
+            formTitle.textContent = 'Sign Up';
+             toggleLinkElement.textContent = 'Already have an account? Sign In'; // Update toggle link text
+             toggleLinkTextElement.style.display = 'block'; // Show the toggle link
+            signedInContent.style.display = 'none'; // Hide signed-in content
+             authForm.style.display = 'block'; // Show the form
+            formContainer.style.display = 'block'; // Show the form container
+            authForm.reset(); // Clear form fields
+             emailInput.focus(); // Set focus to email field
+        });
+
+        // --- Toggle Between Sign Up and Sign In ---
+        toggleLinkElement.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent default link behavior
+            clearAuthError(); // Clear error message on toggle
+            if (formTitle.textContent === 'Sign Up') {
+                formTitle.textContent = 'Sign In';
+                toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
+            } else {
+                formTitle.textContent = 'Sign Up';
+                toggleLinkElement.textContent = 'Already have an account? Sign In';
+            }
+            authForm.reset(); // Reset form fields
+             emailInput.focus(); // Set focus back to email field
+        });
+
+         // --- Handle QR Code Auto Sign-In ---
+         // NOTE: Using email/password directly in a QR code like this is NOT recommended
+         // for security reasons, especially for passwords.
+         // A more secure approach would involve a one-time use token or a link
+         // to a page that prompts for password verification or uses a different authentication flow.
 
 
-                    console.log("Valid token found. Pre-filling email:", tokenData.email);
+         // If QR code parameters are present and autoSignIn === 'true', attempt sign-in
+// Add this to the sign-in page's DOMContentLoaded event listener:
+// Check for token parameter on page load const urlParams = new URLSearchParams(window.location.search); const token = urlParams.get('token');
+if (token) { // Verify the token exists in database database.ref('tokens/' + token).once('value').then((snapshot) => { const tokenData = snapshot.val();
+    if (!tokenData) {
+        console.log("Invalid token");
+        return;
+    }
+    
+    // Check if token is expired
+    if (tokenData.expiresAt < Date.now()) {
+        console.log("Token expired");
+        database.ref('tokens/' + token).remove(); // Clean up
+        return;
+    }
+    
+    // Sign in with the stored custom token
+    auth.signInWithCustomToken(tokenData.customAuthToken)
+        .then(() => {
+            console.log("Auto-sign-in successful");
+            database.ref('tokens/' + token).remove(); // Remove used token
+            window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Account.html';
+        })
+        .catch((error) => {
+            console.error("Auto-sign-in failed:", error);
+        });
+}).catch((error) => {
+    console.error("Token verification failed:", error);
+});
+}
+        // --- Handle Form Submission (Sign Up or Sign In) ---
+        authForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+            clearAuthError(); // Clear previous errors on submit
 
-                    // --- Pre-fill Email and Guide User ---
-                    emailInput.value = tokenData.email; // Set the email input value
-                    // Optionally make email read-only so user doesn't change it during token flow
-                    emailInput.readOnly = true;
-                    displayAuthError(`Email pre-filled from QR code. Please enter your password to sign in.`); // Inform user what to do
+            const email = emailInput.value;
+            const password = passwordInput.value;
 
-                    // Automatically focus the password field
-                    passwordInput.focus();
+            if (formTitle.textContent === 'Sign Up') {
+                // *** Firebase Authentication Sign Up ***
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed up successfully
+                        console.log("Sign-up successful!", userCredential.user);
+                        // Show success message or redirect
+                        alert('Sign Up successful! You can now Sign In.');
 
-                    // Clean up the token from the database AFTER successfully validating and pre-filling
-                    // We do this here so the link can only be used once.
-                    database.ref('tokens/' + token).remove().then(() => {
-                         console.log("Token cleaned up from database.");
-                    }).catch(error => {
-                         console.error("Failed to clean up token:", error);
-                         // This error doesn't stop the sign-in attempt, just logs failure to clean up
+                        // Optionally, sign the user in immediately after signup
+                        // Or, switch to the Sign In view for them to log in:
+                        formTitle.textContent = 'Sign In';
+                        toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
+                        authForm.reset(); // Clear form fields after successful signup
+                        emailInput.focus(); // Set focus to email field
+
+                    })
+                    .catch((error) => {
+                        // Handle signup errors
+                        console.error("Sign-up failed:", error.code, error.message);
+                        displayAuthError('Sign Up failed: ' + error.message); // Display error message to the user
                     });
 
-                    // The user still needs to enter their password and click the 'Submit' button.
-                    // The form submit handler below will handle the actual signInWithEmailAndPassword.
-                    // We remain in the 'inTokenFlow = true' state until the user successfully signs in
-                    // or an auth error occurs during the sign-in attempt.
+            } else { // Sign In
+                // *** Firebase Authentication Sign In ***
+                auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed in successfully
+                        console.log("Sign-in successful!", userCredential.user);
+                        alert('Sign In successful!');
+                        // Redirect to the main page or account page AFTER successful sign-in
+                        // The onAuthStateChanged observer above will also catch this state change.
+                        window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html'; // Redirect
 
-                }).catch((error) => {
-                    // Handle errors during database read (e.g., network issues fetching token data)
-                    console.error("Error fetching token data:", error);
-                    displayAuthError("Error loading sign-in link data. Please try signing in manually."); // User feedback
-                    inTokenFlow = false; // Exit token flow on database error
-                    // Allow the regular sign-in flow UI to be set by onAuthStateChanged
-                });
+                    })
+                    .catch((error) => {
+                        // Handle sign-in errors
+                        console.error("Sign-in failed:", error.code, error.message);
+                        displayAuthError('Sign In failed: ' + error.message); // Display error message
+                        passwordInput.value = ''; // Clear password on failure
+                        passwordInput.focus(); // Set focus back to password
+                    });
             }
+        });
 
-
-            // --- Firebase Authentication State Observer ---
-            // This runs when the page loads and whenever the user's sign-in state changes.
-            // It handles showing/hiding content based on whether a user is logged in.
-            // This needs to intelligently interact with the token handling logic.
-            auth.onAuthStateChanged(function(user) {
-                clearAuthError(); // Clear any old error messages
-
-                if (user) {
-                    // User is signed in.
-                    console.log("User is signed in:", user.email, "UID:", user.uid);
-
-                    // If the user just signed in successfully (either standard flow or after token pre-fill)
-                    // Redirect them to the Account page.
-                    // This condition covers both cases:
-                    // 1. Standard sign-in successful (form submit handler triggers auth state change)
-                    // 2. Token pre-fill, user enters password, signs in (form submit handler triggers auth state change)
-                    console.log("User signed in. Redirecting to Account page.");
-                    window.location.href = 'https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Account.html';
-                    // Use 'return' to stop further execution in this listener to avoid conflicts
-                    return;
-
-                } else {
-                    // User is signed out.
-                    console.log("No user signed in.");
-
-                    // If we are in the token flow (checked at the start) AND the token
-                    // was successfully validated and pre-filled, DO NOT reset the UI
-                    // to the initial question state. Keep the sign-in form visible.
-                    if (!inTokenFlow) {
-                         // This is the standard signed-out state, and we are NOT in the token flow.
-                         // Hide the form container and signed-in content
-                        formContainer.style.display = 'none';
-                        signedInContent.style.display = 'none';
-                        emailInput.readOnly = false; // Ensure email is editable in standard flow
-
-                        // Show the initial question
-                        initialQuestion.style.display = 'block';
-                        authForm.style.display = 'none'; // Make sure form is hidden
-                        toggleLinkTextElement.style.display = 'none'; // Hide toggle link initially
-                    }
-                    // If inTokenFlow is true and validation succeeded, the UI has already
-                    // been set up to show the pre-filled sign-in form by the token logic above.
-                }
-            });
-
-            // --- Initial Question Button Handlers ---
-            // These handlers should now also ensure emailInput is NOT read-only
-            document.getElementById('yes-btn').addEventListener('click', function () {
-                clearAuthError();
-                // Ensure we exit any potential token flow state if user clicks buttons manually
-                inTokenFlow = false;
-                initialQuestion.style.display = 'none';
-                formTitle.textContent = 'Sign In';
-                toggleLinkElement.textContent = 'Don\'t have an account? Sign Up'; // Update toggle link text
-                toggleLinkTextElement.style.display = 'block'; // Show the toggle link
-                signedInContent.style.display = 'none'; // Hide signed-in content
-                authForm.style.display = 'block'; // Show the form
-                formContainer.style.display = 'block'; // Show the form container
-                authForm.reset(); // Clear form fields
-                emailInput.readOnly = false; // Make sure email is editable
-                emailInput.focus(); // Set focus to email field
-            });
-
-            document.getElementById('no-btn').addEventListener('click', function () {
-                clearAuthError();
-                 // Ensure we exit any potential token flow state
-                inTokenFlow = false;
-                initialQuestion.style.display = 'none';
-                formTitle.textContent = 'Sign Up';
-                 toggleLinkElement.textContent = 'Already have an account? Sign In'; // Update toggle link text
-                 toggleLinkTextElement.style.display = 'block'; // Show the toggle link
-                signedInContent.style.display = 'none'; // Hide signed-in content
-                 authForm.style.display = 'block'; // Show the form
-                formContainer.style.display = 'block'; // Show the form container
-                authForm.reset(); // Clear form fields
-                emailInput.readOnly = false; // Make sure email is editable
-                 emailInput.focus(); // Set focus to email field
-            });
-
-            // --- Toggle Between Sign Up and Sign In ---
-            // This handler should also ensure emailInput is NOT read-only
-            toggleLinkElement.addEventListener('click', function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                clearAuthError(); // Clear error message on toggle
-                // Ensure we exit any potential token flow state
-                inTokenFlow = false; // Toggling means exiting token flow if it was active
-                if (formTitle.textContent === 'Sign Up') {
-                    formTitle.textContent = 'Sign In';
-                    toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
-                } else {
-                    formTitle.textContent = 'Sign Up';
-                    toggleLinkElement.textContent = 'Already have an account? Sign In';
-                }
-                authForm.reset(); // Reset form fields
-                emailInput.readOnly = false; // Make sure email is editable
-                 emailInput.focus(); // Set focus back to email field
-            });
-
-
-            // --- Handle Form Submission (Sign Up or Sign In) ---
-            authForm.addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent default form submission
-                clearAuthError(); // Clear previous errors on submit
-
-                const email = emailInput.value;
-                const password = passwordInput.value;
-
-                // Basic input validation
-                if (!email || !password) {
-                    displayAuthError("Please enter email and password.");
-                    return; // Stop the function if fields are empty
-                }
-
-                if (formTitle.textContent === 'Sign Up') {
-                    // *** Firebase Authentication Sign Up ***
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .then((userCredential) => {
-                            // Signed up successfully
-                            console.log("Sign-up successful!", userCredential.user);
-                            alert('Sign Up successful! You can now Sign In.');
-
-                            // Switch to the Sign In view for them to log in:
-                            formTitle.textContent = 'Sign In';
-                            toggleLinkElement.textContent = 'Don\'t have an account? Sign Up';
-                             toggleLinkTextElement.style.display = 'block'; // Ensure toggle link is visible
-                            authForm.reset(); // Clear form fields after successful signup
-                            emailInput.readOnly = false; // Make sure email is editable
-                            emailInput.focus(); // Set focus to email field
-                            // Note: The onAuthStateChanged listener will NOT fire on signup until the user signs IN.
-
-                        })
-                        .catch((error) => {
-                            // Handle signup errors
-                            console.error("Sign-up failed:", error.code, error.message);
-                            displayAuthError('Sign Up failed: ' + error.message); // Display error message to the user
-                        });
-
-                } else { // Sign In
-                    // *** Firebase Authentication Sign In ***
-                    auth.signInWithEmailAndPassword(email, password)
-                        .then((userCredential) => {
-                            // Signed in successfully
-                            console.log("Sign-in successful!", userCredential.user);
-                            // alert('Sign In successful!'); // The onAuthStateChanged handles UI update/redirect
-                            // The onAuthStateChanged listener will detect this sign-in and handle the redirect.
-
-                        })
-                        .catch((error) => {
-                            // Handle sign-in errors
-                            console.error("Sign-in failed:", error.code, error.message);
-                             // Specific error messages for better user feedback
-                             let errorMessage = 'Sign In failed: ' + error.message;
-                             if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                                errorMessage = 'Invalid email or password.';
-                             } else if (error.code === 'auth/invalid-email') {
-                                 errorMessage = 'Invalid email address format.';
-                             } else if (error.code === 'auth/user-disabled') {
-                                 errorMessage = 'Your account has been disabled.';
-                             }
-                            displayAuthError(errorMessage); // Display user-friendly error message
-                            passwordInput.value = ''; // Clear password on failure
-                            passwordInput.focus(); // Set focus back to password
-                        });
-                }
-            });
-
-             // --- Handle Sign Out ---
-             signOutButton.addEventListener('click', function() {
-                 auth.signOut().then(() => {
-                     // Sign-out successful.
-                     console.log("User signed out.");
-                     // The onAuthStateChanged observer will handle updating the UI to show the initial state.
-                     alert("You have been signed out."); // Optional confirmation
-                 }).catch((error) => {
-                     // An error happened.
-                     console.error("Sign-out failed:", error);
-                     alert("Sign Out failed: " + error.message); // Display error
-                 });
+         // --- Handle Sign Out ---
+         signOutButton.addEventListener('click', function() {
+             auth.signOut().then(() => {
+                 // Sign-out successful.
+                 console.log("User signed out.");
+                 // The onAuthStateChanged observer will handle updating the UI to show the initial state.
+                 alert("You have been signed out."); // Optional confirmation
+             }).catch((error) => {
+                 // An error happened.
+                 console.error("Sign-out failed:", error);
+                 alert("Sign Out failed: " + error.message); // Display error
              });
+         });
 
-        }); // End of DOMContentLoaded listener
 
-    </script>
+        // Initially check auth state when the page loads
+        // The onAuthStateChanged listener above will handle this.
 
+        // NOTE on QR Code: The QR code auto-sign-in logic is placed
+        // before the main form submission handler. It attempts to sign
+        // the user in immediately on page load if the parameters are present.
+        // The onAuthStateChanged listener then takes over to update the UI
+        // or redirect if successful. If the QR sign-in fails or the
+        // parameters are not present, the initialQuestion state should
+        // remain visible (or be set to visible by onAuthStateChanged if no user).
+    });
+
+</script>
 </body>
 </html>
