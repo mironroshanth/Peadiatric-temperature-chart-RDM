@@ -160,8 +160,8 @@
         });
       });
 
-      // Function to send feedback to Firestore
-      window.shareFeedback = async function() {
+      // Function to send feedback via email
+      window.shareFeedback = function() {
         const name = document.getElementById('name').value;
         const age = document.getElementById('age').value;
         const date = document.getElementById('date').value;
@@ -170,34 +170,25 @@
         const devComments = document.getElementById('devComments').value;
         const rating = selectedRating || 0;
 
-        try {
-          await db.collection("feedback").add({
-            name: name,
-            age: age ? parseInt(age) : null,
-            date: date,
-            rating: rating,
-            comment: comment,
-            codePiece: codePiece,
-            devComments: devComments,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
+        // Construct the email body
+        const subject = encodeURIComponent("Feedback from " + (name || "Anonymous"));
+        const body = encodeURIComponent(
+          "Name: " + name + "\n" +
+          "Age: " + age + "\n" +
+          "Date: " + date + "\n" +
+          "Rating: " + rating + "\n" +
+          "Comments: " + comment + "\n" +
+          "Code piece:\n" + codePiece + "\n" +
+          "Comments on your code:\n" + devComments
+        );
 
-          alert("Feedback sent successfully!");
-          document.getElementById('name').value = '';
-          document.getElementById('age').value = '';
-          document.getElementById('date').value = '';
-          document.getElementById('comment').value = '';
-          document.getElementById('codePiece').value = '';
-          document.getElementById('devComments').value = '';
-          selectedRating = 0;
-          stars.forEach(s => s.classList.remove('selected'));
-        } catch (error) {
-          console.error("Error adding document: ", error);
-          alert("Error sending feedback. Please try again.");
-        }
+        // Open the user's email client
+        window.location.href = `mailto:kavitharoshanth@gmail.com?subject=${subject}&body=${body}`;
       };
     });
   </script>
 
+
 </body>
 </html>
+
