@@ -584,91 +584,96 @@
                  if(selectedFileItem) selectedFileItem.classList.remove('selected');
             });
 
-
-            // --- Generate QR Code Link (using the Sign In page URL for security) ---
+            // --- Generate QR Code Link (using the Sign In page URL with a token) ---
             // NOTE: Putting Firebase credentials directly in a URL via QR code is NOT secure.
-            // This updated logic generates a QR code that links to your Sign In page.
-            // Users will need to sign in with their OWN credentials after scanning.
-<!-- Replace the existing getQRCodeButton event listener with this: -->
-// Replace the getQRCodeButton event listener with this:
-getQRCodeButton.addEventListener('click', async function() {
-    if (!currentUserId) {
-        alert('No user is logged in to generate a QR code link.');
-        return;
-    }
+            // This logic generates a QR code that links to your Sign In page with a temporary token.
+            // The Sign In page (Sign%20in.html) would need to read this token from the URL
+            // and use it to sign the user in programmatically.
+            // This token should be short-lived and ideally tied to the specific user who generated it.
+            // The code below includes a basic token generation and storage with expiration (5 mins).
 
-    try {
-        // Generate a unique token (you might want to make this more robust)
-        const token = generateToken();
-        
-        // Store the token in Firebase with a 5-minute expiration
-        const tokenRef = database.ref('tokens/' + token);
-        await tokenRef.set({
-            userId: currentUserId,
-            createdAt: firebase.database.ServerValue.TIMESTAMP,
-            expiresAt: Date.now() + 300000 // 5 minutes from now
-        });
-        
-        // Create URL with just the token
-        const signInUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?token=${token}`;
-        
-        // Generate QR code
-        qrcodeContainer.innerHTML = '';
-        new QRCode(qrcodeContainer, {
-            text: signInUrl,
-            width: 128,
-            height: 128,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-        });
+            getQRCodeButton.addEventListener('click', async function() {
+                if (!currentUserId) {
+                    alert('No user is logged in to generate a QR code link.');
+                    return;
+                }
 
-        printQRCodeButton.style.display = 'inline-block';
-        alert("QR Code generated. It will automatically sign in when scanned (valid for 5 minutes).");
-    } catch (error) {
-        console.error("Error generating QR code:", error);
-        alert("Failed to generate QR code: " + error.message);
-    }
-});
+                // Disable the button to prevent multiple clicks while processing
+                getQRCodeButton.disabled = true;
 
-function generateToken() {
-    // Simple token generation - consider using a more robust method
-    return 'temp-' + Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
-}
+                try {
+                    // Generate a unique token (simple implementation, consider more robust methods)
+                    const token = generateToken(); // generateToken function is defined below this listener
 
-    // Show the print button
-    printQRCodeButton.style.display = 'inline-block';
-    console.log("QR Code generated for auto sign-in URL:", signInUrl);
-    alert("QR Code generated. Scanning this will automatically sign in the user.");
-});
+                    // Store the token in Firebase Realtime Database with an expiration
+                    // Ensure your security rules allow writing to the 'tokens' path by the authenticated user
+                    const tokenRef = database.ref('tokens/' + token);
+                    await tokenRef.set({
+                        userId: currentUserId,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP, // Use server timestamp
+                        expiresAt: Date.now() + 300000 // 5 minutes from now (300,000 milliseconds)
+                    });
+
+                    // Construct the URL that the QR code will point to
+                    // This URL goes to your Sign In page and includes the generated token
+                    const signInUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?token=${token}`;
+
+                    // Generate the QR code image
+                    qrcodeContainer.innerHTML = ''; // Clear any previous QR code
+                    new QRCode(qrcodeContainer, {
+                        text: signInUrl,
+                        width: 128,
+                        height: 128,
+                        colorDark: '#000000',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H // High error correction level
+                    });
+
+                    // Show the print button and provide user feedback *after* successful generation
+                    printQRCodeButton.style.display = 'inline-block';
+                    console.log("QR Code generated for auto sign-in URL:", signInUrl);
+                    alert("QR Code generated. Scanning this will open the sign-in page, which can use the token for automatic sign-in (valid for 5 minutes).");
+
+                } catch (error) {
+                    console.error("Error generating QR code:", error);
+                    alert("Failed to generate QR code: " + error.message);
+                } finally {
+                    // Re-enable the button regardless of success or failure
+                    getQRCodeButton.disabled = false;
+                }
+            }); // <-- This brace correctly closes the addEventListener callback and the addEventListener call.
+
+            // Helper function to generate a simple random token
+            function generateToken() {
+                // Basic random string generation - sufficient for a temporary token
+                return 'temp-' + Math.random().toString(36).substring(2, 15) +
+                       Math.random().toString(36).substring(2, 15);
+            }
 
 
             // --- Print QR Code ---
             printQRCodeButton.addEventListener('click', function() {
+                // ... (rest of your printQRCodeButton logic remains the same) ...
                 const qrcodeContainer = document.getElementById('qrcode');
-                // Check if a QR code is currently displayed
-                if (qrcodeContainer.innerHTML === '') {
-                    alert('Please generate a QR code first.');
-                    return;
-                }
+                 if (qrcodeContainer.innerHTML === '') {
+                     alert('Please generate a QR code first.');
+                     return;
+                 }
 
-                const printWindow = window.open('', '_blank'); // Open a new blank window
-                // Write basic HTML structure to the new window
-                printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
-                // Write the content of the QR code div (which should contain the image)
-                printWindow.document.write('<h2>Scan to go to Sign In Page</h2>'); // Add a title for printing
-                printWindow.document.write(qrcodeContainer.innerHTML);
-                printWindow.document.write('</body></html>');
-                printWindow.document.close(); // Close the document to finish writing
+                 const printWindow = window.open('', '_blank');
+                 printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+                 printWindow.document.write('<h2>Scan to automatically sign in</h2>'); // Updated title slightly
+                 printWindow.document.write(qrcodeContainer.innerHTML);
+                 printWindow.document.write('<p style="font-size:10px;">(Link is valid for 5 minutes after generation)</p>'); // Add expiration info
+                 printWindow.document.write('</body></html>');
+                 printWindow.document.close();
 
-                // Wait briefly for content to render, then print
-                setTimeout(() => {
-                    printWindow.print(); // Open the browser's print dialog
-                    // printWindow.close(); // Close the window after printing (optional)
-                }, 250); // Small delay might help ensure image loads
+                 setTimeout(() => {
+                     printWindow.print();
+                     // printWindow.close(); // Optional
+                 }, 250);
 
-                 console.log("Print QR Code initiated.");
+                  console.log("Print QR Code initiated.");
             });
 
 
