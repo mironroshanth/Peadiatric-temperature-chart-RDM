@@ -592,6 +592,9 @@
             // This token should be short-lived and ideally tied to the specific user who generated it.
             // The code below includes a basic token generation and storage with expiration (5 mins).
 
+            // --- Generate QR Code Link (using the Sign In page URL with a token) ---
+            // ... (rest of the comments) ...
+
             getQRCodeButton.addEventListener('click', async function() {
                 if (!currentUserId) {
                     alert('No user is logged in to generate a QR code link.');
@@ -606,16 +609,15 @@
                     const token = generateToken(); // generateToken function is defined below this listener
 
                     // Store the token in Firebase Realtime Database with an expiration
-                    // Ensure your security rules allow writing to the 'tokens' path by the authenticated user
                     const tokenRef = database.ref('tokens/' + token);
                     await tokenRef.set({
                         userId: currentUserId,
+                        email: user.email, // <-- ADD THIS LINE HERE! We are saving the user's email
                         createdAt: firebase.database.ServerValue.TIMESTAMP, // Use server timestamp
                         expiresAt: Date.now() + 300000 // 5 minutes from now (300,000 milliseconds)
                     });
 
                     // Construct the URL that the QR code will point to
-                    // This URL goes to your Sign In page and includes the generated token
                     const signInUrl = `https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html?token=${token}`;
 
                     // Generate the QR code image
@@ -631,8 +633,8 @@
 
                     // Show the print button and provide user feedback *after* successful generation
                     printQRCodeButton.style.display = 'inline-block';
-                    console.log("QR Code generated for auto sign-in URL:", signInUrl);
-                    alert("QR Code generated. Scanning this will open the sign-in page, which can use the token for automatic sign-in (valid for 5 minutes).");
+                    console.log("QR Code generated for sign-in URL:", signInUrl);
+                    alert("QR Code generated. Scanning this will open the sign-in page and pre-fill your email (link valid for 5 minutes)."); // Updated alert text
 
                 } catch (error) {
                     console.error("Error generating QR code:", error);
@@ -641,14 +643,20 @@
                     // Re-enable the button regardless of success or failure
                     getQRCodeButton.disabled = false;
                 }
-            }); // <-- This brace correctly closes the addEventListener callback and the addEventListener call.
+            }); // <-- This brace closes the addEventListener callback.
 
             // Helper function to generate a simple random token
             function generateToken() {
-                // Basic random string generation - sufficient for a temporary token
-                return 'temp-' + Math.random().toString(36).substring(2, 15) +
-                       Math.random().toString(36).substring(2, 15);
+                // ... (this function remains the same) ...
+                 return 'temp-' + Math.random().toString(36).substring(2, 15) +
+                        Math.random().toString(36).substring(2, 15);
             }
+
+
+            // --- Print QR Code ---
+            // ... (rest of your printQRCodeButton logic remains the same) ...
+
+
 
 
             // --- Print QR Code ---
