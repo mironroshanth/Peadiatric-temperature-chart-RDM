@@ -642,7 +642,7 @@ h1{
          console.log("Sidebar closed.");
     }
 
-     // Function to share chart data via Gmail
+     // Function to share chart data via Gmail as a JSON file
     function shareGmail() {
         const name = document.getElementById('name').value.trim();
         const dob = document.getElementById('dob').value;
@@ -656,22 +656,37 @@ h1{
             return;
         }
 
-        // Format temperature data for email body (basic)
-        const temperatureList = temperatures.map(p => {
-             const date = new Date(p.timestamp);
-             // Format timestamp to a readable date/time string
-             const formattedTime = date.toLocaleString(); // Adjust format as needed
-             return `${formattedTime}: ${p.value}°F`;
-        }).join('\n'); // Join points with newline
+        // Prepare JSON data
+        const jsonData = JSON.stringify({
+            name: name,
+            dob: dob,
+            temperatures: temperatures
+        }, null, 2);
 
-        const emailBody = `Patient Name: ${name}\nDate of Birth: ${dob}\n\nTemperature Records:\n${temperatureList}`;
-        const mailtoLink = `mailto:?subject=${encodeURIComponent('Temperature Chart Data for ' + name)}&body=${encodeURIComponent(emailBody)}`;
+        // Create a Blob and a download link for the JSON file
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const fileName = `TemperatureChart_${name.replace(/\s+/g, '_') || 'Patient'}.json`;
+        const url = URL.createObjectURL(blob);
 
-        window.location.href = mailtoLink; // Open default email client
-         console.log("Attempting to share via Gmail.");
+        // Create a temporary download link and click it
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Compose a Gmail link with a message to attach the file
+        const subject = encodeURIComponent('Temperature Chart Data for ' + name);
+        const body = encodeURIComponent(
+            `Hi,\n\nPlease find attached the temperature chart data for ${name}.\n\n(If the file did not attach automatically, please attach the downloaded JSON file to this email.)`
+        );
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=&su=${subject}&body=${body}`;
+        window.open(gmailUrl, '_blank');
     }
 
-    // Function to share chart data via WhatsApp
+    // Function to share chart data via WhatsApp as a JSON file (link)
     function shareWhatsApp() {
         const name = document.getElementById('name').value.trim();
         const dob = document.getElementById('dob').value;
@@ -680,27 +695,36 @@ h1{
             value: point.y
         }));
 
-         if (!name || !dob || temperatures.length === 0) {
-             alert('Please enter patient details and add temperature data before sharing.');
-             return;
-         }
+        if (!name || !dob || temperatures.length === 0) {
+            alert('Please enter patient details and add temperature data before sharing.');
+            return;
+        }
 
-        // Format temperature data for WhatsApp message (more compact)
-         const temperatureList = temperatures.map(p => {
-            const date = new Date(p.timestamp);
-            // Format timestamp to a more compact date/time string for message
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
-            return `${day}/${month} ${hours}:${minutes}: ${p.value}°F`;
-         }).join(' | '); // Join points with a separator
+        // Prepare JSON data
+        const jsonData = JSON.stringify({
+            name: name,
+            dob: dob,
+            temperatures: temperatures
+        }, null, 2);
 
-        const message = `Temperature Chart Data:\nPatient: ${name}\nDOB: ${dob}\nTemps: ${temperatureList}`;
+        // Create a Blob and a download link for the JSON file
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const fileName = `TemperatureChart_${name.replace(/\s+/g, '_') || 'Patient'}.json`;
+        const url = URL.createObjectURL(blob);
+
+        // Download the file first (since WhatsApp Web can't attach files directly)
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Compose WhatsApp message with instructions
+        const message = `Hi,\nI've shared a temperature chart JSON file for ${name}.\nPlease find the file in your downloads and attach it here if needed.`;
         const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-
-        window.open(whatsappLink, '_blank'); // Open WhatsApp share link in new tab
-         console.log("Attempting to share via WhatsApp.");
+        window.open(whatsappLink, '_blank');
     }
 
      // Function to print the designated printable area
