@@ -100,7 +100,7 @@
         font-weight: bold;
         cursor: pointer;
         transition: background 0.3s ease, box-shadow 0.3s ease;
-        width: 100%;
+        width: auto;
         margin: 5px 0;
     }
     button:hover {
@@ -286,13 +286,35 @@ Note that,
 <ul>
             <li>The temperature you input is in °F. If it s in °C you can convert it to °F by going to the <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Convert to fahrenheit.html">temperature converter</a> in the menu bar.</li>
             <li>In this version the time will be marked in the <a href="https://www.google.com/search?q=indian+standard+time&rlz=1C1CHZO_enLK1086LK1086&oq=Indian+Standere&gs_lcrp=EgZjaHJvbWUqCQgBEAAYChiABDIGCAAQRRg5MgkIARAAGAoYgAQyCQgCEAAYChiABDIJCAMQABgKGIAEMgkIBBAAGAoYgAQyCQgFEAAYChiABDIJCAYQABgKGIAEMgkIBxAAGAoYgAQyCQgIEAAYChiABDIJCAkQABgKGIAE0gEJMTExODVqMGo3qAIIsAIB&sourceid=chrome&ie=UTF-8&safe=active">Indian Standered Time</a>.</li>
+</ul><br><br>
+<h1>If you liked this website,</h1> <br><br>
+<h3>
+<ul>
+<li>Please share this webpage with others by,</li>
+<ul><li>Scan this QR code to open this website from another device</li>
+<li>Download the QR code by <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/QR code.zip" download>clicking here</a>
+</li>
+	
+	<img src="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20Chart.png" width="250px" height="auto">
+        <br>
+        <li>Copy the URL of this page and share it with others</li>
 </ul>
-        <br><br>
+</ul>
+</h3>
+        <button onclick="copyHidden()">Copy website URL</button>
+	<p id="hiddenText" style="display:none;">https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Sign%20in.html</p><br>
+        <br>
 <a href="https://mironroshanth.github.io/Peadiatric-temperature-chart-RDM/Temperature%20chart.html">Back to home</a>
 </h3><br>
 </div>
 </body>
         <script>
+function copyHidden() {
+  const text = document.getElementById('hiddenText').innerText;
+  navigator.clipboard.writeText(text)
+    .then(() => alert('Hidden text copied!'))
+    .catch(err => alert('Failed to copy: ' + err));
+}
     function openNav() {
         document.getElementById("mySidebar").style.width = "250px"; // Set the width of the sidebar when opened
     }
