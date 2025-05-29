@@ -644,7 +644,11 @@ h1{
         document.getElementById('tempInput').value = '';
          document.getElementById('dateInput').focus(); // Set focus back to the date input
     }
-
+document.getElementById('temperature').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        document.getElementById('addData').click();
+    }
+});
 
     // Function to calculate age (keeping your existing logic)
     function calculateAge() {
