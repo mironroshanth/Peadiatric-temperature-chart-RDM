@@ -587,6 +587,17 @@ h1{
         const timeInput = document.getElementById('timeInput').value;
         const tempInput = parseFloat(document.getElementById('tempInput').value);
 
+
+    function handleAddDataEnter(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addData();
+        }
+    }
+
+    if (dateInput) dateInput.addEventListener('keydown', handleAddDataEnter);
+    if (timeInput) timeInput.addEventListener('keydown', handleAddDataEnter);
+    if (tempInput) tempInput.addEventListener('keydown', handleAddDataEnter);
         if (!dateInput || !timeInput || isNaN(tempInput)) {
             alert('Please enter a valid date, time, and temperature.');
             return;
@@ -644,11 +655,6 @@ h1{
         document.getElementById('tempInput').value = '';
          document.getElementById('dateInput').focus(); // Set focus back to the date input
     }
-document.getElementById('temperature').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        document.getElementById('addData').click();
-    }
-});
 
     // Function to calculate age (keeping your existing logic)
     function calculateAge() {
